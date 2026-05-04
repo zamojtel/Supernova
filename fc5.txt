@@ -1,0 +1,11 @@
+int main(){
+	fun(7653);
+	return 123;
+}
+
+int32 fun(int32 x){
+	int32 a;
+	int32 b = 123;
+	a=b;
+	return x;
+}

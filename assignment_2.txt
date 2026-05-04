@@ -1,0 +1,10 @@
+
+
+int fun() {
+	return 5;
+}
+
+int main(){
+	if( (fun() + 5) < 10 || ( fun() + 23 ) < 25);
+	return 0;
+}

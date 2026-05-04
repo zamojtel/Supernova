@@ -1,0 +1,10 @@
+
+int fun(int a,int b) {
+	int result = a+b;
+	return result;
+}
+
+int main(){
+	int value = fun(10,20);
+	return 0;
+}

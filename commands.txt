@@ -1,0 +1,6 @@
+antlr4 -Dlanguage=Cpp Expr.g4 -o "C:\Users\zamoj\source\repos\Antlr_Parser_1\Antlr_Parser_1\Generated"
+antlr4 -Dlanguage=Cpp Grammar.g4 -o "C:\Users\zamoj\source\repos\Antlr_Parser_1\Antlr_Parser_1\GeneratedCLikeLanguage"
+
+antlr4 -Dlanguage=Cpp Grammar.g4 -o "C:\Users\zamoj\OneDrive\Pulpit\CompilerProject\"
+
+antlr4 -Dlanguage=Cpp Grammar.g4 -o "C:\Users\zamoj\OneDrive\Pulpit\ProjectKompilator\GeneratedCLikeLanguage"

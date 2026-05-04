@@ -1,0 +1,13 @@
+
+int32 fun(int parameter) {
+	int32 x;
+	int32 y = 123;
+	x=y;
+	return x; 
+}
+
+int main(){
+	int32 x =123;
+	fun(x);
+	return 123;
+}

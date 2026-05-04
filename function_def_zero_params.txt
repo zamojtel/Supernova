@@ -1,0 +1,12 @@
+
+
+bool fun() {
+	int a = false;
+	return a;
+}
+
+int main(){
+	fun();
+
+	return 0;
+}

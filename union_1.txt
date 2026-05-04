@@ -1,0 +1,5 @@
+
+union A {
+	int m_a;
+	float const m_b;
+};

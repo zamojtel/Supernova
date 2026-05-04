@@ -1,0 +1,9 @@
+
+int main(){
+	int [10] t;
+	double x = 33.3;
+	double y = 10.3;
+	int result = t[x+y];
+
+	return 0;
+}

@@ -1,0 +1,22 @@
+
+int main(){
+	int32 x = 123;
+	double z = 11.99;
+	fun(z);
+	fun(x);
+	return 123;
+}
+
+int32 fun(double z) {
+	int32 x;
+	int32 y = 123;
+	x=y;
+	return x;
+}
+
+int32 fun(int32 x){
+	int32 a;
+	int32 b = 123;
+	a=b;
+	return x;
+}

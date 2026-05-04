@@ -1,0 +1,18 @@
+
+void rec(int n)
+{
+	if(n==0){
+		int z = n+3;
+		return;
+	}
+
+	int x = n-1;
+	rec(x);
+
+	return;
+}
+
+int main(){
+	rec(3);
+	return 0;
+}

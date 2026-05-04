@@ -1,0 +1,16 @@
+
+int fun() {
+	return 5;
+}
+
+
+int main(){
+	int x = 0;
+	if( (fun() + 5) < 10 || ( fun() + 23 ) < 25){
+		x = 123;
+	}else{
+		x = 999;
+	}
+	int z = x;
+	return z;
+}

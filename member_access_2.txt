@@ -1,0 +1,13 @@
+
+struct A {
+	int m_a;
+	int m_b;
+};
+
+int main(){
+	A c;
+	c.m_a = 10; 
+	// l-value
+
+	return 0;
+}

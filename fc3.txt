@@ -1,0 +1,21 @@
+
+int main(){
+	int32 x = 123;
+	fun();
+	fun(x);
+	return 123;
+}
+
+int32 fun(float f_x) {
+	int32 x;
+	int32 y = 123;
+	x=y;
+	return x;
+}
+
+int32 fun(int32 x){
+	int32 a;
+	int32 b = 123;
+	a=b;
+	return x;
+}

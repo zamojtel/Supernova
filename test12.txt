@@ -1,0 +1,5 @@
+
+double x;
+x = 123.00;
+
+return x;

@@ -1,0 +1,14 @@
+
+// przekreca sie 
+// asd 
+
+uint8 x;
+uint8 y;
+uint8 z;
+
+x = 223;
+y = 34;
+
+z = x + y;
+
+return z;

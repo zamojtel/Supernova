@@ -1,0 +1,8 @@
+
+int gl_x = 1;
+int gl_y = 9;
+
+int main(){
+	int result = gl_x;
+	return 0;
+}

@@ -1,0 +1,7 @@
+
+int main(){
+	int const *[5][4]*[10] t1;
+	int const *[8] t2;
+
+	return 0;
+}

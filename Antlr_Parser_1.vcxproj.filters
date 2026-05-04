@@ -1,0 +1,1025 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Generated">
+      <UniqueIdentifier>{10310286-14a6-4ff1-a366-7ec3bec84ca7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GeneratedCLikeLanguage">
+      <UniqueIdentifier>{5950d1d4-5358-4512-96b2-01529c8c7cee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AbstractSyntaxtTreeNodeTypes">
+      <UniqueIdentifier>{774f1476-1be2-411b-a700-a396744f654c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Includes">
+      <UniqueIdentifier>{9d2de3c0-ec11-4ec7-86ee-52ba1b140393}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Enums">
+      <UniqueIdentifier>{6f810af3-9a5b-4aee-a343-86c17ec3a149}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Printer">
+      <UniqueIdentifier>{e6138188-c61f-4961-9b30-cc833641c856}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ExampleProgramms">
+      <UniqueIdentifier>{2946b895-5f35-443d-a3de-4eea01c7848a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\IR">
+      <UniqueIdentifier>{bd7f64d4-d123-4469-9d0d-6e30b556ec23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Converter">
+      <UniqueIdentifier>{41c3c7c7-c5d6-4586-81bd-a5a882240b9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Error">
+      <UniqueIdentifier>{c85eb868-999d-40f7-9769-954f40da8c8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\IR\IREnumTypes">
+      <UniqueIdentifier>{650874d2-c5b5-439d-b282-8b8e3adbc2a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests">
+      <UniqueIdentifier>{807c63a6-0106-4813-a145-85dacc30edfa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Checker">
+      <UniqueIdentifier>{9c194f6d-abfb-4e18-9c32-689195c8216b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\errors">
+      <UniqueIdentifier>{0b72d998-f196-4716-9b28-3a014e968f37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DataValues">
+      <UniqueIdentifier>{78445ba7-b660-4e5e-ac26-d1dcb8479aeb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\IRToLLVMIR">
+      <UniqueIdentifier>{76ce0fdc-17f9-4674-b9dc-add998d9de16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\NewFilter1">
+      <UniqueIdentifier>{bb0b3d4a-9664-43a0-8095-c7697bafad02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\Cast">
+      <UniqueIdentifier>{fff703b6-ffbe-49b7-8c49-0f9d7a5e8f64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\NewFilter2">
+      <UniqueIdentifier>{2e025eb6-909b-4206-b44f-626e2a7778f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\Function">
+      <UniqueIdentifier>{ef6a96dd-096c-47bb-ac53-a5cec1f3e119}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\FunctionCalls">
+      <UniqueIdentifier>{25112549-563c-49ac-a8bc-be847d33f79b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Coder">
+      <UniqueIdentifier>{492a733c-4942-4b14-bddd-e2b9e8c506ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\WhileLoop">
+      <UniqueIdentifier>{b64cc851-33f9-4fa0-9cce-3ab03c8e5d4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\BreakContinue">
+      <UniqueIdentifier>{34c859db-37e8-45a5-aad6-8eff80818811}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\DoWhileLoop">
+      <UniqueIdentifier>{107d0c5c-53cc-4b28-955f-2a15a385a36a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\IncrementationDecrementation">
+      <UniqueIdentifier>{1e57a21c-87fb-4bb0-8a2b-885c0a76df79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\control_flow_statements">
+      <UniqueIdentifier>{b79c7f0d-c23d-4b08-a17a-42690d4c4e1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\boolAssignmentAndExpressions">
+      <UniqueIdentifier>{795dc1e2-cdd9-45fd-9308-b213c36bbb5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\GlobalVariables">
+      <UniqueIdentifier>{9f3780c4-9e71-432d-a792-08498fa24b71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\IR\IRDataTypes">
+      <UniqueIdentifier>{8e781b54-ec44-4c5d-beee-9f765e237ce5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\Array">
+      <UniqueIdentifier>{52c15f53-99a9-400e-ab8b-a730850d16ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\SimpleExamples">
+      <UniqueIdentifier>{21424beb-b270-40c9-8f74-aa6d5be2c2c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\FreshTest">
+      <UniqueIdentifier>{71e9fcc2-427d-413d-a73b-bef4b87c1841}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\TypeComparison">
+      <UniqueIdentifier>{78cf0687-10a9-4c64-a00a-7399b08ac13e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\Struct">
+      <UniqueIdentifier>{fc21e6d9-fca8-4cdd-a6f7-5fc5fbc64f5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\Union">
+      <UniqueIdentifier>{26153a7a-a5d4-4667-9c3d-9942fc2d49a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\MemberAccess">
+      <UniqueIdentifier>{3edabd5e-c246-4a18-826c-44d833c22e35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\ReferenceAccess">
+      <UniqueIdentifier>{5dd78765-451a-4400-ba70-093925a623a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\NewFilter3">
+      <UniqueIdentifier>{3712588b-bff6-4d02-9a06-330ca47596bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\VectorOperations">
+      <UniqueIdentifier>{873663c5-6781-4c4f-b9c1-fea21e4b3da6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\TestsForCalculatingSizes">
+      <UniqueIdentifier>{71132f49-9aaa-4538-9522-d00d1c503338}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\TestForSizeOf">
+      <UniqueIdentifier>{86fdeda5-ac1a-474b-8b74-a55b06dc0432}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Interpreter">
+      <UniqueIdentifier>{2ed9a40b-d51e-4617-9c0b-6838e375ae92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\Assert">
+      <UniqueIdentifier>{96c0f99b-acd9-4f82-911d-80cfe20d03fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\DifferentDataTypes">
+      <UniqueIdentifier>{7ec168e0-b588-4cc2-b265-6c44ecba237c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\ForLoops">
+      <UniqueIdentifier>{49cac1d3-7aeb-4a2d-9d48-61ad828a4234}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\InterpreterChecker">
+      <UniqueIdentifier>{a9522f76-83c9-4a77-95cf-d13e5b1ac9ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\AssertAutomaticTests">
+      <UniqueIdentifier>{602b3081-e313-46ee-ba73-7493cc12fff4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\Printing">
+      <UniqueIdentifier>{3793a7ae-1767-48d4-97ab-ef7a06d2a050}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\RecursiveCalls">
+      <UniqueIdentifier>{63820ccb-259a-4e02-a82d-f842fbfed786}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\FunctionCallSimple">
+      <UniqueIdentifier>{f80874d2-6abd-4cf0-9833-2bcd792dbf4a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Generated\ExprBaseListener.cpp">
+      <Filter>Generated</Filter>
+    </ClCompile>
+    <ClCompile Include="Generated\ExprLexer.cpp">
+      <Filter>Generated</Filter>
+    </ClCompile>
+    <ClCompile Include="Generated\ExprListener.cpp">
+      <Filter>Generated</Filter>
+    </ClCompile>
+    <ClCompile Include="Generated\ExprParser.cpp">
+      <Filter>Generated</Filter>
+    </ClCompile>
+    <ClCompile Include="AbstractSyntaxTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedCLikeLanguage\GrammarBaseListener.cpp">
+      <Filter>GeneratedCLikeLanguage</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedCLikeLanguage\GrammarLexer.cpp">
+      <Filter>GeneratedCLikeLanguage</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedCLikeLanguage\GrammarListener.cpp">
+      <Filter>GeneratedCLikeLanguage</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedCLikeLanguage\GrammarParser.cpp">
+      <Filter>GeneratedCLikeLanguage</Filter>
+    </ClCompile>
+    <ClCompile Include="TreePrinter.cpp">
+      <Filter>Source Files\Printer</Filter>
+    </ClCompile>
+    <ClCompile Include="ListNode.cpp">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="ASTConverter.cpp">
+      <Filter>Source Files\Converter</Filter>
+    </ClCompile>
+    <ClCompile Include="ASTConvIncludes.cpp">
+      <Filter>Source Files\Converter</Filter>
+    </ClCompile>
+    <ClCompile Include="IRFunction.cpp">
+      <Filter>Source Files\IR</Filter>
+    </ClCompile>
+    <ClCompile Include="IRIncludes.cpp">
+      <Filter>Source Files\IR</Filter>
+    </ClCompile>
+    <ClCompile Include="AbstractSyntaxTreeNode.cpp">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="Includes.cpp">
+      <Filter>Source Files\Includes</Filter>
+    </ClCompile>
+    <ClCompile Include="IRTriple.cpp">
+      <Filter>Source Files\IR</Filter>
+    </ClCompile>
+    <ClCompile Include="IRVariable.cpp">
+      <Filter>Source Files\IR</Filter>
+    </ClCompile>
+    <ClCompile Include="IROperand.cpp">
+      <Filter>Source Files\IR</Filter>
+    </ClCompile>
+    <ClCompile Include="IRError.cpp">
+      <Filter>Source Files\IR</Filter>
+    </ClCompile>
+    <ClCompile Include="IRConstant.cpp">
+      <Filter>Source Files\IR</Filter>
+    </ClCompile>
+    <ClCompile Include="IRPrinter.cpp">
+      <Filter>Source Files\Printer</Filter>
+    </ClCompile>
+    <ClCompile Include="ErrorIncludes.cpp">
+      <Filter>Source Files\Error</Filter>
+    </ClCompile>
+    <ClCompile Include="IRBasicBlock.cpp">
+      <Filter>Source Files\IR</Filter>
+    </ClCompile>
+    <ClCompile Include="IRChecker.cpp">
+      <Filter>Source Files\Checker</Filter>
+    </ClCompile>
+    <ClCompile Include="IRErrorCollector.cpp">
+      <Filter>Source Files\IR</Filter>
+    </ClCompile>
+    <ClCompile Include="DataType.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IRDataTypeTraits.cpp">
+      <Filter>Source Files\IR</Filter>
+    </ClCompile>
+    <ClCompile Include="IRToLLVMIRConverter.cpp">
+      <Filter>Source Files\IRToLLVMIR</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstantValue.cpp">
+      <Filter>Source Files\DataValues</Filter>
+    </ClCompile>
+    <ClCompile Include="IRArgument.cpp">
+      <Filter>Source Files\IR</Filter>
+    </ClCompile>
+    <ClCompile Include="Layer.cpp">
+      <Filter>Source Files\Converter</Filter>
+    </ClCompile>
+    <ClCompile Include="SymbolTable.cpp">
+      <Filter>Source Files\Converter</Filter>
+    </ClCompile>
+    <ClCompile Include="IRProgram.cpp">
+      <Filter>Source Files\IR</Filter>
+    </ClCompile>
+    <ClCompile Include="IRCoder.cpp">
+      <Filter>Source Files\Coder</Filter>
+    </ClCompile>
+    <ClCompile Include="TypeRef.cpp">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="IRArrayNode.cpp">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="IRPointerNode.cpp">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="IRDataTypeNode.cpp">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="IRBasicTypeNode.cpp">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="IRQualifiersNode.cpp">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="IRReferenceNode.cpp">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="IRDataTypeManager.cpp">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="IRErrorTypeNode.cpp">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="IRUnion.cpp">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="IRStruct.cpp">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="IRCompositeTypeNode.cpp">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="IRMember.cpp">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="Interpreter.cpp">
+      <Filter>Source Files\Interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="IRInterpreterForTests.cpp">
+      <Filter>Source Files\IR</Filter>
+    </ClCompile>
+    <ClCompile Include="IRStackFrame.cpp">
+      <Filter>Source Files\IR</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Expr.g4">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="Generated\Expr.interp">
+      <Filter>Generated</Filter>
+    </None>
+    <None Include="Generated\Expr.tokens">
+      <Filter>Generated</Filter>
+    </None>
+    <None Include="Generated\ExprLexer.interp">
+      <Filter>Generated</Filter>
+    </None>
+    <None Include="Generated\ExprLexer.tokens">
+      <Filter>Generated</Filter>
+    </None>
+    <None Include="Grammar.g4">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="GeneratedCLikeLanguage\Grammar.interp">
+      <Filter>GeneratedCLikeLanguage</Filter>
+    </None>
+    <None Include="GeneratedCLikeLanguage\Grammar.tokens">
+      <Filter>GeneratedCLikeLanguage</Filter>
+    </None>
+    <None Include="GeneratedCLikeLanguage\GrammarLexer.interp">
+      <Filter>GeneratedCLikeLanguage</Filter>
+    </None>
+    <None Include="GeneratedCLikeLanguage\GrammarLexer.tokens">
+      <Filter>GeneratedCLikeLanguage</Filter>
+    </None>
+    <None Include=".gitignore" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Generated\ExprBaseListener.h">
+      <Filter>Generated</Filter>
+    </ClInclude>
+    <ClInclude Include="Generated\ExprLexer.h">
+      <Filter>Generated</Filter>
+    </ClInclude>
+    <ClInclude Include="Generated\ExprListener.h">
+      <Filter>Generated</Filter>
+    </ClInclude>
+    <ClInclude Include="Generated\ExprParser.h">
+      <Filter>Generated</Filter>
+    </ClInclude>
+    <ClInclude Include="AbstractSyntaxTree.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TreeNodeType.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicTypeNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IdentifierNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="AssignmentNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes.h">
+      <Filter>Source Files\Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="DeclarationNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="ListNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="FunctionNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="ReturnNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryOperatorNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="OperationType.h">
+      <Filter>Source Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedCLikeLanguage\GrammarBaseListener.h">
+      <Filter>GeneratedCLikeLanguage</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedCLikeLanguage\GrammarLexer.h">
+      <Filter>GeneratedCLikeLanguage</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedCLikeLanguage\GrammarListener.h">
+      <Filter>GeneratedCLikeLanguage</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedCLikeLanguage\GrammarParser.h">
+      <Filter>GeneratedCLikeLanguage</Filter>
+    </ClInclude>
+    <ClInclude Include="TreePrinter.h">
+      <Filter>Source Files\Printer</Filter>
+    </ClInclude>
+    <ClInclude Include="ReferencePtr.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IRTriple.h">
+      <Filter>Source Files\IR</Filter>
+    </ClInclude>
+    <ClInclude Include="IROperand.h">
+      <Filter>Source Files\IR</Filter>
+    </ClInclude>
+    <ClInclude Include="IRIncludes.h">
+      <Filter>Source Files\IR</Filter>
+    </ClInclude>
+    <ClInclude Include="IRConstant.h">
+      <Filter>Source Files\IR</Filter>
+    </ClInclude>
+    <ClInclude Include="IRVariable.h">
+      <Filter>Source Files\IR</Filter>
+    </ClInclude>
+    <ClInclude Include="ASTConverter.h">
+      <Filter>Source Files\Converter</Filter>
+    </ClInclude>
+    <ClInclude Include="ASTConvIncludes.h">
+      <Filter>Source Files\Converter</Filter>
+    </ClInclude>
+    <ClInclude Include="IRFunction.h">
+      <Filter>Source Files\IR</Filter>
+    </ClInclude>
+    <ClInclude Include="AbstractSyntaxTreeNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IRPrinter.h">
+      <Filter>Source Files\Printer</Filter>
+    </ClInclude>
+    <ClInclude Include="Error.h">
+      <Filter>Source Files\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="IRError.h">
+      <Filter>Source Files\IR</Filter>
+    </ClInclude>
+    <ClInclude Include="IRBasicType.h">
+      <Filter>Source Files\IR\IREnumTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IROperandType.h">
+      <Filter>Source Files\IR\IREnumTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IROperation.h">
+      <Filter>Source Files\IR\IREnumTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrorType.h">
+      <Filter>Source Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrorList.h">
+      <Filter>Source Files\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="ASTConverterError.h">
+      <Filter>Source Files\Converter</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrorIncludes.h">
+      <Filter>Source Files\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="ASTConverterListener.h">
+      <Filter>Source Files\Converter</Filter>
+    </ClInclude>
+    <ClInclude Include="CastNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IfNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="BlockNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IRBasicBlock.h">
+      <Filter>Source Files\IR</Filter>
+    </ClInclude>
+    <ClInclude Include="IRChecker.h">
+      <Filter>Source Files\Checker</Filter>
+    </ClInclude>
+    <ClInclude Include="IRCheckerListener.h">
+      <Filter>Source Files\IR</Filter>
+    </ClInclude>
+    <ClInclude Include="IRErrorCollector.h">
+      <Filter>Source Files\IR</Filter>
+    </ClInclude>
+    <ClInclude Include="WhileNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantValue.h">
+      <Filter>Source Files\DataValues</Filter>
+    </ClInclude>
+    <ClInclude Include="ReinterpretNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IRDataTypeTraits.h">
+      <Filter>Source Files\IR</Filter>
+    </ClInclude>
+    <ClInclude Include="IRToLLVMIRConverter.h">
+      <Filter>Source Files\IRToLLVMIR</Filter>
+    </ClInclude>
+    <ClInclude Include="IRToLLVMIRIncludes.h">
+      <Filter>Source Files\IRToLLVMIR</Filter>
+    </ClInclude>
+    <ClInclude Include="IRArgument.h">
+      <Filter>Source Files\IR</Filter>
+    </ClInclude>
+    <ClInclude Include="FunctionParameterNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="FunctionDefNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="SymbolTable.h">
+      <Filter>Source Files\Converter</Filter>
+    </ClInclude>
+    <ClInclude Include="Layer.h">
+      <Filter>Source Files\Converter</Filter>
+    </ClInclude>
+    <ClInclude Include="IRProgram.h">
+      <Filter>Source Files\IR</Filter>
+    </ClInclude>
+    <ClInclude Include="FunctionCallNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IRCoder.h">
+      <Filter>Source Files\Coder</Filter>
+    </ClInclude>
+    <ClInclude Include="DoWhileNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="ForNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="DeclarationListItemNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="BreakNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="ContinueNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IncrementationNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="DecrementationNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="AndNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="OrNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="BooleanNotNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IRLocalVariable.h">
+      <Filter>Source Files\IR</Filter>
+    </ClInclude>
+    <ClInclude Include="IRGlobalVariable.h">
+      <Filter>Source Files\IR</Filter>
+    </ClInclude>
+    <ClInclude Include="IRDataTypeNode.h">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IRQualifiersNode.h">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IRArrayNode.h">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeRef.h">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IRPointerNode.h">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IRReferenceNode.h">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IRDataTypeNodeType.h">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IRBasicTypeNode.h">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IRDataTypeManager.h">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IRUnion.h">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IRStruct.h">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="ArrayKeyHasher.h">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeModifierNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="QualifierNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="ArrayNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="PointerNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="ReferenceNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="DataTypeNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IRErrorTypeNode.h">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="CompositeNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="StructNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="UnionNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IRCompositeTypeNode.h">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="MemberDeclarationNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="MemberAccessNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IRMember.h">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="ArrayAccessNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="SizeOfNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="AssertNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Interpreter.h">
+      <Filter>Source Files\Interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="IRInterpreterListener.h">
+      <Filter>Source Files\IR</Filter>
+    </ClInclude>
+    <ClInclude Include="IRPrint.h">
+      <Filter>Source Files\IR</Filter>
+    </ClInclude>
+    <ClInclude Include="PrintNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IRInterpreterForTests.h">
+      <Filter>Source Files\IR</Filter>
+    </ClInclude>
+    <ClInclude Include="IRStackFrame.h">
+      <Filter>Source Files\IR</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="commands.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="test1.txt">
+      <Filter>Source Files\Tests</Filter>
+    </Text>
+    <Text Include="test2.txt">
+      <Filter>Source Files\Tests</Filter>
+    </Text>
+    <Text Include="test3.txt">
+      <Filter>Source Files\Tests</Filter>
+    </Text>
+    <Text Include="error1.txt">
+      <Filter>Source Files\Tests\errors</Filter>
+    </Text>
+    <Text Include="error2.txt">
+      <Filter>Source Files\Tests\errors</Filter>
+    </Text>
+    <Text Include="test4.txt">
+      <Filter>Source Files\Tests</Filter>
+    </Text>
+    <Text Include="test5.txt">
+      <Filter>Source Files\Tests</Filter>
+    </Text>
+    <Text Include="test6.txt">
+      <Filter>Source Files\Tests</Filter>
+    </Text>
+    <Text Include="test7.txt">
+      <Filter>Source Files\Tests</Filter>
+    </Text>
+    <Text Include="test8.txt">
+      <Filter>Source Files\Tests</Filter>
+    </Text>
+    <Text Include="test9.txt">
+      <Filter>Source Files\Tests</Filter>
+    </Text>
+    <Text Include="test10.txt">
+      <Filter>Source Files\Tests</Filter>
+    </Text>
+    <Text Include="test11.txt">
+      <Filter>Source Files\Tests</Filter>
+    </Text>
+    <Text Include="test12.txt">
+      <Filter>Source Files\Tests</Filter>
+    </Text>
+    <Text Include="test13.txt">
+      <Filter>Source Files\Tests</Filter>
+    </Text>
+    <Text Include="test_fun_1.txt">
+      <Filter>Source Files\Tests\Function</Filter>
+    </Text>
+    <Text Include="test_fun_2.txt">
+      <Filter>Source Files\Tests\Function</Filter>
+    </Text>
+    <Text Include="test_fun_3.txt">
+      <Filter>Source Files\Tests\Function</Filter>
+    </Text>
+    <Text Include="fc1.txt">
+      <Filter>Source Files\Tests\FunctionCalls</Filter>
+    </Text>
+    <Text Include="fc2.txt">
+      <Filter>Source Files\Tests\FunctionCalls</Filter>
+    </Text>
+    <Text Include="fc3.txt">
+      <Filter>Source Files\Tests\FunctionCalls</Filter>
+    </Text>
+    <Text Include="fc4.txt">
+      <Filter>Source Files\Tests\FunctionCalls</Filter>
+    </Text>
+    <Text Include="fc5.txt">
+      <Filter>Source Files\Tests\FunctionCalls</Filter>
+    </Text>
+    <Text Include="fc6.txt">
+      <Filter>Source Files\Tests\FunctionCalls</Filter>
+    </Text>
+    <Text Include="loop2.txt">
+      <Filter>Source Files\Tests\WhileLoop</Filter>
+    </Text>
+    <Text Include="loop1.txt">
+      <Filter>Source Files\Tests\WhileLoop</Filter>
+    </Text>
+    <Text Include="loop3.txt">
+      <Filter>Source Files\Tests\WhileLoop</Filter>
+    </Text>
+    <Text Include="loop4.txt">
+      <Filter>Source Files\Tests\WhileLoop</Filter>
+    </Text>
+    <Text Include="loop5.txt">
+      <Filter>Source Files\Tests\WhileLoop</Filter>
+    </Text>
+    <Text Include="loop6.txt">
+      <Filter>Source Files\Tests\WhileLoop</Filter>
+    </Text>
+    <Text Include="break.txt">
+      <Filter>Source Files\Tests\BreakContinue</Filter>
+    </Text>
+    <Text Include="continue.txt">
+      <Filter>Source Files\Tests\BreakContinue</Filter>
+    </Text>
+    <Text Include="break2.txt">
+      <Filter>Source Files\Tests\BreakContinue</Filter>
+    </Text>
+    <Text Include="test16.txt">
+      <Filter>Source Files\Tests</Filter>
+    </Text>
+    <Text Include="returnTest.txt">
+      <Filter>Source Files\Tests</Filter>
+    </Text>
+    <Text Include="returnTest2.txt">
+      <Filter>Source Files\Tests</Filter>
+    </Text>
+    <Text Include="do_while_loop.txt">
+      <Filter>Source Files\Tests\DoWhileLoop</Filter>
+    </Text>
+    <Text Include="inc1.txt">
+      <Filter>Source Files\Tests\IncrementationDecrementation</Filter>
+    </Text>
+    <Text Include="dec1.txt">
+      <Filter>Source Files\Tests\IncrementationDecrementation</Filter>
+    </Text>
+    <Text Include="inc2.txt">
+      <Filter>Source Files\Tests\IncrementationDecrementation</Filter>
+    </Text>
+    <Text Include="dec2.txt">
+      <Filter>Source Files\Tests\IncrementationDecrementation</Filter>
+    </Text>
+    <Text Include="if_statements_1.txt">
+      <Filter>Source Files\Tests\control_flow_statements</Filter>
+    </Text>
+    <Text Include="if_statements_2.txt">
+      <Filter>Source Files\Tests\control_flow_statements</Filter>
+    </Text>
+    <Text Include="while_1.txt">
+      <Filter>Source Files\Tests\control_flow_statements</Filter>
+    </Text>
+    <Text Include="do_while_1.txt">
+      <Filter>Source Files\Tests\control_flow_statements</Filter>
+    </Text>
+    <Text Include="if_statements_3.txt">
+      <Filter>Source Files\Tests\control_flow_statements</Filter>
+    </Text>
+    <Text Include="assignment_1.txt">
+      <Filter>Source Files\Tests\boolAssignmentAndExpressions</Filter>
+    </Text>
+    <Text Include="assignment_2.txt">
+      <Filter>Source Files\Tests\boolAssignmentAndExpressions</Filter>
+    </Text>
+    <Text Include="function_call.txt">
+      <Filter>Source Files\Tests\boolAssignmentAndExpressions</Filter>
+    </Text>
+    <Text Include="function_def_multiple_args.txt">
+      <Filter>Source Files\Tests\boolAssignmentAndExpressions</Filter>
+    </Text>
+    <Text Include="function_def_zero_params.txt">
+      <Filter>Source Files\Tests\boolAssignmentAndExpressions</Filter>
+    </Text>
+    <Text Include="global_variables_1.txt">
+      <Filter>Source Files\Tests\GlobalVariables</Filter>
+    </Text>
+    <Text Include="global_variables_2.txt">
+      <Filter>Source Files\Tests\GlobalVariables</Filter>
+    </Text>
+    <Text Include="global_variables_3.txt">
+      <Filter>Source Files\Tests\GlobalVariables</Filter>
+    </Text>
+    <Text Include="arr_1.txt">
+      <Filter>Source Files\Tests\Array</Filter>
+    </Text>
+    <Text Include="simpleExpr1.txt">
+      <Filter>Source Files\Tests\SimpleExamples</Filter>
+    </Text>
+    <Text Include="functionCall1.txt">
+      <Filter>Source Files\Tests\SimpleExamples</Filter>
+    </Text>
+    <Text Include="complex_control_flow.txt">
+      <Filter>Source Files\Tests\control_flow_statements</Filter>
+    </Text>
+    <Text Include="fresh_test1.txt">
+      <Filter>Source Files\Tests\FreshTest</Filter>
+    </Text>
+    <Text Include="comp_1.txt">
+      <Filter>Source Files\Tests\TypeComparison</Filter>
+    </Text>
+    <Text Include="arr_2.txt">
+      <Filter>Source Files\Tests\Array</Filter>
+    </Text>
+    <Text Include="struct_1.txt">
+      <Filter>Source Files\Tests\Struct</Filter>
+    </Text>
+    <Text Include="union_1.txt">
+      <Filter>Source Files\Tests\Union</Filter>
+    </Text>
+    <Text Include="union_2.txt">
+      <Filter>Source Files\Tests\Union</Filter>
+    </Text>
+    <Text Include="struct_2.txt">
+      <Filter>Source Files\Tests\Struct</Filter>
+    </Text>
+    <Text Include="arr_3.txt">
+      <Filter>Source Files\Tests\Array</Filter>
+    </Text>
+    <Text Include="member_access_1.txt">
+      <Filter>Source Files\Tests\MemberAccess</Filter>
+    </Text>
+    <Text Include="member_access_2.txt">
+      <Filter>Source Files\Tests\MemberAccess</Filter>
+    </Text>
+    <Text Include="member_access_3.txt">
+      <Filter>Source Files\Tests\MemberAccess</Filter>
+    </Text>
+    <Text Include="member_access_4.txt">
+      <Filter>Source Files\Tests\MemberAccess</Filter>
+    </Text>
+    <Text Include="reference_access_1.txt">
+      <Filter>Source Files\Tests\ReferenceAccess</Filter>
+    </Text>
+    <Text Include="member_access_5.txt">
+      <Filter>Source Files\Tests\MemberAccess</Filter>
+    </Text>
+    <Text Include="reference_access_2.txt">
+      <Filter>Source Files\Tests\ReferenceAccess</Filter>
+    </Text>
+    <Text Include="cast_1.txt">
+      <Filter>Source Files\Tests\Cast</Filter>
+    </Text>
+    <Text Include="reinterpret_cast_1.txt">
+      <Filter>Source Files\Tests\Cast</Filter>
+    </Text>
+    <Text Include="arr_4.txt">
+      <Filter>Source Files\Tests\Array</Filter>
+    </Text>
+    <Text Include="arr_5.txt">
+      <Filter>Source Files\Tests\Array</Filter>
+    </Text>
+    <Text Include="complex_struct_1.txt">
+      <Filter>Source Files\Tests\Struct</Filter>
+    </Text>
+    <Text Include="arr_6.txt">
+      <Filter>Source Files\Tests\Array</Filter>
+    </Text>
+    <Text Include="union_3.txt">
+      <Filter>Source Files\Tests\Union</Filter>
+    </Text>
+    <Text Include="arr_7.txt">
+      <Filter>Source Files\Tests\Array</Filter>
+    </Text>
+    <Text Include="arr_8.txt">
+      <Filter>Source Files\Tests\Array</Filter>
+    </Text>
+    <Text Include="vec_1.txt">
+      <Filter>Source Files\Tests\VectorOperations</Filter>
+    </Text>
+    <Text Include="vec_2.txt">
+      <Filter>Source Files\Tests\VectorOperations</Filter>
+    </Text>
+    <Text Include="struct_3.txt">
+      <Filter>Source Files\Tests\Struct</Filter>
+    </Text>
+    <Text Include="calc_size_1.txt">
+      <Filter>Source Files\Tests\TestsForCalculatingSizes</Filter>
+    </Text>
+    <Text Include="calc_size_2.txt">
+      <Filter>Source Files\Tests\TestsForCalculatingSizes</Filter>
+    </Text>
+    <Text Include="calc_size_3.txt">
+      <Filter>Source Files\Tests\TestsForCalculatingSizes</Filter>
+    </Text>
+    <Text Include="calc_size_4.txt">
+      <Filter>Source Files\Tests\TestsForCalculatingSizes</Filter>
+    </Text>
+    <Text Include="size_of_1.txt">
+      <Filter>Source Files\Tests\TestForSizeOf</Filter>
+    </Text>
+    <Text Include="size_of_2.txt">
+      <Filter>Source Files\Tests\TestForSizeOf</Filter>
+    </Text>
+    <Text Include="assert_1.txt">
+      <Filter>Source Files\Tests\Assert</Filter>
+    </Text>
+    <Text Include="diff_data_types.txt">
+      <Filter>Source Files\Tests\DifferentDataTypes</Filter>
+    </Text>
+    <Text Include="arr_9.txt">
+      <Filter>Source Files\Tests\Array</Filter>
+    </Text>
+    <Text Include="assert_2.txt">
+      <Filter>Source Files\Tests\Assert</Filter>
+    </Text>
+    <Text Include="for_1.txt">
+      <Filter>Source Files\Tests\ForLoops</Filter>
+    </Text>
+    <Text Include="auto_assert_1.txt">
+      <Filter>Source Files\Tests\AssertAutomaticTests</Filter>
+    </Text>
+    <Text Include="print_1.txt">
+      <Filter>Source Files\Tests\Printing</Filter>
+    </Text>
+    <Text Include="fc8.txt">
+      <Filter>Source Files\Tests\FunctionCalls</Filter>
+    </Text>
+    <Text Include="fc7.txt">
+      <Filter>Source Files\Tests\FunctionCalls</Filter>
+    </Text>
+    <Text Include="rec_1.txt">
+      <Filter>Source Files\Tests\RecursiveCalls</Filter>
+    </Text>
+    <Text Include="rec_2.txt">
+      <Filter>Source Files\Tests\RecursiveCalls</Filter>
+    </Text>
+    <Text Include="sfc_1.txt">
+      <Filter>Source Files\Tests\FunctionCallSimple</Filter>
+    </Text>
+    <Text Include="simple_1.txt">
+      <Filter>Source Files\Tests\SimpleExamples</Filter>
+    </Text>
+    <Text Include="factorial.txt">
+      <Filter>Source Files\Tests\RecursiveCalls</Filter>
+    </Text>
+    <Text Include="factorial_reg.txt">
+      <Filter>Source Files\Tests\RecursiveCalls</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

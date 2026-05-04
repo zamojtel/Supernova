@@ -1,0 +1,10 @@
+
+struct A{
+	int const m_value;
+	int m_a;
+};
+
+int main(){
+	A [3] t;
+	return 0;
+}

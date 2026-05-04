@@ -1,0 +1,11 @@
+
+struct CompositeType{
+	int const m_value;
+	float const m_f_value;
+};
+
+int main(){
+	CompositeType a;
+
+	return 0;
+}

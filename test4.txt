@@ -1,0 +1,8 @@
+
+int count = 0;
+int n = 5;
+while(count < n){
+	count = count + 1;
+}
+
+return count;

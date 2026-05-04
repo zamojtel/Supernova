@@ -1,0 +1,8 @@
+
+int main(){
+	int x = 2;
+	if(x<3){
+		int z = 123;
+	}
+	int end = 333;
+}

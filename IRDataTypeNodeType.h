@@ -1,0 +1,11 @@
+
+enum class IRDataTypeNodeType {
+	ARRAY,
+	POINTER,
+	REFERENCE,
+	QUALIFIER,
+	STRUCT,
+	UNION,
+	BASIC_TYPE,
+	ERROR,
+};

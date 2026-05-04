@@ -1,0 +1,6 @@
+
+int main(){
+	int [10] const t;
+	
+	return 0;
+}

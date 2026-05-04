@@ -1,0 +1,12 @@
+
+struct A{
+	int [2] table;
+	int const m_value;
+};
+
+int main(){
+	A a;
+	int result = a.table[0];
+
+	return 0;
+}

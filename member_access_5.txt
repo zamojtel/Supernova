@@ -1,0 +1,12 @@
+struct A {
+	int m_a;
+	int m_b;
+};
+
+int main(){
+	A temp;
+	A &c = temp;
+	int result = c.m_a + c.m_b;
+
+	return 0;
+}

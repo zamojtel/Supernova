@@ -1,0 +1,45 @@
+# Visual Studio / MSVC
+.vs/
+*.vcxproj.user
+*.suo
+*.user
+*.VC.db
+ipch/
+*.ilk
+*.pdb
+*.idb
+*.opendb
+
+# Build artifacts
+x64/
+Debug/
+Release/
+build/
+bin/
+obj/
+*.obj
+*.exe
+*.dll
+*.lib
+*.log
+*.tlog
+
+# Visual Studio generated intermediate headers
+*.ifc
+*.ifc.d.json
+*.module.json
+
+# CMake / other
+CMakeFiles/
+CMakeCache.txt
+
+# Test / temp
+*.tmp
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Optional: if you prefer to NOT commit ANTLR generated code,
+# ignore the generated folder (update path as needed)
+# GeneratedCLikeLanguage/

@@ -1,0 +1,11 @@
+
+union A {
+	int m_a;
+	float const m_b;
+};
+
+int main(){
+	A x;
+
+	return 0;
+}

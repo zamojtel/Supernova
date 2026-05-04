@@ -1,0 +1,7 @@
+
+int main(){
+	int x = 10;
+	float result = reinterpret_cast<float>(x);
+
+	return 0;
+}

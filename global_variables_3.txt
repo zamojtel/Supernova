@@ -1,0 +1,7 @@
+
+int gl_x = 123;
+int gl_y = 555;
+
+int main(){
+	int x=1 , y = gl_x, z = gl_y;
+}

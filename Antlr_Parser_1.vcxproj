@@ -1,0 +1,616 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{498b0f4f-4c9e-449d-8b29-639406b3c8c6}</ProjectGuid>
+    <RootNamespace>AntlrParser1</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\zamoj\C++Projects\antlr4\runtime\Cpp\runtime\src</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Users\zamoj\C++Projects\antlr4\runtime\Cpp\runtime\bin\vs-2022\x64\Debug Static</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\zamoj\C++Projects\antlr4\runtime\Cpp\runtime\src</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Users\zamoj\C++Projects\antlr4\runtime\Cpp\runtime\bin\vs-2022\x64\Debug Static</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\zamoj\C++Projects\antlr4\runtime\Cpp\runtime\src;D:\vcpkg\buildtrees\llvm\x64-windows-dbg\include;D:\vcpkg\buildtrees\llvm\src\org-18.1.6-167c29d834.clean\llvm\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Users\zamoj\C++Projects\antlr4\runtime\Cpp\runtime\bin\vs-2022\x64\Debug Static;D:\vcpkg\buildtrees\llvm\x64-windows-dbg\lib</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\zamoj\C++Projects\antlr4\runtime\Cpp\runtime\src</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Users\zamoj\C++Projects\antlr4\runtime\Cpp\runtime\bin\vs-2022\x64\Debug Static</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="AbstractSyntaxTree.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="AbstractSyntaxTreeNode.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ASTConverter.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ASTConvIncludes.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Interpreter.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRArrayNode.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRBasicTypeNode.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRCoder.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ConstantValue.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ErrorIncludes.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Includes.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRArgument.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRBasicBlock.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRChecker.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRCompositeTypeNode.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRConstant.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRDataTypeManager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRDataTypeNode.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRDataTypeTraits.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRError.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRErrorCollector.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRErrorTypeNode.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRIncludes.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRInterpreterForTests.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRMember.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IROperand.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRPointerNode.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRPrinter.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRFunction.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRProgram.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRQualifiersNode.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRReferenceNode.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRStruct.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRToLLVMIRConverter.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRTriple.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRUnion.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRVariable.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Layer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ListNode.cpp" />
+    <ClCompile Include="IRStackFrame.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="SymbolTable.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="TreePrinter.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="TypeRef.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClInclude Include="AbstractSyntaxTreeNode.h" />
+    <ClCompile Include="DataType.h" />
+    <ClInclude Include="AndNode.h" />
+    <ClInclude Include="ArrayAccessNode.h" />
+    <ClInclude Include="ArrayKeyHasher.h" />
+    <ClInclude Include="ArrayNode.h" />
+    <ClInclude Include="AssertNode.h" />
+    <ClInclude Include="ASTConverterError.h" />
+    <ClInclude Include="BinaryOperatorNode.h" />
+    <ClInclude Include="ASTConverter.h" />
+    <ClInclude Include="ASTConvIncludes.h" />
+    <ClInclude Include="BlockNode.h" />
+    <ClInclude Include="BooleanNotNode.h" />
+    <ClInclude Include="BreakNode.h" />
+    <ClInclude Include="CastNode.h" />
+    <ClInclude Include="CompositeNode.h" />
+    <ClInclude Include="ContinueNode.h" />
+    <ClInclude Include="DataTypeNode.h" />
+    <ClInclude Include="DeclarationListItemNode.h" />
+    <ClInclude Include="DecrementationNode.h" />
+    <ClInclude Include="DoWhileNode.h" />
+    <ClInclude Include="ForNode.h" />
+    <ClInclude Include="IncrementationNode.h" />
+    <ClInclude Include="Interpreter.h" />
+    <ClInclude Include="IRArrayNode.h" />
+    <ClInclude Include="IRBasicTypeNode.h" />
+    <ClInclude Include="IRCoder.h" />
+    <ClInclude Include="ConstantValue.h" />
+    <ClInclude Include="FunctionCallNode.h" />
+    <ClInclude Include="FunctionDefNode.h" />
+    <ClInclude Include="IRArgument.h" />
+    <ClInclude Include="IRCheckerListener.h" />
+    <ClInclude Include="DeclarationNode.h" />
+    <ClCompile Include="GeneratedCLikeLanguage\GrammarBaseListener.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedCLikeLanguage\GrammarLexer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedCLikeLanguage\GrammarListener.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedCLikeLanguage\GrammarParser.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Generated\ExprBaseListener.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Generated\ExprLexer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Generated\ExprListener.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Generated\ExprParser.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClInclude Include="Error.h" />
+    <ClInclude Include="ErrorIncludes.h" />
+    <ClInclude Include="ErrorList.h" />
+    <ClInclude Include="ASTConverterListener.h" />
+    <ClInclude Include="ErrorType.h" />
+    <ClInclude Include="IfNode.h" />
+    <ClInclude Include="IRBasicBlock.h" />
+    <ClInclude Include="IRChecker.h" />
+    <ClInclude Include="IRCompositeTypeNode.h" />
+    <ClInclude Include="IRConstant.h" />
+    <ClInclude Include="IRBasicType.h" />
+    <ClInclude Include="IRDataTypeManager.h" />
+    <ClInclude Include="IRDataTypeNode.h" />
+    <ClInclude Include="IRDataTypeNodeType.h" />
+    <ClInclude Include="IRDataTypeTraits.h" />
+    <ClInclude Include="IRError.h" />
+    <ClInclude Include="IRErrorCollector.h" />
+    <ClInclude Include="IRErrorTypeNode.h" />
+    <ClInclude Include="IRGlobalVariable.h" />
+    <ClInclude Include="IRIncludes.h" />
+    <ClInclude Include="IRInterpreterForTests.h" />
+    <ClInclude Include="IRInterpreterListener.h" />
+    <ClInclude Include="IRLocalVariable.h" />
+    <ClInclude Include="IRMember.h" />
+    <ClInclude Include="IROperation.h" />
+    <ClInclude Include="IROperand.h" />
+    <ClInclude Include="IROperandType.h" />
+    <ClInclude Include="IRPointerNode.h" />
+    <ClInclude Include="IRPrint.h" />
+    <ClInclude Include="IRPrinter.h" />
+    <ClInclude Include="IRFunction.h" />
+    <ClInclude Include="IRProgram.h" />
+    <ClInclude Include="IRQualifiersNode.h" />
+    <ClInclude Include="IRReferenceNode.h" />
+    <ClInclude Include="IRStruct.h" />
+    <ClInclude Include="IRToLLVMIRConverter.h" />
+    <ClInclude Include="IRToLLVMIRIncludes.h" />
+    <ClInclude Include="IRUnion.h" />
+    <ClInclude Include="IRVariable.h" />
+    <ClInclude Include="FunctionParameterNode.h" />
+    <ClInclude Include="Layer.h" />
+    <ClInclude Include="MemberAccessNode.h" />
+    <ClInclude Include="MemberDeclarationNode.h" />
+    <ClInclude Include="OrNode.h" />
+    <ClInclude Include="PointerNode.h" />
+    <ClInclude Include="PrintNode.h" />
+    <ClInclude Include="ProgNode.h" />
+    <ClInclude Include="QualifierNode.h" />
+    <ClInclude Include="ReferenceNode.h" />
+    <ClInclude Include="ReferencePtr.h" />
+    <ClInclude Include="ReinterpretNode.h" />
+    <ClInclude Include="SizeOfNode.h" />
+    <ClInclude Include="IRStackFrame.h" />
+    <ClInclude Include="StructNode.h" />
+    <ClInclude Include="SymbolTable.h" />
+    <ClInclude Include="TreePrinter.h" />
+    <ClInclude Include="IRTriple.h" />
+    <ClInclude Include="TypeModifierNode.h" />
+    <ClInclude Include="TypeRef.h" />
+    <ClInclude Include="UnionNode.h" />
+    <ClInclude Include="WhileNode.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitignore" />
+    <None Include="Expr.g4" />
+    <None Include="GeneratedCLikeLanguage\Grammar.interp" />
+    <None Include="GeneratedCLikeLanguage\Grammar.tokens" />
+    <None Include="GeneratedCLikeLanguage\GrammarLexer.interp" />
+    <None Include="GeneratedCLikeLanguage\GrammarLexer.tokens" />
+    <None Include="Generated\Expr.interp" />
+    <None Include="Generated\Expr.tokens" />
+    <None Include="Generated\ExprLexer.interp" />
+    <None Include="Generated\ExprLexer.tokens" />
+    <None Include="Grammar.g4" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AbstractSyntaxTree.h" />
+    <ClInclude Include="AssignmentNode.h" />
+    <ClInclude Include="BasicTypeNode.h" />
+    <ClInclude Include="GeneratedCLikeLanguage\GrammarBaseListener.h" />
+    <ClInclude Include="GeneratedCLikeLanguage\GrammarLexer.h" />
+    <ClInclude Include="GeneratedCLikeLanguage\GrammarListener.h" />
+    <ClInclude Include="GeneratedCLikeLanguage\GrammarParser.h" />
+    <ClInclude Include="Generated\ExprBaseListener.h" />
+    <ClInclude Include="Generated\ExprLexer.h" />
+    <ClInclude Include="Generated\ExprListener.h" />
+    <ClInclude Include="Generated\ExprParser.h" />
+    <ClInclude Include="IdentifierNode.h" />
+    <ClInclude Include="Includes.h" />
+    <ClInclude Include="ListNode.h" />
+    <ClInclude Include="ConstantNode.h" />
+    <ClInclude Include="OperationType.h" />
+    <ClInclude Include="FunctionNode.h" />
+    <ClInclude Include="ReturnNode.h" />
+    <ClInclude Include="TreeNodeType.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="arr_1.txt" />
+    <Text Include="arr_2.txt" />
+    <Text Include="arr_3.txt" />
+    <Text Include="arr_4.txt" />
+    <Text Include="arr_5.txt" />
+    <Text Include="arr_6.txt" />
+    <Text Include="arr_7.txt" />
+    <Text Include="arr_8.txt" />
+    <Text Include="arr_9.txt" />
+    <Text Include="assert_1.txt" />
+    <Text Include="assert_2.txt" />
+    <Text Include="assignment_1.txt" />
+    <Text Include="assignment_2.txt" />
+    <Text Include="auto_assert_1.txt" />
+    <Text Include="break.txt" />
+    <Text Include="break2.txt" />
+    <Text Include="calc_size_1.txt" />
+    <Text Include="calc_size_2.txt" />
+    <Text Include="calc_size_3.txt" />
+    <Text Include="calc_size_4.txt" />
+    <Text Include="cast_1.txt" />
+    <Text Include="commands.txt" />
+    <Text Include="complex_control_flow.txt" />
+    <Text Include="complex_struct_1.txt" />
+    <Text Include="comp_1.txt" />
+    <Text Include="continue.txt" />
+    <Text Include="dec1.txt" />
+    <Text Include="dec2.txt" />
+    <Text Include="diff_data_types.txt" />
+    <Text Include="do_while_1.txt" />
+    <Text Include="do_while_loop.txt" />
+    <Text Include="error1.txt" />
+    <Text Include="error2.txt" />
+    <Text Include="factorial.txt" />
+    <Text Include="factorial_reg.txt" />
+    <Text Include="fc1.txt" />
+    <Text Include="fc2.txt" />
+    <Text Include="fc3.txt" />
+    <Text Include="fc4.txt" />
+    <Text Include="fc5.txt" />
+    <Text Include="fc6.txt" />
+    <Text Include="fc7.txt" />
+    <Text Include="fc8.txt" />
+    <Text Include="fresh_test1.txt" />
+    <Text Include="functionCall1.txt" />
+    <Text Include="function_call.txt" />
+    <Text Include="function_def_multiple_args.txt" />
+    <Text Include="function_def_zero_params.txt" />
+    <Text Include="global_variables_1.txt" />
+    <Text Include="global_variables_2.txt" />
+    <Text Include="global_variables_3.txt" />
+    <Text Include="if_statements_1.txt" />
+    <Text Include="if_statements_2.txt" />
+    <Text Include="if_statements_3.txt" />
+    <Text Include="inc1.txt" />
+    <Text Include="inc2.txt" />
+    <Text Include="loop1.txt" />
+    <Text Include="loop3.txt" />
+    <Text Include="loop4.txt" />
+    <Text Include="loop5.txt" />
+    <Text Include="loop6.txt" />
+    <Text Include="for_1.txt" />
+    <Text Include="member_access_1.txt" />
+    <Text Include="member_access_2.txt" />
+    <Text Include="member_access_3.txt" />
+    <Text Include="member_access_4.txt" />
+    <Text Include="member_access_5.txt" />
+    <Text Include="print_1.txt" />
+    <Text Include="rec_1.txt" />
+    <Text Include="rec_2.txt" />
+    <Text Include="reference_access_1.txt" />
+    <Text Include="reference_access_2.txt" />
+    <Text Include="reinterpret_cast_1.txt" />
+    <Text Include="returnTest.txt" />
+    <Text Include="returnTest2.txt" />
+    <Text Include="sfc_1.txt" />
+    <Text Include="simpleExpr1.txt" />
+    <Text Include="simple_1.txt" />
+    <Text Include="size_of_1.txt" />
+    <Text Include="size_of_2.txt" />
+    <Text Include="struct_1.txt" />
+    <Text Include="struct_2.txt" />
+    <Text Include="struct_3.txt" />
+    <Text Include="test1.txt" />
+    <Text Include="test10.txt" />
+    <Text Include="test11.txt" />
+    <Text Include="test12.txt" />
+    <Text Include="test13.txt" />
+    <Text Include="test16.txt" />
+    <Text Include="test2.txt" />
+    <Text Include="test3.txt" />
+    <Text Include="test4.txt" />
+    <Text Include="test5.txt" />
+    <Text Include="test6.txt" />
+    <Text Include="test7.txt" />
+    <Text Include="test8.txt" />
+    <Text Include="test9.txt" />
+    <Text Include="test_fun_1.txt" />
+    <Text Include="test_fun_2.txt" />
+    <Text Include="test_fun_3.txt" />
+    <Text Include="loop2.txt" />
+    <Text Include="union_1.txt" />
+    <Text Include="union_2.txt" />
+    <Text Include="union_3.txt" />
+    <Text Include="vec_1.txt" />
+    <Text Include="vec_2.txt" />
+    <Text Include="while_1.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

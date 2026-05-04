@@ -1,0 +1,11 @@
+
+
+int main(){
+	int x = 2;
+	int y = 10;
+	if( x < 3 || y < 100 ){
+		int z = 123;
+	}
+
+	int last = 1111;
+}

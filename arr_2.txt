@@ -1,0 +1,6 @@
+
+int main(){
+	int const * [2] t;
+
+	return 0;
+}

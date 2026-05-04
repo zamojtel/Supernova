@@ -1,0 +1,10 @@
+
+int gl_x;
+int gl_y;
+
+int main(){
+	gl_x = 1;
+	gl_y = 1;
+	int result = gl_x;
+	return 0;
+}

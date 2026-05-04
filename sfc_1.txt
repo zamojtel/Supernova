@@ -1,0 +1,13 @@
+
+
+int fun(int a,int b){
+	int c = a+b;
+	return c;
+}
+
+int main(){
+	int result = fun(100,100);
+	print(result);
+
+	return 0;
+}

@@ -1,0 +1,15 @@
+
+int x;
+x = 123;
+int a;
+int b;
+
+if(x>100){
+	a = 12;
+}else{
+	b = 13;
+}
+
+int jp;
+jp = 100;
+

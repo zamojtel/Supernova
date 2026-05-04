@@ -1,0 +1,16 @@
+
+void rec_print(int n)
+{
+	if(n==0)
+		return;
+
+	rec_print(n-1);
+	print(n);
+
+	return;
+}
+
+int main(){
+	rec_print(3);
+	return 0;
+}

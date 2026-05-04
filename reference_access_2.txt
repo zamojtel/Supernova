@@ -1,0 +1,13 @@
+
+struct A {
+	int m_a;
+	int m_b;
+};
+
+int main(){
+	A * temp;
+	A *& temp_2 = temp;
+
+	int x = temp_2->m_a;
+	return 0;
+}

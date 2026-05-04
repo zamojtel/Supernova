@@ -1,0 +1,12 @@
+
+
+struct A{
+	int m_a;
+	double m_b;
+	A * ptr;
+};
+
+int main(){
+	A [10] tab;
+	return 0;
+}

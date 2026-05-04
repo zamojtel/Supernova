@@ -1,0 +1,7 @@
+
+int main(){
+	int [10] t;
+	int result = t[9.3];
+
+	return 0;
+}

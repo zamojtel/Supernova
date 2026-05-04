@@ -1,0 +1,12 @@
+
+int main(){
+	float x;
+	float y;
+	float z;
+
+	x = 10.00;
+	y = 20.00;
+	z = x + y;
+
+	return z;
+}

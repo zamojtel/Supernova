@@ -1,0 +1,9 @@
+
+int main(){
+	int x = 0;
+	int counter = 0;
+	do{
+		counter++;
+	}while(x<10);
+	int z = 123;
+}

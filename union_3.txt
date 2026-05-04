@@ -1,0 +1,12 @@
+
+union A {
+	int m_a;
+	float const m_b;
+};
+
+int main(){
+	A example;
+	int result = example.m_a;
+
+	return 0;
+}

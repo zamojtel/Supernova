@@ -1,0 +1,15 @@
+
+int main(){
+
+	int x = 10;
+	int y = 20;
+	assert(x+y==30); // passed
+	assert(x+10==20);  // passed
+	assert(2*y+10==50); // passed
+	assert(y!=x); // passed
+
+	assert(1-2 == 0); // failed
+	assert(x == y); // failed
+
+	return 0;
+}
