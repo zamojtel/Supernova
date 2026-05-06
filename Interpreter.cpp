@@ -7,6 +7,8 @@ void Interpreter::set_listener(IRInterpreterListener* l) {
 	m_listener = l;
 }
 
+
+
 ConstantValue Interpreter::get_operand_value(const IROperand& op) {
 	switch (op.m_operand_type)
 	{
@@ -196,15 +198,17 @@ ConstantValue Interpreter::execute_cmp_operation(IROperation op, ConstantValue& 
 	return value;
 }
 
-IRStackFrame* Interpreter::add_frame(IRBasicBlock* blk, IRTriple* r_t, size_t triple_count,size_t l_var_count) {
-	m_frames.emplace_back(blk, r_t, triple_count,l_var_count);
+
+
+IRStackFrame* Interpreter::add_frame(IRBasicBlock* blk, IRTriple* r_t, size_t triple_count,size_t l_var_count,size_t total_size) {
+	//m_frames.emplace_back(blk, r_t, triple_count,l_var_count);
+	m_frames.emplace_back(blk,r_t,triple_count,l_var_count,total_size);
 	return &m_frames.back();
 }
 
 void Interpreter::pop_frame() {
 	m_frames.pop_back();
 }
-
 
 void Interpreter::start() {
 	auto basic_blks = m_current_function->get_basic_blocks();
@@ -214,8 +218,8 @@ void Interpreter::start() {
 	bool finished = false;
 	IRBasicBlock* current_blk = basic_blks[0];
 	int current_blk_triple_index = 0;
-
-	m_current_frame = add_frame(current_blk, nullptr, m_current_function->get_triple_count(),m_current_function->get_variables().size());
+	//m_current_function->
+	m_current_frame = add_frame(current_blk, nullptr, m_current_function->get_triple_count(),m_current_function->get_variables().size(),m_current_function->get_required_size());
 	while (true) {
 		IRTriple* current_triple = current_blk->get_all_triples()[current_blk_triple_index];
 
@@ -246,9 +250,6 @@ void Interpreter::start() {
 		case IROperation::BITWISE_OR:
 		case IROperation::BITWISE_XOR: {
 			IROperation operation = current_triple->get_ir_operation();
-			if (operation == IROperation::MUL) {
-				int x = 123;
-			}
 
 			IROperand op1 = current_triple->m_operands[0];
 			IROperand op2 = current_triple->m_operands[1];
@@ -359,7 +360,7 @@ void Interpreter::start() {
 			m_current_function = fn;
 			size_t function_triple_count = function_op.get_function()->get_triple_count();
 
-			add_frame(current_blk, current_triple, function_triple_count, fn->get_variables().size());
+			add_frame(current_blk, current_triple, function_triple_count, fn->get_variables().size(),m_current_function->get_required_size());
 			std::vector<IRVariable*> parameters = fn->get_parameters();
 			for (size_t i = 0; i < parameters.size();i++) {
 				// trzeba sci¹gn¹æ z parameters i pod nie ustawic te wartoœci
@@ -394,3 +395,44 @@ void Interpreter::start() {
 	}
 
 }
+
+
+
+
+//size_t Interpreter::calculate_required_size(IRFunction* fn) {
+//	std::vector<IRBasicBlock*> blks = fn->get_basic_blocks();
+//	std::vector<IRVariable*> params = fn->get_parameters();
+//	size_t total_size_required = 0;
+//
+//	for (size_t i = 0; i < params.size();i++) {
+//		TypeRef ref = params[i]->get_data_type();
+//		size_t size = ref.get_size();
+//		total_size_required += size;
+//	}
+//
+//	std::vector<IRVariable*> local_variables = fn->get_variables();
+//	for (size_t i = 0; i < local_variables.size();i++) {
+//		TypeRef ref = local_variables[i]->get_data_type();
+//		size_t size = ref.get_size();
+//		total_size_required += size;
+//	}
+//
+//	size_t required_size_for_triples = 0;
+//
+//	for (size_t i = 0; i < blks.size();i++) {
+//		auto *blk = blks[i];
+//		std::vector<IRTriple*> all_triples = blk->get_all_triples();
+//		for (size_t j = 0; j < all_triples.size();j++) {
+//			IRTriple *current_triple = all_triples[j];
+//			TypeRef type = current_triple->get_data_type();
+//
+//			if (type && type.has_size()) {
+//				required_size_for_triples += type.get_size();
+//			}
+//		}
+//	}
+//
+//	total_size_required += required_size_for_triples;
+//
+//	return total_size_required;
+//}

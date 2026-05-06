@@ -1,0 +1,16 @@
+
+int func(double x,double y){
+
+	double result = x+y;
+	int z = 123;
+	return result;
+}
+
+// total size 3 x 4
+int main(){
+	int a = 123;
+	int b = 22;
+	int c = 3;
+	func(a,b);
+	return 0;
+}

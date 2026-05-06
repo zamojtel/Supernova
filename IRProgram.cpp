@@ -31,8 +31,53 @@ void IRProgram::check_program() {
 	}
 }
 
-const std::unordered_map<std::string, std::vector<IRFunction*>>& IRProgram::get_functions() {
+const std::unordered_map<std::string, std::vector<IRFunction*>>& IRProgram::get_functions() const {
 	return m_functions;
+}
+
+void IRProgram::calculate_required_size_for_all_fns() {
+	auto fns_map = get_functions();
+
+	for(auto &[name,fns] : fns_map){
+		for (size_t i = 0; i < fns.size();i++) {
+			calculate_size_required_for_fn(fns[i]);
+
+		}
+	}
+}
+
+void IRProgram::calculate_size_required_for_fn(IRFunction* fn) {
+	std::vector<IRBasicBlock*> blks = fn->get_basic_blocks();
+	std::vector<IRVariable*> params = fn->get_parameters();
+	size_t total_size_required = 0;
+	size_t current_offset = 0;
+	std::vector<IRVariable*> local_variables = fn->get_variables();
+	for (size_t i = 0; i < local_variables.size(); i++) {
+		TypeRef ref = local_variables[i]->get_data_type();
+		size_t size_in_bytes = ref.get_size();
+		local_variables[i]->m_local_mem_offset = current_offset;
+		current_offset += size_in_bytes;
+
+		total_size_required += size_in_bytes;
+	}
+
+	current_offset = total_size_required;
+
+	for (size_t i = 0; i < blks.size(); i++) {
+		auto* blk = blks[i];
+		std::vector<IRTriple*> all_triples = blk->get_all_triples();
+		for (size_t j = 0; j < all_triples.size(); j++) {
+			IRTriple* current_triple = all_triples[j];
+			TypeRef type = current_triple->get_data_type();
+			if (type && type.has_size()) {
+				size_t size_in_bytes = type.get_size();
+				current_triple->m_local_mem_offset = current_offset;
+				current_offset += size_in_bytes;
+			}
+		}
+	}
+
+	fn->m_total_size_required = current_offset;
 }
 
 IRFunction* IRProgram::get_function(const std::string& name, const std::vector<IROperand>& arguments) {

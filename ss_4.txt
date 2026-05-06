@@ -1,0 +1,14 @@
+
+int func(int x,int y) {
+	int result = x+y;
+	return result;
+}
+
+// total size 3 x 4
+int main(){
+	int a = 123;
+	int b = 22;
+	int result = func(a,b);
+
+	return 0;
+}

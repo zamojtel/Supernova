@@ -977,4 +977,8 @@ void ASTConverter::convert(ASTConverterListener* listener) {
 	second_pass(m_prog);
 	m_symbol_table.pop_layer();
 
+	// TODO MOVE FROM HERE 
+	m_ir_program->calculate_required_size_for_all_fns();
+
+
 }

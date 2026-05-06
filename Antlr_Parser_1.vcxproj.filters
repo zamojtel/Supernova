@@ -166,6 +166,9 @@
     <Filter Include="Source Files\Tests\FunctionCallSimple">
       <UniqueIdentifier>{f80874d2-6abd-4cf0-9833-2bcd792dbf4a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Tests\CalculatingStackSize">
+      <UniqueIdentifier>{d72c823c-ab79-4447-8888-14c69dc90d7a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -1020,6 +1023,18 @@
     </Text>
     <Text Include="factorial_reg.txt">
       <Filter>Source Files\Tests\RecursiveCalls</Filter>
+    </Text>
+    <Text Include="ss_1.txt">
+      <Filter>Source Files\Tests\CalculatingStackSize</Filter>
+    </Text>
+    <Text Include="ss_2.txt">
+      <Filter>Source Files\Tests\CalculatingStackSize</Filter>
+    </Text>
+    <Text Include="ss_3.txt">
+      <Filter>Source Files\Tests\CalculatingStackSize</Filter>
+    </Text>
+    <Text Include="ss_4.txt">
+      <Filter>Source Files\Tests\CalculatingStackSize</Filter>
     </Text>
   </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 
-std::string IRPrinter::ir_operation_to_string(const IROperation op) {
+std::string IRPrinter::ir_operation_to_string(const IROperation op) const {
 	switch (op)
 	{
 	case IROperation::ADD:
@@ -60,6 +60,11 @@ std::string IRPrinter::ir_operation_to_string(const IROperation op) {
 	}
 }
 
+//void IRPrinter::print_variable(const IRVariable* v) {
+//	std::cout << "V" << v->m_index << " "<<v->m_identifier<<" "<< v->get_data_type().to_string() << std::endl;
+//}
+
+
 void IRPrinter::print_variable(const IRVariable* v) {
 	std::cout << "V" << v->m_index << " "<<v->m_identifier<<" "<< v->get_data_type().to_string() << std::endl;
 }
@@ -82,6 +87,8 @@ void IRPrinter::print_ir_representation(IRProgram& p) {
 	for (const auto& [name,functions] : p.get_functions()) {
 		for (auto *fn : functions) {
 			std::cout << std::endl;
+
+			std::cout << "Total size required: " << fn->get_required_size() << std::endl;
 			std::cout << "Function name: " << fn->get_name() << std::endl;
 			std::cout << "============================" << std::endl;
 			std::cout << "Parameters: " << std::endl;
@@ -116,10 +123,8 @@ void IRPrinter::print_triple(IRTriple* triple) {
 	std::cout << std::endl;
 }
 
-void IRPrinter::print_constant(IRConstant* c) {
-
+void IRPrinter::print_constant(IRConstant* c) const {
 	IRBasicType type = c->get_value().get_basic_type();
-
 
 	switch (type)
 	{
@@ -165,10 +170,6 @@ void IRPrinter::print_constant(IRConstant* c) {
 		std::cout << "CONSTANT " << c->get_value().get_value<double>();
 		break;
 	}
-	//case IRBasicType::STRING: {
-	//	std::cout << "CONSTANT EMPTY";
-	//	break;
-	//}
 	case IRBasicType::BOOL: {
 		bool value = c->get_value().get_value<bool>();
 		if (value)
@@ -178,11 +179,9 @@ void IRPrinter::print_constant(IRConstant* c) {
 		break;
 	}
 	}
-
 }
 
-void IRPrinter::print_operand(const IROperand& op) {
-
+void IRPrinter::print_operand(const IROperand& op) const {
 	switch (op.m_operand_type)
 	{
 	case IROperandType::CONSTANT: {
@@ -238,9 +237,6 @@ void IRPrinter::print_all_data_types_with_size(IRProgram& p) {
 	std::cout << "All data types with sizes: " << std::endl;
 	for (auto *type : all_types) {
 		std::string data_type_name = TypeRef{ type }.to_string();
-		//if (data_type_name == "A") {
-		//	int x = 123;
-		//}
 
 		if (type->has_size()) {
 			size_t data_type_size = type->get_size().value();
@@ -250,4 +246,39 @@ void IRPrinter::print_all_data_types_with_size(IRProgram& p) {
 			std::cout << data_type_name << " no size has been set " << std::endl;
 	}
 
+}
+
+void IRPrinter::print_memory_layout_for_fn(const IRFunction* f) const {
+	std::cout << "Memory Layout for function: " << f->get_identifier() << std::endl;
+	std::cout << "\nVariables: " << std::endl;
+
+	for (auto *var : f->get_variables()) {
+		size_t offset = var->get_local_mem_offset();
+		std::cout << var->get_variable_name() << " : " << offset << std::endl;
+	}
+
+	std::cout << "Triples: " << std::endl;
+	for (auto *blk : f->get_basic_blocks()) {
+		for (auto *triple : blk->get_all_triples()) {
+			std::string data_type_str = triple->get_data_type().to_string();
+			size_t gl_index = triple->get_global_index();
+
+			std::cout << gl_index << " : " << data_type_str << " T" << triple->m_index << " " << ir_operation_to_string(triple->m_operation) << " ";
+			for (size_t i = 0; i < triple->m_operands.size(); i++) {
+				print_operand(triple->m_operands[i]);
+				std::cout << " ";
+			}
+			std::cout << " " << triple->get_local_mem_offset();
+			std::cout << std::endl;
+		}
+	}
+}
+
+void IRPrinter::print_memory_layout(const IRProgram& p) const {
+	const std::unordered_map<std::string, std::vector<IRFunction*>>& map = p.get_functions();
+	for (auto &[name,fns] : map) {
+		for (IRFunction* fn : fns) {
+			print_memory_layout_for_fn(fn);
+		}
+	}
 }

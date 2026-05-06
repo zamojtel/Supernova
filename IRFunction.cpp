@@ -57,7 +57,7 @@ IRBasicBlock* IRFunction::get_basic_blk(size_t index) {
 	return m_basic_blocks.at(index);
 }
 
-const std::vector<IRBasicBlock*>& IRFunction::get_basic_blocks() {
+const std::vector<IRBasicBlock*>& IRFunction::get_basic_blocks() const {
 	return m_basic_blocks;
 }
 
@@ -98,10 +98,6 @@ size_t IRFunction::get_triple_count() {
 	return m_triple_count;
 }
 
-//IRBasicType IRFunction::get_return_type() {
-//	return m_return_type;
-//}
-
 const TypeRef& IRFunction::get_return_type() const {
 	return m_return_type;
 }
@@ -122,4 +118,12 @@ bool IRFunction::compare_arguments(const std::vector<IROperand>& arguments) {
 	}
 
 	return true;
+}
+
+const std::string& IRFunction::get_identifier() const {
+	return m_identifier;
+}
+
+size_t IRFunction::get_required_size() {
+	return m_total_size_required;
 }

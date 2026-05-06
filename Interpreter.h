@@ -13,7 +13,7 @@ public:
 	ConstantValue execute_arithmetic_operation(const TypeRef& type, IROperation op, ConstantValue& cv1, ConstantValue& cv2);
 	ConstantValue execute_cmp_operation(IROperation op, ConstantValue& cv1, ConstantValue& cv2);
 	ConstantValue get_operand_value(const IROperand& op);
-	IRStackFrame* add_frame(IRBasicBlock* blk, IRTriple* r_t,size_t triple_count , size_t l_var_count);
+	IRStackFrame* add_frame(IRBasicBlock* blk, IRTriple* r_t,size_t triple_count , size_t l_var_count,size_t total_size);
 	void pop_frame();
 	void start();
 	template <class T>
@@ -21,5 +21,6 @@ public:
 	template <class T>
 	T execute_arithmetic_operation(T cv1, T cv2,IROperation operation);
 	void set_listener(IRInterpreterListener *l);
-	
+	size_t calculate_required_size(IRFunction *fn);
+	//size_t calculate_required_size_for_triple(const IRTriple *t);
 };

@@ -582,6 +582,10 @@
     <Text Include="simple_1.txt" />
     <Text Include="size_of_1.txt" />
     <Text Include="size_of_2.txt" />
+    <Text Include="ss_1.txt" />
+    <Text Include="ss_2.txt" />
+    <Text Include="ss_3.txt" />
+    <Text Include="ss_4.txt" />
     <Text Include="struct_1.txt" />
     <Text Include="struct_2.txt" />
     <Text Include="struct_3.txt" />

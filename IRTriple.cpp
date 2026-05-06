@@ -21,11 +21,14 @@ const TypeRef& IRTriple::get_data_type() const { return m_data_type; }
 IROperation IRTriple::get_ir_operation() const { return m_operation; }
 
 std::vector<IROperand> IRTriple::get_function_call_arguments() const { 
-	// TODO try add views
 	std::vector<IROperand> fn_call_args;
 	for (size_t i = 1; i < m_operands.size();i++) {
 		fn_call_args.push_back(m_operands[i]);
 	}
 
 	return fn_call_args;
+}
+
+size_t IRTriple::get_local_mem_offset() const {
+	return m_local_mem_offset;
 }

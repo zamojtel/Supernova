@@ -6,3 +6,5 @@ std::string IRVariable::get_variable_name() const { return m_identifier; }
 const TypeRef& IRVariable::get_data_type() const { return m_data_type; }
 
 size_t IRVariable::get_index() const { return m_index;  }
+
+size_t IRVariable::get_local_mem_offset() const { return m_local_mem_offset; }

@@ -427,8 +427,7 @@ void check_prints(const std::string& file_name ,const std::vector<std::string> &
 }
 
 int main() {
-	//std::string file_name = "factorial_reg.txt";
-	std::string file_name = "arr_5.txt";
+	std::string file_name = "ss_4.txt";
 	std::string line;
 
 	std::ifstream myfile(file_name);
@@ -544,7 +543,6 @@ int main() {
 	std::vector<IROperand> fn_arguments{};
 	IRFunction *fn = ir_program.get_function("main",fn_arguments);
 
-
 	class IRInterpreterImpl : public IRInterpreterListener {
 	private:
 		size_t m_assertions_falied;
@@ -587,7 +585,6 @@ int main() {
 
 		size_t get_number_of_assertions_falied() { return m_assertions_falied;  }
 
-		
 	};
 
 	class IRInterpreterImplForTest : public IRInterpreterListener {
@@ -628,6 +625,8 @@ int main() {
 	interpreter.set_listener(ir_intereter_listener);
 
 	interpreter.start();
+	IRPrinter printer;
+	printer.print_memory_layout(ir_program);
 
 	return 0;
 }

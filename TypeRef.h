@@ -39,6 +39,7 @@ public:
 	bool is_numeric() const;
 	bool is_pointer_with_qualifiers() const;
 
+
 	size_t get_size() const;
 	bool has_size() const;
 	IRBasicType get_ir_basic_type() const;
