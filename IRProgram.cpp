@@ -35,6 +35,11 @@ const std::unordered_map<std::string, std::vector<IRFunction*>>& IRProgram::get_
 	return m_functions;
 }
 
+void IRProgram::calculate_memory_layout() {
+	calculate_size_required_for_global_variables();
+	calculate_required_size_for_all_fns();
+}
+
 void IRProgram::calculate_required_size_for_all_fns() {
 	auto fns_map = get_functions();
 
@@ -51,6 +56,7 @@ void IRProgram::calculate_size_required_for_fn(IRFunction* fn) {
 	std::vector<IRVariable*> params = fn->get_parameters();
 	size_t total_size_required = 0;
 	size_t current_offset = 0;
+
 	std::vector<IRVariable*> local_variables = fn->get_variables();
 	for (size_t i = 0; i < local_variables.size(); i++) {
 		TypeRef ref = local_variables[i]->get_data_type();
@@ -79,6 +85,18 @@ void IRProgram::calculate_size_required_for_fn(IRFunction* fn) {
 
 	fn->m_total_size_required = current_offset;
 }
+
+size_t IRProgram::calculate_size_required_for_global_variables() {
+	size_t current_offset = 0;
+	for (size_t i = 0; i < m_global_variables.size();i++) {
+		size_t size = m_global_variables[i]->get_data_type().get_size();
+		m_global_variables[i]->m_local_mem_offset = current_offset + size;
+		current_offset += size;
+	}
+
+	return current_offset;
+}
+
 
 IRFunction* IRProgram::get_function(const std::string& name, const std::vector<IROperand>& arguments) {
 	for (const auto& [fn_name,functions]: m_functions ) {

@@ -7,6 +7,7 @@ private:
 	std::vector<ConstantValue> m_global_variables;
 	IRInterpreterListener* m_listener = nullptr;
 	std::list<IRStackFrame> m_frames;
+	std::vector<uint8_t> m_meomory_for_gl_variables;
 	IRStackFrame* m_current_frame = nullptr;
 public:
 	Interpreter(IRProgram *p,IRFunction *fn,std::vector<IROperand> &fn_arguments);
@@ -21,6 +22,4 @@ public:
 	template <class T>
 	T execute_arithmetic_operation(T cv1, T cv2,IROperation operation);
 	void set_listener(IRInterpreterListener *l);
-	size_t calculate_required_size(IRFunction *fn);
-	//size_t calculate_required_size_for_triple(const IRTriple *t);
 };

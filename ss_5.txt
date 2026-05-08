@@ -1,6 +1,6 @@
 
-int const global_var;
-double const global_var2;
+int const global_var = 10 + 30;
+double const global_var2 = 123*3;
 
 int func(int x,int y) {
 	int result = x+y;

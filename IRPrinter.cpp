@@ -275,6 +275,13 @@ void IRPrinter::print_memory_layout_for_fn(const IRFunction* f) const {
 }
 
 void IRPrinter::print_memory_layout(const IRProgram& p) const {
+	std::cout << "Memory Layout for function:" << std::endl;
+	auto global_variables = p.get_global_variables();
+	
+	for (size_t i = 0; i < global_variables.size();i++) {
+		std::cout << global_variables[i]->get_variable_name() << " : " << global_variables[i]->get_local_mem_offset() << std::endl;
+	}
+
 	const std::unordered_map<std::string, std::vector<IRFunction*>>& map = p.get_functions();
 	for (auto &[name,fns] : map) {
 		for (IRFunction* fn : fns) {

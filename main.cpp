@@ -427,7 +427,7 @@ void check_prints(const std::string& file_name ,const std::vector<std::string> &
 }
 
 int main() {
-	std::string file_name = "ss_4.txt";
+	std::string file_name = "ss_5.txt";
 	std::string line;
 
 	std::ifstream myfile(file_name);

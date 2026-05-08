@@ -1,13 +1,13 @@
 
 Interpreter::Interpreter(IRProgram* p, IRFunction* fn, std::vector<IROperand>& fn_arguments) :m_ir_program{ p }, m_current_function{ fn }, m_fn_arguments{ fn_arguments } {
 	m_global_variables.resize(p->get_global_variables().size());
+	//IRFunction* get_function(const std::string & name, const std::vector<IROperand> &arguments);
+	m_meomory_for_gl_variables.resize(p->get_function("_global_function", {})->get_required_size());
 }
 
 void Interpreter::set_listener(IRInterpreterListener* l) {
 	m_listener = l;
 }
-
-
 
 ConstantValue Interpreter::get_operand_value(const IROperand& op) {
 	switch (op.m_operand_type)
@@ -197,8 +197,6 @@ ConstantValue Interpreter::execute_cmp_operation(IROperation op, ConstantValue& 
 
 	return value;
 }
-
-
 
 IRStackFrame* Interpreter::add_frame(IRBasicBlock* blk, IRTriple* r_t, size_t triple_count,size_t l_var_count,size_t total_size) {
 	//m_frames.emplace_back(blk, r_t, triple_count,l_var_count);

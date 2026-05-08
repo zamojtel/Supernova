@@ -246,9 +246,11 @@ void ASTConverter::find_function_signatures(const ReferencePtr<AbstractSyntaxTre
 				std::string msg = std::format("symbol {} is already used.",variable_name);
 				m_ast_converter_listener->error({ current_node->get_line_number(),msg});
 			}
-			
+			// tutaj chyba coœ jest nie halo 
 			IRGlobalVariable* variable = m_ir_program->add_variable(variable_name, dtn->m_ir_data_type);
+
 			m_symbol_table.add_symbol(variable_name,{variable});
+
 		}
 		break;
 	}
@@ -978,7 +980,7 @@ void ASTConverter::convert(ASTConverterListener* listener) {
 	m_symbol_table.pop_layer();
 
 	// TODO MOVE FROM HERE 
-	m_ir_program->calculate_required_size_for_all_fns();
-
+	m_ir_program->calculate_memory_layout();
+	//m_ir_program->calculate_required_size_for_all_fns();
 
 }
