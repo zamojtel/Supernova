@@ -328,6 +328,12 @@ expr:
 	|	'!' (e = expr) {
 			$ctx->m_node = new BooleanNotNode{$e.ctx->m_node};
 		}
+	|	'*' e = expr {
+			$ctx->m_node = new DereferenceNode{$e.ctx->m_node};
+		}
+	|   '&' e = expr {
+			$ctx->m_node = new AddressOfNode{$e.ctx->m_node};
+		}
 	|	left = expr op = ('/'|'*') right = expr { 
 			char oper = $op->getText().data()[0];
 			OperationType basicType;
@@ -395,6 +401,7 @@ expr:
 	|	'reinterpret_cast' '<' dataType '>' '(' expr ')' {
 			$ctx->m_node = new ReinterpretNode{$dataType.ctx->m_node.cast<DataTypeNode>(),$expr.ctx->m_node};
 		}
+	// change the order later
 	|	sizeOf { $ctx->m_node = $sizeOf.ctx->m_node; }
 	// move to to another place
 	|	assertCondition { $ctx->m_node = $assertCondition.ctx->m_node; }

@@ -10,5 +10,6 @@
 
 #include "AbstractSyntaxTreeNode.cpp"
 #include "ConstantValue.cpp"
+#include "Tester.cpp"
 
 #endif INCLUDES_CPP

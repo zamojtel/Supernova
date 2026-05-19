@@ -9,8 +9,11 @@ std::optional<To> safe_numeric_cast(From value) {
     if constexpr (std::is_integral_v<From> && std::is_integral_v<To>) {
         // a) oba maj¹ ten sam "signedness"
         if constexpr (std::is_signed_v<From> == std::is_signed_v<To>) {
-            if (value < static_cast<From>(std::numeric_limits<To>::min()) ||
-                value > static_cast<From>(std::numeric_limits<To>::max())) {
+            From s1 = static_cast<From>(std::numeric_limits<To>::min());
+            From s2 = static_cast<From>(std::numeric_limits<To>::max());
+
+            if (value < s1 ||
+                value > s2 ){
                 return std::nullopt; // wyjœcie poza zakres typu docelowego
             }
         }
@@ -145,14 +148,31 @@ std::string ConstantValue::to_string() const {
     if (!m_data_type.has_value())
         return "No value has been set";
 
+    std::string msg;
     switch (get_basic_type())
     {
-    case IRBasicType::BOOL:
-        return std::to_string(get_value<bool>());
-    case IRBasicType::DOUBLE:
-        return std::to_string(get_value<double>());
-    case IRBasicType::FLOAT:
-        return std::to_string(get_value<float>());
+    case IRBasicType::BOOL: {
+        msg = std::format("{}",std::to_string(get_value<bool>()));
+        //return std::to_string(get_value<bool>());
+        return msg;
+    }
+    case IRBasicType::DOUBLE: {
+
+        double value = get_value<double>();
+        if (std::floor(value) == value)
+            return std::format("{:.0f}", value);
+
+        msg = std::format("{}",value);
+        return msg;
+    }
+    case IRBasicType::FLOAT: {
+        float value = get_value<float>();
+        if (std::floor(value) == value)
+            return std::format("{:.0f}", value);
+
+        msg = std::format("{}", value);
+        return msg;
+    }
     case IRBasicType::INT8:
         return std::to_string(get_value<int8_t>());
     case IRBasicType::INT16:
@@ -172,4 +192,11 @@ std::string ConstantValue::to_string() const {
     default:
         throw std::runtime_error("unknown type can't convert to string");
     }
+}
+
+//const uint8_t* ConstantValue::get_address() const {
+//    return reinterpret_cast<uint8_t*>(m_data);
+//}
+const uint8_t* ConstantValue::get_address() const {
+    return reinterpret_cast<const uint8_t*>(&m_data);
 }

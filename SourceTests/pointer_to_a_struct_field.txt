@@ -1,0 +1,18 @@
+
+struct A {
+	int m_a;
+	int m_b;
+};
+
+int main(){
+	A c;
+	c.m_a=44;
+	c.m_b=23;
+	print(c.m_a);
+	print(c.m_b);
+
+	int* p = &c.m_a;
+	print(*p);
+
+	return 0;
+}

@@ -26,6 +26,8 @@ enum class IROperation {
 	JC, // jump if condition
 	JMP, // unconditional jump
 	// ARRAY ACCESS
+	ADREESS_OF,
+	DEREFERENCE,
 	ARRAY_ACCESS,
 	MEMBER_ACCESS,
 	ASSERT,

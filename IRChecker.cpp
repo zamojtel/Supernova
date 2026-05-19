@@ -142,6 +142,19 @@ void IRChecker::check_triple(IRTriple* triple)
 
 		break;
 	}
+	case IROperation::ADREESS_OF: {
+		TypeRef dataType = op1->get_data_type();
+		dataType = m_dtm->add_pointer(dataType);
+
+		triple->m_data_type = dataType;
+		break;
+	}
+	case IROperation::DEREFERENCE: {
+		TypeRef dataType = op1->get_data_type();
+
+		triple->m_data_type = dataType.remove_pointer_with_qualifiers();
+		break;
+	}
 	default:
 		throw std::runtime_error("unknow operation while checking triple");
 		break;

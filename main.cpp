@@ -11,6 +11,8 @@
 #include <type_traits>
 #include <functional>
 #include <unordered_map>
+#include <filesystem>
+#include <sstream>
 
 #define ANTLR4CPP_STATIC
 #pragma comment(lib,"antlr4-runtime.lib")
@@ -215,6 +217,7 @@ void check_asserts() {
 
 	class MyErrorListener : public antlr4::ANTLRErrorListener
 	{
+	private:
 	public:
 		bool m_syntax_error = false;
 		void syntaxError(Recognizer* recognizer, Token* offendingSymbol, size_t line,
@@ -243,8 +246,10 @@ void check_asserts() {
 	MyErrorListener errorListener;
 	parser.removeErrorListeners();
 	parser.addErrorListener(&errorListener);
-
 	antlr4::tree::ParseTree* tree = parser.prog();
+
+	if (errorListener.m_syntax_error)
+		return;
 
 	TreePrinter tree_printer;
 
@@ -312,8 +317,7 @@ void check_asserts() {
 }
 
 
-void check_prints(const std::string& file_name ,const std::vector<std::string> &messages) {
-
+void check_prints(const std::string& file_name, const std::vector<std::string>& messages) {
 	std::string line;
 	std::ifstream myfile(file_name);
 
@@ -423,11 +427,38 @@ void check_prints(const std::string& file_name ,const std::vector<std::string> &
 	assert(ir_interpreter_listener.get_messages().size() == messages.size());
 	auto collected_msgs = ir_interpreter_listener.get_messages();
 	for (size_t i = 0; i < collected_msgs.size(); i++)
-		assert(collected_msgs[i]==messages[i]);
+		assert(collected_msgs[i] == messages[i]);
 }
 
 int main() {
-	std::string file_name = "ss_5.txt";
+
+	// tests:
+	std::string test_folder = "C:\\Users\\zamoj\\OneDrive\\Pulpit\\ProjectKompilator\\SourceTests";
+	std::string expected_outputs_folder = "C:\\Users\\zamoj\\OneDrive\\Pulpit\\ProjectKompilator\\SourceTests";
+
+	std::vector<std::string> test_names{
+		//simple array tests:
+		//"arr_1",
+		//"arr_2",
+		//"arr_3",
+		//"arr_4",
+		//"arr_5",
+		//"address_of_1",
+		//"simple_test_1",
+		//"dereference_1",
+		//"double_swap_1",
+		//"pointer_1",
+		//"pointer_to_a_struct_field",
+		//"pointer_to_the_element_of_array",
+		"read_array_from_pointers"
+	};
+
+	Tester compiler_tester(test_folder, expected_outputs_folder);
+	compiler_tester.run_all_tests(test_names);
+
+	//std::string file_name = "pointer_to_the_element_of_array.txt";
+	std::string file_name = "pointer_to_the_element_of_array";
+	//std::string file_name = "arr_4.txt";
 	std::string line;
 
 	std::ifstream myfile(file_name);
@@ -480,6 +511,9 @@ int main() {
 
 	antlr4::tree::ParseTree* tree = parser.prog();
 
+	if (errorListener.m_syntax_error) {
+		return 1;
+	}
 	TreePrinter tree_printer;
 
 	tree_printer.print_tree(static_cast<MyContextSuperClass*>(tree)->m_node, 0);
@@ -518,8 +552,8 @@ int main() {
 	uint8_t CONST = 1;
 	uint8_t VOLATILE = 2;
 	//ir_program.get_dtm_manager();
-	ASTConverter converter{ prog, &ir_program, ir_program.get_dtm_manager()};
-	
+	ASTConverter converter{ prog, &ir_program, ir_program.get_dtm_manager() };
+
 	// TODO add datatype manager do checkera bo trzeba typy dodawac do triple
 	class ASTConverterImpl : public ASTConverterListener {
 	public:
@@ -541,7 +575,7 @@ int main() {
 
 	llvm_ir_converter.convert();
 	std::vector<IROperand> fn_arguments{};
-	IRFunction *fn = ir_program.get_function("main",fn_arguments);
+	IRFunction* fn = ir_program.get_function("main", fn_arguments);
 
 	class IRInterpreterImpl : public IRInterpreterListener {
 	private:
@@ -549,41 +583,41 @@ int main() {
 		size_t m_assertions_succeded;
 		std::vector<bool> m_results;
 	public:
-		IRInterpreterImpl() : m_assertions_falied{ 0 }, m_assertions_succeded{0} {}
+		IRInterpreterImpl() : m_assertions_falied{ 0 }, m_assertions_succeded{ 0 } {}
 
 		void assertion_failed(size_t line_number, const std::string& error_msg) {
 			m_assertions_falied++;
-			std::string msg = std::format("{}: {}",line_number,error_msg);
+			std::string msg = std::format("{}: {}", line_number, error_msg);
 			std::cout << msg << std::endl;
 		}
 
 		void assertion_succeded() {
 			m_assertions_succeded++;
 		}
-		
+
 		std::vector<bool>& get_results() {
 			return m_results;
 		}
 
 		void print_called(const ConstantValue& v) override {
 			std::string msg = v.to_string();
-			std::cout <<"PRINT: "<< msg << std::endl;
+			std::cout << "PRINT: " << msg << std::endl;
 		}
 
-		void function_call_start(const std::vector<ConstantValue>& args,IRFunction *fn) override {
+		void function_call_start(const std::vector<ConstantValue>& args, IRFunction* fn) override {
 			IRPrinter printer;
 			std::cout << "Function : " << fn->get_name() << std::endl;
-			for (size_t i = 0; i < args.size();i++) {
+			for (size_t i = 0; i < args.size(); i++) {
 				std::cout << args[i] << std::endl;
 			}
 		}
 
-		void function_call_end(IRFunction* fn,const ConstantValue& val) override {
+		void function_call_end(IRFunction* fn, const ConstantValue& val) override {
 			std::string fn_name = fn ? fn->get_name() : "main";
-			std::cout << "Got out of the function : "<<fn_name <<" returned value " << val << std::endl;
+			std::cout << "Got out of the function : " << fn_name << " returned value " << val << std::endl;
 		}
 
-		size_t get_number_of_assertions_falied() { return m_assertions_falied;  }
+		size_t get_number_of_assertions_falied() { return m_assertions_falied; }
 
 	};
 
@@ -593,11 +627,11 @@ int main() {
 		size_t m_assertions_succeded;
 		std::vector<bool> m_assertion_results;
 	public:
-		IRInterpreterImplForTest() : m_assertions_falied{ 0 }, m_assertions_succeded{0} {}
+		IRInterpreterImplForTest() : m_assertions_falied{ 0 }, m_assertions_succeded{ 0 } {}
 
 		void assertion_failed(size_t line_number, const std::string& error_msg) override {
 			m_assertions_falied++;
-			std::string msg = std::format("{}: {}",line_number,error_msg);
+			std::string msg = std::format("{}: {}", line_number, error_msg);
 			std::cout << msg << std::endl;
 			m_assertion_results.push_back(false);
 		}
@@ -612,21 +646,24 @@ int main() {
 		}
 
 		void print_called(const ConstantValue& v) override {
-			std::cout <<"PRINT: "<< v << std::endl;
+			std::cout << "PRINT: " << v << std::endl;
 		}
 
-		size_t get_number_of_assertions_falied() { return m_assertions_falied;  }
-		size_t get_asserts_passed() const { return m_assertions_succeded;}
+		size_t get_number_of_assertions_falied() { return m_assertions_falied; }
+		size_t get_asserts_passed() const { return m_assertions_succeded; }
 		size_t get_asserts_failed() const { return m_assertions_falied; }
 	};
 
 	IRInterpreterImpl* ir_intereter_listener = new IRInterpreterImpl{};
- 	Interpreter interpreter{ &ir_program,fn,fn_arguments };
+	Interpreter interpreter{ &ir_program,fn,fn_arguments };
 	interpreter.set_listener(ir_intereter_listener);
 
-	interpreter.start();
 	IRPrinter printer;
+	printer.print_ir_representation(ir_program);
 	printer.print_memory_layout(ir_program);
+
+	//interpreter.start();
+
 
 	return 0;
 }

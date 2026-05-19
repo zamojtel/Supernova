@@ -70,7 +70,20 @@ IROperand ASTConverter::get_op(const ReferencePtr<AbstractSyntaxTreeNode> &node)
 	}
 	case TreeNodeType::REINTERPRET_CAST:
 		break;
+	case TreeNodeType::ADDRESS_OF: {
+		auto casted_node = node.cast<AddressOfNode>();
+		break;
+	}
+	case TreeNodeType::DEREFERENCE: {
+		auto casted_node = node.cast<DereferenceNode>();
+		break;
+	}
+	case TreeNodeType::ARRAY_ACCESS: {
+		auto casted_node = node.cast<ArrayAccessNode>();
+		break;
+	}
 	default:
+		throw std::runtime_error("unkown tree node type");
 		break;
 	}
 	return node->m_operand;
@@ -160,7 +173,7 @@ void ASTConverter::build_ir_data_type_from_ast(const ReferencePtr<DataTypeNode>&
 		}
 	}
 
-	std::cout << current_ref.to_string() << std::endl;
+	//std::cout << current_ref.to_string() << std::endl;
 	dtn->m_ir_data_type = current_ref;
 }
 
@@ -192,7 +205,7 @@ void ASTConverter::find_function_signatures(const ReferencePtr<AbstractSyntaxTre
 
 		ReferencePtr<DataTypeNode> fn_return_type = current_node->get_data_type_node();
 		/*IRBasicType fn_type = current_node->get_data_type_node()->get_basic_type()->get_data_type();*/
-		std::cout << "Built type: " << std::endl;
+		//std::cout << "Built type: " << std::endl;
 		build_ir_data_type_from_ast(fn_return_type);
 
 		std::vector<IRVariable*> fn_parameters;
@@ -367,9 +380,6 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		ReferencePtr<DataTypeNode> dtn = current_node->get_data_type_node();
 
 		build_ir_data_type_from_ast(dtn);
-
-		std::cout << "Build DataType: " << std::endl;
-		std::cout << dtn->m_ir_data_type.to_string() << std::endl;
 		
 		if (m_current_fn) {
 			for (size_t i = 0; i < list->get_child_count(); i++) {
@@ -833,7 +843,27 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		ReferencePtr<UnionNode> current_node = node.cast<UnionNode>();
 		break;
 	}
-	// tutaj teraz
+	case TreeNodeType::ADDRESS_OF: {
+		ReferencePtr<AddressOfNode> current_node = node.cast<AddressOfNode>();
+		ReferencePtr<AbstractSyntaxTreeNode> expr_node = current_node->get_expr_node();
+		post_order_traverse(expr_node);
+		IROperand expr_op = get_op(expr_node);
+
+		IRTriple *triple = m_coder.add_triple(current_node->get_line_number(),IROperation::ADREESS_OF,expr_op);
+		set_op(current_node,triple);
+		break;
+	}
+	case TreeNodeType::DEREFERENCE: {
+		ReferencePtr<DereferenceNode> current_node = node.cast<DereferenceNode>();
+		ReferencePtr<AbstractSyntaxTreeNode> expr_node = current_node->get_expr_node();
+		post_order_traverse(expr_node);
+
+		IROperand expr_op = get_op(current_node->get_expr_node());
+		IRTriple* triple = m_coder.add_triple(current_node->get_line_number(), IROperation::DEREFERENCE,expr_op);
+
+		set_op(current_node,triple);
+		break;
+	}
 	case TreeNodeType::MEMBER_ACCESS: {
 		// TODO wygenerowaæ triple 
 		/*
@@ -981,6 +1011,5 @@ void ASTConverter::convert(ASTConverterListener* listener) {
 
 	// TODO MOVE FROM HERE 
 	m_ir_program->calculate_memory_layout();
-	//m_ir_program->calculate_required_size_for_all_fns();
 
 }

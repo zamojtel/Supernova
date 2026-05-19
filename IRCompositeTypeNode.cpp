@@ -11,16 +11,34 @@ std::string IRCompositeTypeNode::get_name() const {
 
 size_t IRCompositeTypeNode::calculate_size() {
 	size_t total_size = 0;
-
-	for (auto *element : m_field_list) {
-		TypeRef ref = element->get_data_type();
-		if(ref.has_size()) {
-			size_t size = ref.get_size();
-			total_size += size;
+	IRDataTypeNodeType type_node = get_node_type();
+	// STRUCT,
+	// UNION,
+	if ( type_node == IRDataTypeNodeType::STRUCT ) {
+		for (auto* member : m_field_list) {
+			TypeRef ref = member->get_data_type();
+			if(ref.has_size()) {
+				size_t size = ref.get_size();
+				member->set_offset(total_size);
+				total_size += size;
+			}
+			else
+				throw std::runtime_error("field size is not set");
 		}
-		else
-			throw std::runtime_error("field size is not set");
 	}
+	else if (type_node == IRDataTypeNodeType::UNION) {
+
+	}
+
+	//for (auto *element : m_field_list) {
+	//	TypeRef ref = element->get_data_type();
+	//	if(ref.has_size()) {
+	//		size_t size = ref.get_size();
+	//		total_size += size;
+	//	}
+	//	else
+	//		throw std::runtime_error("field size is not set");
+	//}
 
 	std::string msg = std::format("\n{} size {}",m_name,total_size);
 	std::cout << msg << std::endl;

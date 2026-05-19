@@ -1,0 +1,8 @@
+
+int main(){
+	int [2] t;
+	t[0] = 10;
+	t[1] = 12;
+	print(t[0] * t[1]); // 120
+	return 0;
+}

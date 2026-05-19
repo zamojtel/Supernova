@@ -37,11 +37,13 @@ enum class TreeNodeType {
 	ARRAY,
 	POINTER,
 	REFERENCE,
+	DEREFERENCE,
+	ADDRESS_OF,
 	SIZE_OF,
 	ASSERT,
 	PRINT,
 	// Composite Types
-	COMPOSITE,
+	//COMPOSITE
 	STRUCT,
 	UNION,
 };

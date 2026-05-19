@@ -1,0 +1,15 @@
+
+struct Point{
+	int x;
+	int y;
+};
+
+int main(){
+	Point p;
+	p.x = 10;
+	p.y = 20;
+
+	int result = p.x+1;
+	print(result);
+	return 0;
+}

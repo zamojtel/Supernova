@@ -1,0 +1,21 @@
+
+void swap(double *d1,double *d2){
+	double tmp = *d1;
+	*d1 = *d2;
+	*d2 = tmp;
+}
+
+
+int main(){
+	double a = 10.0;
+	double b = 20.0;
+	print(a);
+	print(b);
+
+	swap(&a,&b);
+
+	print(a);
+	print(b);
+
+	return 0;
+}

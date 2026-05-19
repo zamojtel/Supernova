@@ -3,19 +3,109 @@ class ConstantValue {
 private:
 	std::optional<IRBasicType> m_data_type;
 	std::variant<uint8_t, uint16_t, uint32_t, uint64_t, int8_t, int16_t, int32_t, int64_t, float, double,bool> m_value;
+	uint64_t m_data;
 public:
 	ConstantValue() {}
-	ConstantValue(uint8_t v) :m_data_type{ IRBasicType::UINT8 }, m_value{ v } {}
-	ConstantValue(uint16_t v) :m_data_type{ IRBasicType::UINT16 }, m_value{ v } {}
-	ConstantValue(uint32_t v) :m_data_type{ IRBasicType::UINT32 }, m_value{ v } {}
-	ConstantValue(uint64_t v) :m_data_type{ IRBasicType::UINT64 }, m_value{ v } {}
-	ConstantValue(int8_t v) :m_data_type{ IRBasicType::INT8 }, m_value{ v } {}
-	ConstantValue(int16_t v) :m_data_type{ IRBasicType::INT16 }, m_value{ v } {}
-	ConstantValue(int32_t v) :m_data_type{ IRBasicType::INT32 }, m_value{ v } {}
-	ConstantValue(int64_t v) :m_data_type{ IRBasicType::INT64 }, m_value{ v } {}
-	ConstantValue(float v) :m_data_type{ IRBasicType::FLOAT }, m_value{ v } {}
-	ConstantValue(double v) :m_data_type{ IRBasicType::DOUBLE }, m_value{ v } {}
-	ConstantValue(bool v) :m_data_type{ IRBasicType::BOOL }, m_value{ v } {}
+	// move to cpp file
+	ConstantValue(IRBasicType type, const void* address) : m_data_type{ type } {
+		switch (type)
+		{
+		case IRBasicType::INT8: {
+			int8_t value = *reinterpret_cast<const int8_t*>(address);
+			m_value = value;
+			*reinterpret_cast<int8_t*>(&m_data) = value;
+			break;
+		}
+		case IRBasicType::INT16: {
+			int16_t value = *reinterpret_cast<const int16_t*>(address);
+			m_value = value;
+			*reinterpret_cast<int16_t*>(&m_data) = value;
+			break;
+		}
+		case IRBasicType::INT32:
+		{
+			int32_t value = *reinterpret_cast<const int32_t*>(address);
+			m_value = value;
+			*reinterpret_cast<int32_t*>(&m_data) = value;
+			break;
+		}
+		case IRBasicType::INT64:
+		{
+			int64_t value = *reinterpret_cast<const int64_t*>(address);
+			m_value = value;
+			*reinterpret_cast<int64_t*>(&m_data) = value;
+			break;
+		}
+		case IRBasicType::UINT8:
+		{
+			uint8_t value = *reinterpret_cast<const uint8_t*>(address);
+			m_value = value;
+			*reinterpret_cast<uint8_t*>(&m_data) = value;
+			break;
+		}
+		case IRBasicType::UINT16:
+		{
+			uint16_t value = *reinterpret_cast<const uint16_t*>(address);
+			m_value = value;
+			*reinterpret_cast<uint16_t*>(&m_data) = value;
+			break;
+		}
+		case IRBasicType::UINT32:
+		{
+			uint32_t value = *reinterpret_cast<const uint32_t*>(address);
+			m_value = value;
+			*reinterpret_cast<uint32_t*>(&m_data) = value;
+			break;
+		}
+		case IRBasicType::UINT64:
+		{
+			uint64_t value = *reinterpret_cast<const uint64_t*>(address);
+			m_value = value;
+			*reinterpret_cast<uint64_t*>(&m_data) = value;
+			break;
+		}
+		case IRBasicType::FLOAT:
+		{
+			float value = *reinterpret_cast<const float*>(address);
+			m_value = value;
+			*reinterpret_cast<float*>(&m_data) = value;
+			break;
+		}
+		case IRBasicType::DOUBLE:
+		{
+			double value = *reinterpret_cast<const double*>(address);
+			m_value = value;
+			*reinterpret_cast<double*>(&m_data) = value;
+			break;
+		}
+		case IRBasicType::BOOL:
+		{
+			bool value = *reinterpret_cast<const bool*>(address);
+			m_value = value;
+			*reinterpret_cast<bool*>(&m_data) = value;
+			break;
+		}
+		case IRBasicType::VOID:
+			break;
+		case IRBasicType::NUMBER_OF_TYPES:
+			break;
+		default:
+			throw std::runtime_error("type is not allowed");
+			break;
+		}
+	}
+
+	ConstantValue(uint8_t v) :m_data_type{ IRBasicType::UINT8 }, m_value{ v } { *reinterpret_cast<uint8_t*>(&m_data) = v; }
+	ConstantValue(uint16_t v) :m_data_type{ IRBasicType::UINT16 }, m_value{ v } { *reinterpret_cast<uint16_t*>(&m_data) = v; }
+	ConstantValue(uint32_t v) :m_data_type{ IRBasicType::UINT32 }, m_value{ v } { *reinterpret_cast<uint32_t*>(&m_data) = v; }
+	ConstantValue(uint64_t v) :m_data_type{ IRBasicType::UINT64 }, m_value{ v } { *reinterpret_cast<uint64_t*>(&m_data) = v; }
+	ConstantValue(int8_t v) :m_data_type{ IRBasicType::INT8 }, m_value{ v } { *reinterpret_cast<int8_t*>(&m_data) = v; }
+	ConstantValue(int16_t v) :m_data_type{ IRBasicType::INT16 }, m_value{ v } { *reinterpret_cast<int16_t*>(&m_data) = v; }
+	ConstantValue(int32_t v) :m_data_type{ IRBasicType::INT32 }, m_value{ v } { *reinterpret_cast<int32_t*>(&m_data) = v; }
+	ConstantValue(int64_t v) :m_data_type{ IRBasicType::INT64 }, m_value{ v } { *reinterpret_cast<int64_t*>(&m_data) = v; }
+	ConstantValue(float v) :m_data_type{ IRBasicType::FLOAT }, m_value{ v } { *reinterpret_cast<float*>(&m_data) = v; }
+	ConstantValue(double v) :m_data_type{ IRBasicType::DOUBLE }, m_value{ v } { *reinterpret_cast<double*>(&m_data) = v; }
+	ConstantValue(bool v) :m_data_type{ IRBasicType::BOOL }, m_value{ v } { *reinterpret_cast<bool*>(&m_data) = v; }
 
 	template <class T>
 	static ConstantValue from_optional(const std::optional<T> &v) 
@@ -37,8 +127,10 @@ public:
 			return { safe_numeric_cast<To>(get_value<int8_t>()) };
 		case IRBasicType::INT16:
 			return { safe_numeric_cast<To>(get_value<int16_t>()) };
-		case IRBasicType::INT32:
-			return { safe_numeric_cast<To>(get_value<int32_t>()) };
+		case IRBasicType::INT32: {
+			int32_t value = get_value<int32_t>();
+			return { safe_numeric_cast<To>(value) };
+		}
 		case IRBasicType::INT64:
 			return { safe_numeric_cast<To>(get_value<int64_t>()) };
 		case IRBasicType::UINT8:
@@ -85,6 +177,8 @@ public:
 	// move to cpp 
 	std::string to_string() const;
 
+	//uint8_t* get_address() const;
+	const uint8_t* get_address() const;
 };
 
 

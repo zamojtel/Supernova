@@ -3,11 +3,9 @@
 class IRStackFrame {
 private:
 	friend class Interpreter;
-	//std::vector<IROperand> m_arguments;
-	std::vector<ConstantValue> m_triple_values;
+	std::vector<uint8_t*> m_triple_addresses;
 	std::vector<ConstantValue> m_local_variables;
-	std::vector<uint8_t> m_meomory_stack;
-
+	std::vector<uint8_t> m_memory_stack;
 	IRBasicBlock* m_return_blk = nullptr;
 	IRTriple* m_return_triple = nullptr; // it's returning address after a fucntion is called
 public:

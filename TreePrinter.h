@@ -367,6 +367,14 @@ void TreePrinter::print_node(const ReferencePtr<AbstractSyntaxTreeNode> &node,in
 		std::cout << "SIZE_OF " << std::endl;
 		break;
 	}
+	case TreeNodeType::ADDRESS_OF: {
+		std::cout << "ADDRESS_OF " << std::endl;
+		break;
+	}
+	case TreeNodeType::DEREFERENCE: {
+		std::cout << "DEREFERENCE " << std::endl;
+		break;
+	}
 	case TreeNodeType::ASSERT: {
 		std::cout << "ASSERT " << std::endl;
 		break;

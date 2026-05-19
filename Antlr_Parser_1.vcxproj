@@ -314,6 +314,12 @@
     <ClCompile Include="SymbolTable.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Tester.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="TreePrinter.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -325,6 +331,7 @@
     </ClCompile>
     <ClInclude Include="AbstractSyntaxTreeNode.h" />
     <ClCompile Include="DataType.h" />
+    <ClInclude Include="AddressOfNode.h" />
     <ClInclude Include="AndNode.h" />
     <ClInclude Include="ArrayAccessNode.h" />
     <ClInclude Include="ArrayKeyHasher.h" />
@@ -343,6 +350,7 @@
     <ClInclude Include="DataTypeNode.h" />
     <ClInclude Include="DeclarationListItemNode.h" />
     <ClInclude Include="DecrementationNode.h" />
+    <ClInclude Include="DereferenceNode.h" />
     <ClInclude Include="DoWhileNode.h" />
     <ClInclude Include="ForNode.h" />
     <ClInclude Include="IncrementationNode.h" />
@@ -460,6 +468,7 @@
     <ClInclude Include="IRStackFrame.h" />
     <ClInclude Include="StructNode.h" />
     <ClInclude Include="SymbolTable.h" />
+    <ClInclude Include="Tester.h" />
     <ClInclude Include="TreePrinter.h" />
     <ClInclude Include="IRTriple.h" />
     <ClInclude Include="TypeModifierNode.h" />
@@ -502,6 +511,7 @@
     <ClInclude Include="TreeNodeType.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="address_of_1.txt" />
     <Text Include="arr_1.txt" />
     <Text Include="arr_2.txt" />
     <Text Include="arr_3.txt" />
@@ -530,7 +540,9 @@
     <Text Include="continue.txt" />
     <Text Include="dec1.txt" />
     <Text Include="dec2.txt" />
+    <Text Include="dereference_1.txt" />
     <Text Include="diff_data_types.txt" />
+    <Text Include="double_swap_1.txt" />
     <Text Include="do_while_1.txt" />
     <Text Include="do_while_loop.txt" />
     <Text Include="error1.txt" />
@@ -569,7 +581,11 @@
     <Text Include="member_access_3.txt" />
     <Text Include="member_access_4.txt" />
     <Text Include="member_access_5.txt" />
+    <Text Include="pointer_1.txt" />
+    <Text Include="pointer_to_a_struct_field.txt" />
+    <Text Include="pointer_to_the_element_of_array.txt" />
     <Text Include="print_1.txt" />
+    <Text Include="read_array_from_pointers.txt" />
     <Text Include="rec_1.txt" />
     <Text Include="rec_2.txt" />
     <Text Include="reference_access_1.txt" />
@@ -580,12 +596,20 @@
     <Text Include="sfc_1.txt" />
     <Text Include="simpleExpr1.txt" />
     <Text Include="simple_1.txt" />
+    <Text Include="simple_test_1.txt" />
     <Text Include="size_of_1.txt" />
     <Text Include="size_of_2.txt" />
+    <Text Include="sml_1.txt" />
+    <Text Include="sml_2.txt" />
+    <Text Include="sml_3.txt" />
+    <Text Include="sml_4.txt" />
+    <Text Include="sml_5.txt" />
+    <Text Include="sml_6.txt" />
     <Text Include="ss_1.txt" />
     <Text Include="ss_2.txt" />
     <Text Include="ss_3.txt" />
     <Text Include="ss_4.txt" />
+    <Text Include="ss_5.txt" />
     <Text Include="struct_1.txt" />
     <Text Include="struct_2.txt" />
     <Text Include="struct_3.txt" />

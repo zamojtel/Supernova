@@ -1,0 +1,15 @@
+
+struct Point{
+	int x;
+	int y;
+};
+
+int main(){
+	Point p;
+	p.x = 10;
+	p.x = 20;
+
+	int result = 10*(p.x+p.y)+1;
+
+	return 0;
+}

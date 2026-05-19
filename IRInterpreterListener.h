@@ -10,4 +10,5 @@ public:
 	size_t get_asserts_passed() const;
 	size_t get_asserts_failed() const;
 	// and more ...
+	std::vector<std::string> get_messages();
 };

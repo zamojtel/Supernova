@@ -169,6 +169,18 @@
     <Filter Include="Source Files\Tests\CalculatingStackSize">
       <UniqueIdentifier>{d72c823c-ab79-4447-8888-14c69dc90d7a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Tests\StructMemoryLayout">
+      <UniqueIdentifier>{58f162c9-bf7e-4470-98aa-974b3742576d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\Pointers">
+      <UniqueIdentifier>{8dc5a729-7633-465a-b352-1c6f8b212985}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tester">
+      <UniqueIdentifier>{b6e60b52-42f0-4bea-bf79-568f4f569164}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\simple">
+      <UniqueIdentifier>{9e4f0110-907d-4a10-8960-497d74f699d7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -329,6 +341,9 @@
     </ClCompile>
     <ClCompile Include="IRStackFrame.cpp">
       <Filter>Source Files\IR</Filter>
+    </ClCompile>
+    <ClCompile Include="Tester.cpp">
+      <Filter>Source Files\Tester</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -701,6 +716,15 @@
     <ClInclude Include="IRStackFrame.h">
       <Filter>Source Files\IR</Filter>
     </ClInclude>
+    <ClInclude Include="AddressOfNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="DereferenceNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Tester.h">
+      <Filter>Source Files\Tester</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="commands.txt">
@@ -1035,6 +1059,51 @@
     </Text>
     <Text Include="ss_4.txt">
       <Filter>Source Files\Tests\CalculatingStackSize</Filter>
+    </Text>
+    <Text Include="ss_5.txt">
+      <Filter>Source Files\Tests\CalculatingStackSize</Filter>
+    </Text>
+    <Text Include="sml_1.txt">
+      <Filter>Source Files\Tests\StructMemoryLayout</Filter>
+    </Text>
+    <Text Include="sml_2.txt">
+      <Filter>Source Files\Tests\StructMemoryLayout</Filter>
+    </Text>
+    <Text Include="sml_3.txt">
+      <Filter>Source Files\Tests\StructMemoryLayout</Filter>
+    </Text>
+    <Text Include="sml_4.txt">
+      <Filter>Source Files\Tests\StructMemoryLayout</Filter>
+    </Text>
+    <Text Include="sml_5.txt">
+      <Filter>Source Files\Tests\StructMemoryLayout</Filter>
+    </Text>
+    <Text Include="sml_6.txt">
+      <Filter>Source Files\Tests\StructMemoryLayout</Filter>
+    </Text>
+    <Text Include="pointer_1.txt">
+      <Filter>Source Files\Tests\Pointers</Filter>
+    </Text>
+    <Text Include="dereference_1.txt">
+      <Filter>Source Files\Tests\Pointers</Filter>
+    </Text>
+    <Text Include="address_of_1.txt">
+      <Filter>Source Files\Tests\Pointers</Filter>
+    </Text>
+    <Text Include="double_swap_1.txt">
+      <Filter>Source Files\Tests\Pointers</Filter>
+    </Text>
+    <Text Include="pointer_to_a_struct_field.txt">
+      <Filter>Source Files\Tests\Pointers</Filter>
+    </Text>
+    <Text Include="pointer_to_the_element_of_array.txt">
+      <Filter>Source Files\Tests\Pointers</Filter>
+    </Text>
+    <Text Include="simple_test_1.txt">
+      <Filter>Source Files\Tests\simple</Filter>
+    </Text>
+    <Text Include="read_array_from_pointers.txt">
+      <Filter>Source Files\Tests\Pointers</Filter>
     </Text>
   </ItemGroup>
 </Project>

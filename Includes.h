@@ -37,7 +37,6 @@
 #include "DeclarationNode.h"
 #include "AssignmentNode.h"
 
-
 #include "MemberAccessNode.h"
 #include "MemberDeclarationNode.h"
 #include "CompositeNode.h"
@@ -75,7 +74,8 @@
 #include "DoWhileNode.h"
 #include "ReturnNode.h"
 #include "TreePrinter.h"
-
+#include "AddressOfNode.h"
+#include "DereferenceNode.h"
 
 
 #include "IRPrinter.h"
@@ -86,6 +86,7 @@
 #include "ErrorList.h"
 
 #include "ASTConvIncludes.h"
+#include "Tester.h"
 
 #endif INCLUDES_H
 

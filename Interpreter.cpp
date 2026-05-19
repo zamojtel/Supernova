@@ -9,35 +9,69 @@ void Interpreter::set_listener(IRInterpreterListener* l) {
 	m_listener = l;
 }
 
-ConstantValue Interpreter::get_operand_value(const IROperand& op) {
+uint8_t* Interpreter::get_operand_address(IROperand op) {
 	switch (op.m_operand_type)
 	{
-	case IROperandType::CONSTANT: {
-		return op.get_constant()->get_value();
+	case IROperandType::CONSTANT:{
+		return const_cast<uint8_t*>(op.get_constant()->get_value().get_address());
+	}
+	case IROperandType::MEMBER: {
+
+		break;
+	}
+	case IROperandType::TRIPLE: {
+		IRTriple *t = op.get_triple();
+		return m_current_frame->m_triple_addresses[t->get_global_index()];
 	}
 	case IROperandType::VARIABLE: {
 		IRVariable* variable = op.get_variable();
 		size_t index = op.get_variable()->get_index();
 
 		if (variable->is_global()) {
-			return m_global_variables[index];
+			throw std::runtime_error("dont use global");
 		}
 		else {
-			return m_current_frame->m_local_variables[index];
+			size_t offset = variable->get_local_mem_offset();
+			return &m_current_frame->m_memory_stack[0] + offset;
+			//return m_current_frame->m_local_variables[index];
 		}
-
-	}
-	case IROperandType::TRIPLE: {
-		size_t index = op.get_triple()->get_global_index();
-
-		return 	m_current_frame->m_triple_values[index];
-	}
-	case IROperandType::FUNCTION: {
-		return op.get_function();
+		break;
 	}
 	default:
 		break;
 	}
+}
+
+ConstantValue Interpreter::get_operand_value(const IROperand& op) {
+	throw std::runtime_error("can't be used!");
+	//switch (op.m_operand_type)
+	//{
+	//case IROperandType::CONSTANT: {
+	//	return op.get_constant()->get_value();
+	//}
+	//case IROperandType::VARIABLE: {
+	//	IRVariable* variable = op.get_variable();
+	//	size_t index = op.get_variable()->get_index();
+
+	//	if (variable->is_global()) {
+	//		return m_global_variables[index];
+	//	}
+	//	else {
+	//		return m_current_frame->m_local_variables[index];
+	//	}
+
+	//}
+	//case IROperandType::TRIPLE: {
+	//	size_t index = op.get_triple()->get_global_index();
+
+	//	return 	m_current_frame->m_triple_values[index];
+	//}
+	//case IROperandType::FUNCTION: {
+	//	return op.get_function();
+	//}
+	//default:
+	//	break;
+	//}
 }
 
 // operation + / - / * / div 
@@ -118,9 +152,64 @@ ConstantValue Interpreter::execute_arithmetic_operation(const TypeRef& type, IRO
 	return value;
 }
 
+void Interpreter::execute_arithmetic_operation_on_addresses(const TypeRef& type, IROperation op,const uint8_t* cv1,const uint8_t* cv2,uint8_t* res_addr) {
+	ConstantValue value;
+	switch (type.get_ir_basic_type())
+	{
+	case IRBasicType::INT8: {
+		*reinterpret_cast<int8_t*>(res_addr) = execute_arithmetic_operation(*reinterpret_cast<const int8_t*>(cv1), *reinterpret_cast<const int8_t*>(cv2), op);
+	}
+	case IRBasicType::INT16: {
+		*reinterpret_cast<int16_t*>(res_addr) = execute_arithmetic_operation(*reinterpret_cast<const int16_t*>(cv1), *reinterpret_cast<const int16_t*>(cv2), op);
+		break;
+	}
+	case IRBasicType::INT32: {
+		*reinterpret_cast<int32_t*>(res_addr) = execute_arithmetic_operation(*reinterpret_cast<const int32_t *>(cv1),*reinterpret_cast<const int32_t *>(cv2),op);
+		break;
+	}
+	case IRBasicType::INT64: {
+		*reinterpret_cast<int64_t*>(res_addr) = execute_arithmetic_operation(*reinterpret_cast<const int64_t*>(cv1), *reinterpret_cast<const int64_t*>(cv2), op);
+		break;
+	}
+	case IRBasicType::UINT8: {
+		*reinterpret_cast<uint8_t*>(res_addr) = execute_arithmetic_operation(*reinterpret_cast<const uint8_t*>(cv1), *reinterpret_cast<const uint8_t*>(cv2), op);
+		break;
+	}
+	case IRBasicType::UINT16: {
+
+		*reinterpret_cast<uint16_t*>(res_addr) = execute_arithmetic_operation(*reinterpret_cast<const uint16_t*>(cv1), *reinterpret_cast<const uint16_t*>(cv2), op);
+		break;
+	}
+	case IRBasicType::UINT32: {
+		*reinterpret_cast<uint32_t*>(res_addr) = execute_arithmetic_operation(*reinterpret_cast<const uint32_t*>(cv1), *reinterpret_cast<const uint32_t*>(cv2), op);
+		break;
+	}
+	case IRBasicType::UINT64: {
+		*reinterpret_cast<uint64_t*>(res_addr) = execute_arithmetic_operation(*reinterpret_cast<const uint64_t*>(cv1), *reinterpret_cast<const uint64_t*>(cv2), op);
+		break;
+	}
+	case IRBasicType::FLOAT: {
+		*reinterpret_cast<float*>(res_addr) = execute_arithmetic_operation(*reinterpret_cast<const float*>(cv1), *reinterpret_cast<const float*>(cv2), op);
+		break;
+	}
+	case IRBasicType::DOUBLE: {
+		*reinterpret_cast<double *>(res_addr) = execute_arithmetic_operation(*reinterpret_cast<const double*>(cv1), *reinterpret_cast<const double*>(cv2), op);
+		break;
+	}
+	case IRBasicType::BOOL: {
+		*reinterpret_cast<bool*>(res_addr) = execute_arithmetic_operation(*reinterpret_cast<const bool*>(cv1), *reinterpret_cast<const bool*>(cv2), op);
+		break;
+	}
+	case IRBasicType::VOID: {
+		break;
+	}
+	default:
+		break;
+	}
+}
+
 template <class T>
 bool Interpreter::execute_cmp_operation(T v1, T v2, IROperation operation) {
-	//ConstantValue value;
 	switch (operation)
 	{
 	case IROperation::GT:
@@ -142,7 +231,7 @@ bool Interpreter::execute_cmp_operation(T v1, T v2, IROperation operation) {
 
 ConstantValue Interpreter::execute_cmp_operation(IROperation op, ConstantValue& cv1, ConstantValue& cv2) {
 	ConstantValue value;
-	//cv1.get_basic_type()
+
 	switch (cv1.get_basic_type())
 	{
 	case IRBasicType::INT8: {
@@ -199,7 +288,6 @@ ConstantValue Interpreter::execute_cmp_operation(IROperation op, ConstantValue& 
 }
 
 IRStackFrame* Interpreter::add_frame(IRBasicBlock* blk, IRTriple* r_t, size_t triple_count,size_t l_var_count,size_t total_size) {
-	//m_frames.emplace_back(blk, r_t, triple_count,l_var_count);
 	m_frames.emplace_back(blk,r_t,triple_count,l_var_count,total_size);
 	return &m_frames.back();
 }
@@ -210,33 +298,64 @@ void Interpreter::pop_frame() {
 
 void Interpreter::start() {
 	auto basic_blks = m_current_function->get_basic_blocks();
+	auto variables = m_current_function->get_variables();
+
+	//std::cout << "Offsets for variables " << std::endl;
+	//for (size_t i = 0; i < variables.size();i++) {
+	//	std::cout << variables[i]->get_variable_name() << " " << variables[i]->get_local_mem_offset() << std::endl;
+	//}
+	//auto blks = m_current_function->get_basic_blocks();
+	//std::cout << "Offsets for triples " << std::endl;
+	//for (auto blk :  blks) {
+	//	for (auto *triple : blk->get_all_triples()) {
+	//		std::cout <<"T"<<triple->get_global_index() << " " << triple->get_local_mem_offset() << std::endl;
+	//	}
+	//}
+	//std::cout << std::endl;
 
 	std::vector<IROperand> args;
-
 	bool finished = false;
 	IRBasicBlock* current_blk = basic_blks[0];
 	int current_blk_triple_index = 0;
-	//m_current_function->
+
 	m_current_frame = add_frame(current_blk, nullptr, m_current_function->get_triple_count(),m_current_function->get_variables().size(),m_current_function->get_required_size());
+	
+	//std::cout << "Memory Stack.data : " <<(void*) m_current_frame->m_memory_stack.data() << std::endl;
 	while (true) {
 		IRTriple* current_triple = current_blk->get_all_triples()[current_blk_triple_index];
-
+		//CONSTANT
 		switch (current_triple->get_ir_operation())
 		{
 		case IROperation::ASSIGN: {
 			IROperand op1 = current_triple->m_operands[0];
 			IROperand op2 = current_triple->m_operands[1];
-		
-			IRVariable* var = op1.get_variable();
-			size_t index = var->get_index();
-			ConstantValue c_v = get_operand_value(op2);
+			if (op2.m_operand_type == IROperandType::TRIPLE) {
+				int x = 123;
+			}
 
-			if (var->is_global()) {
-				m_global_variables[index] = c_v;
-			}
-			else {
-				m_current_frame->m_local_variables[index] = c_v;
-			}
+			uint8_t* addr1 = get_operand_address(op1);
+			uint8_t* addr2 = get_operand_address(op2);
+			//if (op2.m_operand_type==IROperandType::TRIPLE) {
+			//	int32_t* value1 = reinterpret_cast<int32_t*>(addr1);
+			//	int32_t** value2 = reinterpret_cast<int32_t**>(addr2);
+			//	int32_t* value_2_inside = reinterpret_cast<int32_t*>(*value2);
+			//	std::cout << " INSIDE ASSIGN First operand addr: " << value1 << std::endl;
+			//	std::cout <<" INSIDE ASSIGN : "<< value_2_inside << " -> " <<*value_2_inside<< std::endl;
+			//}
+			//m_current_frame->m_triple_addresses
+			int32_t* value1 = reinterpret_cast<int32_t*>(addr1);
+			int32_t* value2 = reinterpret_cast<int32_t*>(addr2);
+
+			TypeRef type = op1.get_data_type();
+			size_t size = type.get_size();
+			memcpy(addr1,addr2,size);
+
+			//if (op2.m_operand_type == IROperandType::TRIPLE) {
+			//	int32_t* value1 = reinterpret_cast<int32_t*>(addr1);
+			//	int32_t** value2 = reinterpret_cast<int32_t**>(addr2);
+			//	int32_t* value_2_inside = reinterpret_cast<int32_t*>(*value2);
+			//	std::cout << " INSIDE ASSIGN : " << value_2_inside << " -> " << *value_2_inside << std::endl;
+			//}
 
 			break;
 		}
@@ -246,19 +365,20 @@ void Interpreter::start() {
 		case IROperation::DIV:
 		case IROperation::BITWISE_AND:
 		case IROperation::BITWISE_OR:
-		case IROperation::BITWISE_XOR: {
-			IROperation operation = current_triple->get_ir_operation();
-
+		case IROperation::BITWISE_XOR:
+		{
 			IROperand op1 = current_triple->m_operands[0];
 			IROperand op2 = current_triple->m_operands[1];
-			ConstantValue cv1 = get_operand_value(op1);
-			ConstantValue cv2 = get_operand_value(op2);
 
-			size_t index = current_triple->get_global_index();
-			TypeRef type = current_triple->get_data_type();
-			ConstantValue value = execute_arithmetic_operation(type, operation, cv1, cv2);
+			uint8_t *addr1 = get_operand_address(op1);
+			uint8_t *addr2 = get_operand_address(op2);
+			TypeRef type = op1.get_data_type();
+			size_t size_of_type = type.get_size();
+		
+			uint8_t* result_addr = &m_current_frame->m_memory_stack[0] + current_triple->get_local_mem_offset();
+			execute_arithmetic_operation_on_addresses(type,current_triple->get_ir_operation(),addr1,addr2,result_addr);
+			m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result_addr;
 
-			m_current_frame->m_triple_values[index] = value;
 			break;
 		}
 		case IROperation::LT:
@@ -267,17 +387,17 @@ void Interpreter::start() {
 		case IROperation::GE:
 		case IROperation::EQ:
 		case IROperation::NEQ: {
-			IROperation operation = current_triple->get_ir_operation();
-			IROperand op1 = current_triple->m_operands[0];
-			IROperand op2 = current_triple->m_operands[1];
-			ConstantValue cv1 = get_operand_value(op1);
-			ConstantValue cv2 = get_operand_value(op2);
+			//IROperation operation = current_triple->get_ir_operation();
+			//IROperand op1 = current_triple->m_operands[0];
+			//IROperand op2 = current_triple->m_operands[1];
+			//ConstantValue cv1 = get_operand_value(op1);
+			//ConstantValue cv2 = get_operand_value(op2);
 
-			size_t index = current_triple->get_global_index();
-			TypeRef type = current_triple->get_data_type();
-			ConstantValue value = execute_cmp_operation(operation, cv1, cv2);
+			//size_t index = current_triple->get_global_index();
+			//TypeRef type = current_triple->get_data_type();
+			//ConstantValue value = execute_cmp_operation(operation, cv1, cv2);
 
-			m_current_frame->m_triple_values[index] = value;
+			//m_current_frame->m_triple_values[index] = value;
 			break;
 		}
 		case IROperation::ASSERT: {
@@ -291,11 +411,11 @@ void Interpreter::start() {
 		case IROperation::RETURN: {
 			IRFunction* out_fun = m_current_function;
 			IRStackFrame* frame = &m_frames.back();
-			ConstantValue return_value;
-			IROperand op1;
 
+			uint8_t* return_value_address = nullptr;
 			if (current_triple->m_operands.size()>0) {
-				return_value = get_operand_value(current_triple->m_operands[0]);
+				IROperand op1 = current_triple->m_operands[0];
+				return_value_address = get_operand_address(op1);
 			}
 
 			IRTriple* triple_return_addr = frame->m_return_triple;
@@ -311,13 +431,14 @@ void Interpreter::start() {
 				finished = true;
 			}
 
+			m_current_frame = m_frames.size() > 1 ? &*(--(--m_frames.end())) : nullptr;
+			if (m_current_frame) {
+				m_current_frame->m_triple_addresses[triple_return_addr->get_global_index()] = return_value_address;
+			}
+
 			pop_frame();
 
-			m_current_frame = m_frames.size() > 0 ? &m_frames.back() : nullptr;
-			if (m_current_frame)
-				m_current_frame->m_triple_values[triple_return_addr->get_global_index()] = return_value;
-
-			m_listener->function_call_end(out_fun,return_value);
+			m_listener->function_call_end(out_fun,return_value_address);
 			
 			break;
 		}
@@ -344,9 +465,14 @@ void Interpreter::start() {
 			continue;
 		}
 		case IROperation::PRINT: {
-			ConstantValue value = get_operand_value(current_triple->m_operands[0]);
-			m_listener->print_called(value);
+			m_listener;
+			IROperand op = current_triple->m_operands[0];
+			uint8_t* address = get_operand_address(op);
+			std::cout << "address to be printed: " << reinterpret_cast<void*>(address) << std::endl;
 
+			IRBasicType basic_type = op.get_data_type().get_ir_basic_type();
+			ConstantValue value = ConstantValue{basic_type,address};
+			m_listener->print_called(value);
 			break;
 		}
 		case IROperation::FUNCTION_CALL: {
@@ -361,15 +487,15 @@ void Interpreter::start() {
 			add_frame(current_blk, current_triple, function_triple_count, fn->get_variables().size(),m_current_function->get_required_size());
 			std::vector<IRVariable*> parameters = fn->get_parameters();
 			for (size_t i = 0; i < parameters.size();i++) {
-				// trzeba sci¹gn¹æ z parameters i pod nie ustawic te wartoœci
-				//size_t param_index = parameters[i]->get_index();
-				auto value = get_operand_value(arguments[i]);
-				m_frames.back().m_local_variables[i] = value;
+				auto value = get_operand_address(arguments[i]);
+				TypeRef type = parameters[i]->get_data_type();
+				size_t size = type.get_size();
+				uint64_t result_offset = m_current_frame->m_memory_stack[0] + parameters[i]->get_local_mem_offset();
+				memcpy(&m_frames.back().m_memory_stack[result_offset],value,size);
 				values_passed_to_func.push_back(value);
 			}
 
 			m_current_frame = &m_frames.back();
-
 			m_listener->function_call_start(values_passed_to_func,fn);
 			IROperand op = current_triple->m_operands[0];
 
@@ -379,8 +505,83 @@ void Interpreter::start() {
 			continue;
 		}
 		case IROperation::ARRAY_ACCESS: {
+			IROperand op1 = current_triple->m_operands[0];
+			IROperand op2 = current_triple->m_operands[1];
+			// p[2]
+			//if(op1.m_operand_type==)
+			TypeRef type = op1.get_data_type();
+			uint8_t* starting_address = nullptr;
 
+			if (type.is_array()) {
+				type = type.remove_all_extents();
+				starting_address = get_operand_address(op1);
+			}
+			else if (type.is_pointer()) {
+				type = type.remove_pointer_with_qualifiers();
+				starting_address = get_operand_address(op1);
+				starting_address = *reinterpret_cast<uint8_t**>(starting_address);
+			}
+			else {
+				throw std::runtime_error("unkown type");
+			}
 
+			size_t size_of_element = type.get_size();
+
+			TypeRef type_of_index_element = op2.get_data_type();
+			uint8_t* value = get_operand_address(op2);
+			int32_t* pointer = reinterpret_cast<int32_t*>(value);
+
+			IRBasicType basic_type = type_of_index_element.get_ir_basic_type();
+			ConstantValue constant_value = ConstantValue{ basic_type,value };
+
+			std::optional<int64_t> converted_value_op = convert_value_to<int64_t>(constant_value);
+			
+			size_t converted_value;
+			if (converted_value_op.has_value()) {
+				converted_value = converted_value_op.value();
+			}
+			else
+				throw std::runtime_error("can't convert value from empty optional");
+		
+			size_t offset = converted_value * size_of_element;
+			uint8_t* result_addr = starting_address + offset;
+			std::cout <<"Stored value "<< *reinterpret_cast<uint32_t*>(result_addr) << std::endl;
+			m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result_addr;
+			break;
+		}
+		case IROperation::MEMBER_ACCESS: {
+			IROperand op1 = current_triple->m_operands[0];
+			IROperand op2 = current_triple->m_operands[1];
+
+			uint8_t* op_1_addr = get_operand_address(op1);
+			size_t offset = op2.get_member()->get_offset();
+			uint8_t* result_addr = op_1_addr + offset;
+			m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result_addr;
+
+			break;
+		}
+		// ADDRESS_OF not ADREESS_OF
+		// zmienic nazwe 
+		case IROperation::ADREESS_OF: {
+
+			IROperand op1 = current_triple->m_operands[0];
+			uint8_t* op_1_addr = get_operand_address(op1);
+			uint8_t* result_addr = &m_current_frame->m_memory_stack[0] + current_triple->get_local_mem_offset();
+			int32_t* result = reinterpret_cast<int32_t*>(op_1_addr);
+			std::cout <<"Whta's in the mem: "<< * result << std::endl;
+			*reinterpret_cast<void**>(result_addr) = op_1_addr;
+			m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result_addr;
+
+			break;
+		}
+		case IROperation::DEREFERENCE: {
+			IROperand op1 = current_triple->m_operands[0];
+			uint8_t* op_1_addr = get_operand_address(op1);
+			uint8_t* result_addr = nullptr;
+			//std::cout << "p address: " << *reinterpret_cast<void**>(op_1_addr) << std::endl;
+			//std::cout << "under the address: " << **reinterpret_cast<uint32_t**>(op_1_addr) << std::endl;
+			//std::cout << " INSIDE DEREFERENCE : " << *reinterpret_cast<void**>(op_1_addr) << " -> " << **reinterpret_cast<uint32_t**>(op_1_addr) << std::endl;
+			m_current_frame->m_triple_addresses[current_triple->get_global_index()] = *reinterpret_cast<uint8_t**>(op_1_addr);
 			break;
 		}
 		default:
@@ -394,43 +595,40 @@ void Interpreter::start() {
 
 }
 
+template <class To>
+std::optional<To> Interpreter::convert_value_to(ConstantValue &v) const {
+	if (!v.is_empty())
+		throw std::runtime_error("no type has been set");
 
-
-
-//size_t Interpreter::calculate_required_size(IRFunction* fn) {
-//	std::vector<IRBasicBlock*> blks = fn->get_basic_blocks();
-//	std::vector<IRVariable*> params = fn->get_parameters();
-//	size_t total_size_required = 0;
-//
-//	for (size_t i = 0; i < params.size();i++) {
-//		TypeRef ref = params[i]->get_data_type();
-//		size_t size = ref.get_size();
-//		total_size_required += size;
-//	}
-//
-//	std::vector<IRVariable*> local_variables = fn->get_variables();
-//	for (size_t i = 0; i < local_variables.size();i++) {
-//		TypeRef ref = local_variables[i]->get_data_type();
-//		size_t size = ref.get_size();
-//		total_size_required += size;
-//	}
-//
-//	size_t required_size_for_triples = 0;
-//
-//	for (size_t i = 0; i < blks.size();i++) {
-//		auto *blk = blks[i];
-//		std::vector<IRTriple*> all_triples = blk->get_all_triples();
-//		for (size_t j = 0; j < all_triples.size();j++) {
-//			IRTriple *current_triple = all_triples[j];
-//			TypeRef type = current_triple->get_data_type();
-//
-//			if (type && type.has_size()) {
-//				required_size_for_triples += type.get_size();
-//			}
-//		}
-//	}
-//
-//	total_size_required += required_size_for_triples;
-//
-//	return total_size_required;
-//}
+	switch (v.get_basic_type())
+	{
+	case IRBasicType::INT8:
+		return { static_cast<To>(v.get_value<int8_t>()) };
+	case IRBasicType::INT16:
+		return { static_cast<To>(v.get_value<int16_t>()) };
+	case IRBasicType::INT32: {
+		return { static_cast<To>(v.get_value<int32_t>()) };
+	}
+	case IRBasicType::INT64:
+		return { static_cast<To>(v.get_value<int64_t>()) };
+	case IRBasicType::UINT8:
+		return { static_cast<To>(v.get_value<uint8_t>()) };
+	case IRBasicType::UINT16:
+		return { static_cast<To>(v.get_value<uint16_t>()) };
+	case IRBasicType::UINT32:
+		return { static_cast<To>(v.get_value<uint32_t>()) };
+	case IRBasicType::UINT64:
+		return { static_cast<To>(v.get_value<uint64_t>()) };
+	case IRBasicType::FLOAT:
+		return { static_cast<To>(v.get_value<float>()) };
+	case IRBasicType::DOUBLE:
+		return { static_cast<To>(v.get_value<double>()) };
+	case IRBasicType::BOOL:
+		return { static_cast<To>(v.get_value<bool>()) };
+	case IRBasicType::VOID: {
+		break;
+	}
+	default:
+		break;
+	}
+}

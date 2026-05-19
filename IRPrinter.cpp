@@ -55,6 +55,12 @@ std::string IRPrinter::ir_operation_to_string(const IROperation op) const {
 	case IROperation::PRINT: {
 		return "PRINT";
 	}
+	case IROperation::ADREESS_OF: {
+		return "ADDRESS_OF";
+	}
+	case IROperation::DEREFERENCE: {
+		return "DEREFERENCE";
+	}
 	default:
 		throw std::runtime_error("can't find such ir operation");
 	}

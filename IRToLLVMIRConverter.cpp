@@ -84,12 +84,9 @@ void IRToLLVMIRConverter::convert_arithmetic_operation(llvm::Instruction::Binary
 
 llvm::Value* IRToLLVMIRConverter::auto_cast(llvm::Value* src,llvm::Type* dstTy,bool srcIsSigned, bool dstIsSigned) {
 	auto op = llvm::CastInst::getCastOpcode(src,srcIsSigned,dstTy,dstIsSigned);
-
 	return m_builder->CreateCast(op, src, dstTy);
 }
 
-//auto llvm_type = llvm::Type::getInt8Ty(*m_context);
-//llvm::Type* get_llvm_type(IRBasicType type);
 llvm::Type* IRToLLVMIRConverter::get_llvm_type(IRBasicType type) const {
 	switch (type)
 	{
@@ -117,15 +114,10 @@ llvm::Type* IRToLLVMIRConverter::get_llvm_type(IRBasicType type) const {
 		return llvm::Type::getInt1Ty(*m_context);
 	case IRBasicType::VOID:
 		return llvm::Type::getVoidTy(*m_context);
-	//case IRBasicType::STRING:
-		//break;
-	//case IRBasicType::ERROR:
-	//	//break;
 	default:
 		throw std::runtime_error("no suitable data type");
 		break;
 	}
-
 }
 
 // nazwy pozmieniac bo az boli
