@@ -163,6 +163,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="ArrayIterator.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="ASTConverter.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -334,6 +340,7 @@
     <ClInclude Include="AddressOfNode.h" />
     <ClInclude Include="AndNode.h" />
     <ClInclude Include="ArrayAccessNode.h" />
+    <ClInclude Include="ArrayIterator.h" />
     <ClInclude Include="ArrayKeyHasher.h" />
     <ClInclude Include="ArrayNode.h" />
     <ClInclude Include="AssertNode.h" />
@@ -464,6 +471,7 @@
     <ClInclude Include="ReferenceNode.h" />
     <ClInclude Include="ReferencePtr.h" />
     <ClInclude Include="ReinterpretNode.h" />
+    <ClInclude Include="SelectNode.h" />
     <ClInclude Include="SizeOfNode.h" />
     <ClInclude Include="IRStackFrame.h" />
     <ClInclude Include="StructNode.h" />
@@ -581,15 +589,18 @@
     <Text Include="member_access_3.txt" />
     <Text Include="member_access_4.txt" />
     <Text Include="member_access_5.txt" />
+    <Text Include="member_pointer.txt" />
     <Text Include="pointer_1.txt" />
     <Text Include="pointer_to_a_struct_field.txt" />
     <Text Include="pointer_to_the_element_of_array.txt" />
     <Text Include="print_1.txt" />
+    <Text Include="print_arr.txt" />
     <Text Include="read_array_from_pointers.txt" />
     <Text Include="rec_1.txt" />
     <Text Include="rec_2.txt" />
     <Text Include="reference_access_1.txt" />
     <Text Include="reference_access_2.txt" />
+    <Text Include="regular_function_call.txt" />
     <Text Include="reinterpret_cast_1.txt" />
     <Text Include="returnTest.txt" />
     <Text Include="returnTest2.txt" />

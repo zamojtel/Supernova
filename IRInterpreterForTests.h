@@ -90,9 +90,12 @@ public:
 		m_assertion_results.push_back(true);
 	}
 
-	void print_called(const ConstantValue& v) override {
-		std::string msg = v.to_string();
-		m_messages.push_back(msg);
+	//void print_called(const ConstantValue& v) override {
+	//	std::string msg = v.to_string();
+	//	m_messages.push_back(msg);
+	//}
+	void print_called(const std::string& v) override {
+		m_messages.push_back(v);
 	}
 
 	std::vector<bool>& get_results() {

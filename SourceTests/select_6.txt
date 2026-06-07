@@ -1,0 +1,17 @@
+
+int main(){
+
+	int [3] t1;
+	t1[0] = 1;
+	t1[1] = 2;
+	t1[2] = 3;
+	int [3] result;
+	result = select(t1>0,2*t1,5*t1);
+	print(result);
+
+	return 0;
+}
+
+
+#------------------
+[2,4,6]

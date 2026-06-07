@@ -59,6 +59,8 @@
 #include "IRInterpreterForTests.h"
 #include "IRStackFrame.h"
 
+#include "ArrayIterator.h"
+
 #include "Interpreter.h"
 
 #endif IR_INCLUDES_H

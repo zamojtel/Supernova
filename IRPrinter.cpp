@@ -61,6 +61,9 @@ std::string IRPrinter::ir_operation_to_string(const IROperation op) const {
 	case IROperation::DEREFERENCE: {
 		return "DEREFERENCE";
 	}
+	case IROperation::INIT_ASSIGN: {
+		return "INIT_ASSIGN";
+	}
 	default:
 		throw std::runtime_error("can't find such ir operation");
 	}

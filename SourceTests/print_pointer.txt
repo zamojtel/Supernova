@@ -1,0 +1,11 @@
+int main(){
+	int a = 10;
+	int* ptr = &a;
+
+	print(ptr);
+
+	return 0;
+}
+
+#------------------
+asd

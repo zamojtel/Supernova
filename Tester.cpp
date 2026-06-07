@@ -1,12 +1,29 @@
 
 Tester::Tester(const std::string& s_d,const std::string& e_d) :m_source_dir{ s_d }, m_expected_dir{ e_d } {}
 
+// wPISdu
 std::string Tester::read_entire_file(const fs::path& file_path) {
+    std::vector<std::string> lines;
 	std::fstream file(file_path);
 	if (!file.is_open())
-		return "";
+		return {};
 
-	return std::string({ std::istreambuf_iterator<char>(file) }, std::istreambuf_iterator<char>());
+    std::string line;
+    while (std::getline(file, line)) {
+
+        if (line == "#------------------")
+            break;
+
+        line = line + '\n';
+        lines.push_back(line);
+    }
+
+    std::string read_source_code;
+    for (auto &line : lines) {
+        read_source_code += line;
+    }
+
+    return read_source_code;
 }
 
 std::vector<std::string> Tester::read_expected_lines(const fs::path& file_path) {
@@ -15,10 +32,17 @@ std::vector<std::string> Tester::read_expected_lines(const fs::path& file_path) 
 	
 	std::string line;
 	while (std::getline(file,line)){
-		if (!line.empty() && line.back() == '\r')
-			line.pop_back();
+        if (line=="#------------------") {
+            std::string expected_value;
+            while (std::getline(file,expected_value))
+            {
+                if (expected_value.empty())
+                    continue;
 
-		lines.push_back(line);
+                lines.push_back(expected_value);
+            }
+            break;
+        }
 	}
 
 	return lines;
@@ -39,17 +63,17 @@ void Tester::run_all_tests(const std::vector<std::string>& test_names) {
     size_t failed = 0;
     for (const std::string &test_name : test_names) {
         fs::path test_path =  m_source_dir + "\\" + test_name + ".txt";
-        fs::path expected_test_path =  m_source_dir +"\\" + test_name + "_output.txt";
+        //fs::path expected_test_path =  m_source_dir +"\\" + test_name + "_output.txt";
 
         std::cout << "Running test: " << test_path.filename().string() << "...\n";
 
-        if (!fs::exists(expected_test_path)) {
-            std::cout << "Test skipped, no expected file\n";
-            continue;
-        }
+        //if (!fs::exists(expected_test_path)) {
+        //    std::cout << "Test skipped, no expected file\n";
+        //    continue;
+        //}
 
         std::cout << "===========================\n";
-        if (run_single_test(test_path, expected_test_path)) {
+        if (run_single_test(test_path, "")) {
             std::cout << "Passed\n";
             passed++;
         }
@@ -97,7 +121,7 @@ void Tester::run_all_tests(const std::vector<std::string>& test_names) {
 bool Tester::run_single_test(const fs::path& source_file, const fs::path& expected_path) {
     IRPrinter printer;
     std::string source_code = read_entire_file(source_file);
-    std::vector<std::string> expected_outputs = read_expected_lines(expected_path);
+    std::vector<std::string> expected_outputs = read_expected_lines(source_file);
 
     antlr4::ANTLRInputStream stream(source_code);
     GrammarLexer lexer(&stream);
@@ -172,8 +196,6 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
         std::cout << "there's no main function in the source file";
         return false;
     }
-
-    printer.print_ir_representation(ir_program);
 
     TestInterpreterListener test_listener;
     Interpreter interpreter{ &ir_program,fn,fn_arguments };

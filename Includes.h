@@ -76,7 +76,7 @@
 #include "TreePrinter.h"
 #include "AddressOfNode.h"
 #include "DereferenceNode.h"
-
+#include "SelectNode.h"
 
 #include "IRPrinter.h"
 #include "IRDataTypeTraits.h"

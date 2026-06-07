@@ -29,6 +29,7 @@ enum class TreeNodeType {
 	CONTINUE,
 	BLOCK,
 	RETURN,
+	SELECT,
 	FUNCTION,
 	FUNCTION_CALL,
 	PARAMETER,
@@ -46,4 +47,5 @@ enum class TreeNodeType {
 	//COMPOSITE
 	STRUCT,
 	UNION,
+	
 };

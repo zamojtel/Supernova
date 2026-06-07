@@ -39,6 +39,8 @@
 
 #include "IRCoder.cpp"
 
+#include "ArrayIterator.cpp"
+
 #include "Interpreter.cpp"
 #include "IRInterpreterForTests.cpp"
 #include "IRStackFrame.cpp"

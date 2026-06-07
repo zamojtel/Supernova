@@ -107,13 +107,12 @@ size_t IRFunction::get_index() {
 }
 
 bool IRFunction::compare_arguments(const std::vector<IROperand>& arguments) {
-	// show 
 	// for now it will ignore operands other than variables 
 	if (m_parameters.size() != arguments.size())
 		return false;
 
 	for (size_t i = 0; i < arguments.size();i++) {
-		if (m_parameters[i]->get_data_type() != arguments[i].get_data_type())
+		if (m_parameters[i]->get_data_type().remove_reference() != arguments[i].get_data_type().remove_reference())
 			return false;
 	}
 

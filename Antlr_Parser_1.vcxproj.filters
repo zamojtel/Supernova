@@ -345,6 +345,9 @@
     <ClCompile Include="Tester.cpp">
       <Filter>Source Files\Tester</Filter>
     </ClCompile>
+    <ClCompile Include="ArrayIterator.cpp">
+      <Filter>Source Files\Interpreter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Expr.g4">
@@ -725,6 +728,12 @@
     <ClInclude Include="Tester.h">
       <Filter>Source Files\Tester</Filter>
     </ClInclude>
+    <ClInclude Include="ArrayIterator.h">
+      <Filter>Source Files\Interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="commands.txt">
@@ -1104,6 +1113,15 @@
     </Text>
     <Text Include="read_array_from_pointers.txt">
       <Filter>Source Files\Tests\Pointers</Filter>
+    </Text>
+    <Text Include="member_pointer.txt">
+      <Filter>Source Files\Tests\Pointers</Filter>
+    </Text>
+    <Text Include="regular_function_call.txt">
+      <Filter>Source Files\Tests\Pointers</Filter>
+    </Text>
+    <Text Include="print_arr.txt">
+      <Filter>Source Files\Tests\Printing</Filter>
     </Text>
   </ItemGroup>
 </Project>

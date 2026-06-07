@@ -82,6 +82,14 @@ IROperand ASTConverter::get_op(const ReferencePtr<AbstractSyntaxTreeNode> &node)
 		auto casted_node = node.cast<ArrayAccessNode>();
 		break;
 	}
+	case TreeNodeType::FUNCTION_CALL: {
+		auto casted_node = node.cast<FunctionCallNode>();
+		break;
+	}
+	case TreeNodeType::SELECT: {
+		auto casted_node = node.cast<SelectNode>();
+		break;
+	}
 	default:
 		throw std::runtime_error("unkown tree node type");
 		break;
@@ -403,7 +411,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 
 				if (expr_node != nullptr) {
 					IROperand op_expr = get_op(expr_node);
-					IRTriple* expr_triple = m_coder.add_triple(current_node->get_line_number(), IROperation::ASSIGN, variable, op_expr);
+					m_coder.add_triple(current_node->get_line_number(), IROperation::INIT_ASSIGN, variable, op_expr);
 				}
 			}
 		}
@@ -930,6 +938,25 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		IRTriple* array_assignment = m_coder.add_triple(current_node->get_line_number(),IROperation::ARRAY_ACCESS,array_name_expr_op,array_index_expr_op);
 
 		set_op(current_node,array_assignment);
+		break;
+	}
+	case TreeNodeType::SELECT: {
+		ReferencePtr<SelectNode> current_node = node.cast<SelectNode>();
+
+		ReferencePtr<AbstractSyntaxTreeNode> condition_expr = current_node->get_condition();
+		ReferencePtr<AbstractSyntaxTreeNode> expr_true = current_node->get_expr_true();
+		ReferencePtr<AbstractSyntaxTreeNode> expr_false = current_node->get_expr_false();
+
+		post_order_traverse(condition_expr);
+		post_order_traverse(expr_true);
+		post_order_traverse(expr_false);
+
+		IROperand condition_expr_op = get_op(condition_expr);
+		IROperand expr_true_op = get_op(expr_true);
+		IROperand expr_false_op = get_op(expr_false);
+		IRTriple *select = m_coder.add_triple(current_node->get_line_number(),IROperation::SELECT,condition_expr_op,expr_true_op,expr_false_op);
+		
+		set_op(current_node,select);
 		break;
 	}
 	default:

@@ -1,0 +1,21 @@
+void fun(int& temp){
+	temp = 7;
+	return;
+}
+
+int main(){
+	int a = 10;
+	int b = 200;
+	int c = 3000;
+
+	fun(a);
+	print(a);
+	print(b);
+	print(c);	
+	return 0;
+}
+
+#------------------
+7
+200
+3000

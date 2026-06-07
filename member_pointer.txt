@@ -1,0 +1,16 @@
+
+struct A{
+	int m_p;
+};
+
+
+int main(){
+	A a;
+	a.m_p = 10;
+
+	A *pointer = &a;
+
+	print(pointer->m_p);
+	
+	return 0;
+}

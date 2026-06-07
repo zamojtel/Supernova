@@ -17,16 +17,21 @@ void IRChecker::check_triple(IRTriple* triple)
 	IROperandType right_op_type = IROperandType::NO_OPERAND;
 	IROperand* op1 = nullptr;
 	IROperand* op2 = nullptr;
+	IROperand* op3 = nullptr;
 	if (triple->m_operands.size() == 1) {
-		left_op_type = triple->m_operands[0].m_operand_type;
+		//left_op_type = triple->m_operands[0].m_operand_type;
 		op1 = &triple->m_operands[0];
 	}
-	else if(triple->m_operands.size()>1) {
-		left_op_type = triple->m_operands[0].m_operand_type;
-		right_op_type = triple->m_operands[1].m_operand_type;
-
+	else if(triple->m_operands.size()==2) {
+		//left_op_type = triple->m_operands[0].m_operand_type;
+		//right_op_type = triple->m_operands[1].m_operand_type;
 		op1 = &triple->m_operands[0];
 		op2 = &triple->m_operands[1];
+	}
+	else if (triple->m_operands.size() > 2) {
+		op1 = &triple->m_operands[0];
+		op2 = &triple->m_operands[1];
+		op3 = &triple->m_operands[2];
 	}
 
 	IROperation operation = triple->m_operation;
@@ -48,8 +53,9 @@ void IRChecker::check_triple(IRTriple* triple)
 		break;
 	}
 	case IROperation::ASSIGN: {
-		if (!check_operand_types(*op1, *op2))
+		if (!check_operand_types(*op1, *op2)) {
 			m_listener->add_error(triple->m_line_number, "can't assign value of different types");
+		}
 		break;
 	}
 	case IROperation::INC:
@@ -95,7 +101,25 @@ void IRChecker::check_triple(IRTriple* triple)
 	case IROperation::EQ:
 	case IROperation::NEQ:
 	{
-		triple->m_data_type = m_ir_program->get_dtm_manager()->get_basic_type_node(IRBasicType::BOOL);
+		TypeRef type1 = op1->get_data_type().remove_reference();
+		TypeRef type2 = op2->get_data_type().remove_reference();
+		
+		// zrobic to bez iteratora 
+		// sprawdzic size wybrac wiekszy 
+
+		if (type1.is_array() || type2.is_array()) {
+			size_t arr1_size = type1.is_array() ? static_cast<IRArrayNode*>(type1.get_data_type_node())->m_count : 0;
+			size_t arr2_size = type2.is_array() ? static_cast<IRArrayNode*>(type2.get_data_type_node())->m_count : 0;
+			
+			size_t size = std::max(arr1_size,arr2_size);
+			TypeRef type = m_dtm->add_array(m_dtm->get_basic_type_node(IRBasicType::BOOL),size);
+
+			triple->m_data_type = type;
+		}
+		else {
+			triple->m_data_type = m_dtm->get_basic_type_node(IRBasicType::BOOL);
+		}
+
 		break;
 	}
 	case IROperation::FUNCTION_CALL:{
@@ -155,9 +179,39 @@ void IRChecker::check_triple(IRTriple* triple)
 		triple->m_data_type = dataType.remove_pointer_with_qualifiers();
 		break;
 	}
+	case IROperation::INIT_ASSIGN: {
+		TypeRef dataType = op1->get_data_type();
+
+		triple->m_data_type = dataType;
+		break;
+	}
+	case IROperation::SELECT: {
+		TypeRef type1 = op1->get_data_type();
+		TypeRef type2 = op2->get_data_type();
+		TypeRef type3 = op3->get_data_type();
+
+		size_t condition_arr_size = type1.is_array() ? static_cast<IRArrayNode*>(type1.get_data_type_node())->m_count : 1;
+		size_t expr_true_arr_size = type2.is_array() ? static_cast<IRArrayNode*>(type2.get_data_type_node())->m_count : 1;
+		size_t expr_false_arr_size = type3.is_array() ? static_cast<IRArrayNode*>(type3.get_data_type_node())->m_count : 1;
+		
+		if (condition_arr_size % expr_true_arr_size != 0 || condition_arr_size% expr_false_arr_size != 0 ) {
+			m_listener->add_error(triple->m_line_number, "can't execute broadcasting");
+		}
+
+		TypeRef op2_element_type = type2.remove_all_extents();
+		TypeRef op3_element_type = type2.remove_all_extents();
+		if (op2_element_type!=op3_element_type) {
+			m_listener->add_error(triple->m_line_number, "can't execute select on different value types");
+		}
+
+		TypeRef element_type = type2.remove_all_extents();
+		TypeRef result_type = m_dtm->add_array(element_type, condition_arr_size);
+
+		triple->m_data_type = result_type;
+		break;
+	}
 	default:
 		throw std::runtime_error("unknow operation while checking triple");
-		break;
 	}
 
 	//deduce_triple_data_type(triple);
@@ -171,6 +225,8 @@ bool IRChecker::check_data_type_size(const TypeRef& type1,const TypeRef& type2) 
 
 
 bool IRChecker::check_operand_types(const IROperand& op1, const IROperand& op2) const {
+	std::string type1 = op1.get_data_type().to_string();
+	std::string type2 = op2.get_data_type().to_string();
 	TypeRef type_ref_op1 = op1.get_data_type();
 	TypeRef type_ref_op2 = op2.get_data_type();
 
@@ -244,8 +300,8 @@ TypeRef IRChecker::check_arithmetic_operation_possible(IRTriple *triple) const {
 		std::vector<size_t> arr2_dimensions = r2.get_all_extents_size();
 		
 		if (arr1_dimensions.size() == 1 && arr2_dimensions.size() == 1) {
-			size_t arr1_size = static_cast<IRArrayNode*>(r1.get_data_type_node())->m_size;
-			size_t arr2_size = static_cast<IRArrayNode*>(r2.get_data_type_node())->m_size;
+			size_t arr1_size = static_cast<IRArrayNode*>(r1.get_data_type_node())->m_count;
+			size_t arr2_size = static_cast<IRArrayNode*>(r2.get_data_type_node())->m_count;
 			size_t max_size = std::max(arr1_size, arr2_size);
 			size_t min_size = std::max(arr1_size, arr2_size);
 			if (arr1_size >= arr2_size) {

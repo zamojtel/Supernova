@@ -1,0 +1,16 @@
+void modify(int& temp){
+	print(temp);
+	temp = 23;
+	return;
+}
+
+int main(){
+	int a = 10;
+	modify(a);
+	print(a);
+	return 0;
+}
+
+#------------------
+10
+23

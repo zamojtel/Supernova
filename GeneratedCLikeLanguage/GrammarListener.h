@@ -98,6 +98,9 @@ public:
   virtual void enterExpr(GrammarParser::ExprContext *ctx) = 0;
   virtual void exitExpr(GrammarParser::ExprContext *ctx) = 0;
 
+  virtual void enterSelect(GrammarParser::SelectContext *ctx) = 0;
+  virtual void exitSelect(GrammarParser::SelectContext *ctx) = 0;
+
   virtual void enterNumber(GrammarParser::NumberContext *ctx) = 0;
   virtual void exitNumber(GrammarParser::NumberContext *ctx) = 0;
 

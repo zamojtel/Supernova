@@ -55,7 +55,7 @@ std::vector<size_t> TypeRef::get_all_extents_size() const {
 
 	while (current_ref.is_array()) {
 		auto casted = static_cast<IRArrayNode*>(current_ref.get_data_type_node());
-		size_t size = casted->m_size;
+		size_t size = casted->m_count;
 		current_ref = casted->m_element_type;
 		dimensions.push_back(size);
 	}
@@ -180,7 +180,7 @@ std::string TypeRef::to_string() const {
 	{
 	case IRDataTypeNodeType::ARRAY: {
 		IRArrayNode* casted = static_cast<IRArrayNode*>(m_data_type_node);
-		return casted->m_element_type.to_string() +" "+"[" + std::to_string(casted->m_size) + "]";
+		return casted->m_element_type.to_string() +" "+"[" + std::to_string(casted->m_count) + "]";
 	}
 	case IRDataTypeNodeType::BASIC_TYPE: {
 		IRBasicTypeNode* casted = static_cast<IRBasicTypeNode*>(m_data_type_node);

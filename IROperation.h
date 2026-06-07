@@ -6,6 +6,7 @@ enum class IROperation {
 	DIV,
 	MOD,
 	ASSIGN,
+	INIT_ASSIGN,
 	CAST,
 	REINTERPRET_CAST,
 	RETURN,
@@ -32,4 +33,5 @@ enum class IROperation {
 	MEMBER_ACCESS,
 	ASSERT,
 	PRINT,
+	SELECT,
 };

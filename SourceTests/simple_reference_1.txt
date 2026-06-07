@@ -1,0 +1,15 @@
+
+int main(){
+	int a =10;
+	int& b = a;
+	
+	b = 20;
+	print(a);
+	print(b);
+
+	return 0;
+}
+
+#------------------
+20
+20

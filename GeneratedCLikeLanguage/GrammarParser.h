@@ -20,9 +20,9 @@ public:
     T__32 = 33, T__33 = 34, T__34 = 35, T__35 = 36, T__36 = 37, T__37 = 38, 
     T__38 = 39, T__39 = 40, T__40 = 41, T__41 = 42, T__42 = 43, T__43 = 44, 
     T__44 = 45, T__45 = 46, T__46 = 47, T__47 = 48, T__48 = 49, T__49 = 50, 
-    T__50 = 51, T__51 = 52, T__52 = 53, T__53 = 54, T__54 = 55, LINE_COMMENT = 56, 
-    WS = 57, INT = 58, FLOAT = 59, DOUBLE = 60, BOOL = 61, CONTINUE = 62, 
-    BREAK = 63, ID = 64
+    T__50 = 51, T__51 = 52, T__52 = 53, T__53 = 54, T__54 = 55, T__55 = 56, 
+    LINE_COMMENT = 57, WS = 58, INT = 59, FLOAT = 60, DOUBLE = 61, BOOL = 62, 
+    CONTINUE = 63, BREAK = 64, ID = 65
   };
 
   enum {
@@ -33,7 +33,7 @@ public:
     RuleDeclaration = 16, RuleDeclarationListItem = 17, RuleStructDecl = 18, 
     RuleUnionDecl = 19, RuleFundamentalType = 20, RuleDataType = 21, RuleTypeModifier = 22, 
     RuleBasicType = 23, RuleReturn = 24, RuleSizeOf = 25, RuleAssertCondition = 26, 
-    RuleExpr = 27, RuleNumber = 28, RuleIdentifier = 29
+    RuleExpr = 27, RuleSelect = 28, RuleNumber = 29, RuleIdentifier = 30
   };
 
   explicit GrammarParser(antlr4::TokenStream *input);
@@ -81,6 +81,7 @@ public:
   class SizeOfContext;
   class AssertConditionContext;
   class ExprContext;
+  class SelectContext;
   class NumberContext;
   class IdentifierContext; 
 
@@ -552,6 +553,7 @@ public:
     GrammarParser::NumberContext *numberContext = nullptr;
     GrammarParser::SizeOfContext *sizeOfContext = nullptr;
     GrammarParser::AssertConditionContext *assertConditionContext = nullptr;
+    GrammarParser::SelectContext *selectContext = nullptr;
     antlr4::Token *op = nullptr;
     GrammarParser::ExprContext *right = nullptr;
     GrammarParser::ExprContext *right_expr = nullptr;
@@ -566,6 +568,7 @@ public:
     NumberContext *number();
     SizeOfContext *sizeOf();
     AssertConditionContext *assertCondition();
+    SelectContext *select();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -574,6 +577,23 @@ public:
 
   ExprContext* expr();
   ExprContext* expr(int precedence);
+  class  SelectContext : public MyContextSuperClass {
+  public:
+    GrammarParser::ExprContext *condition = nullptr;
+    GrammarParser::ExprContext *e_t = nullptr;
+    GrammarParser::ExprContext *e_f = nullptr;
+    SelectContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<ExprContext *> expr();
+    ExprContext* expr(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  SelectContext* select();
+
   class  NumberContext : public MyContextSuperClass {
   public:
     antlr4::Token *intToken = nullptr;

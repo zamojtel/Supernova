@@ -14,6 +14,8 @@ public:
 	ConstantValue execute_arithmetic_operation(const TypeRef& type, IROperation op, ConstantValue& cv1, ConstantValue& cv2);
 	void execute_arithmetic_operation_on_addresses(const TypeRef& type, IROperation op, const uint8_t* cv1, const uint8_t* cv2,uint8_t* res_addr);
 	ConstantValue execute_cmp_operation(IROperation op, ConstantValue& cv1, ConstantValue& cv2);
+	//void execute_cmp_operation_on_arrays(const TypeRef& type, IROperation op,uint8_t* arr1, uint8_t* arr2, uint8_t* res_addr,const TypeRef& res_type);
+	void execute_cmp_operation_on_arrays(const TypeRef& type1, const TypeRef& type2, IROperation op, uint8_t* arr1, uint8_t* arr2, uint8_t* res_addr, const TypeRef& res_type);
 	ConstantValue get_operand_value(const IROperand& op);
 	IRStackFrame* add_frame(IRBasicBlock* blk, IRTriple* r_t,size_t triple_count , size_t l_var_count,size_t total_size);
 	void pop_frame();
@@ -23,7 +25,9 @@ public:
 	template <class T>
 	T execute_arithmetic_operation(T cv1, T cv2,IROperation operation);
 	void set_listener(IRInterpreterListener *l);
-	uint8_t * get_operand_address(IROperand op);
+	uint8_t* get_operand_address(IROperand op, bool ignore_reference = false);
 	template <class To>
 	std::optional<To> convert_value_to(ConstantValue& v) const;
 };
+
+//bool Interpreter::execute_cmp_operation(T v1, T v2, IROperation operation)

@@ -1,0 +1,14 @@
+
+void inc(int a){
+	return a+1;
+}
+
+int main(){
+	int b = 10;
+	int result = inc(b);
+	print(result);
+	return 0;
+}
+
+#------------------
+11

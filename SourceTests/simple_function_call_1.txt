@@ -1,0 +1,13 @@
+
+void fun(int a){
+	print(a);
+}
+
+int main(){
+	int b = 10;
+	fun(b);
+	return 0;
+}
+
+#------------------
+10

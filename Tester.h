@@ -23,10 +23,8 @@ public:
 		return m_results;
 	}
 
-	void print_called(const ConstantValue& v) override {
-		std::string msg = v.to_string();
-		std::cout << "PRINT: " << msg << std::endl;
-		m_printed_messages.push_back(msg);
+	void print_called(const std::string& v) override {
+		m_printed_messages.push_back(v);
 	}
 
 	// no need for now
@@ -47,5 +45,6 @@ public:
 	Tester(const std::string& source_dir,const std::string& expected_dir);
 	void run_all_tests(const std::vector<std::string>& test_names);
 	bool run_single_test(const fs::path& source_file,const fs::path& expected_path);
+	//std::string read_entire_file(const fs::path& file_path);
 	std::string read_entire_file(const fs::path& file_path);
 };

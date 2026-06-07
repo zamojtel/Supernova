@@ -7,8 +7,11 @@ void swap(double *d1,double *d2){
 
 
 int main(){
-	double a = 10.0;
-	double b = 20.0;
+	double a;
+	a = 10.0;
+	double b;
+	b = 20.0;
+
 	print(a);
 	print(b);
 
@@ -19,3 +22,9 @@ int main(){
 
 	return 0;
 }
+
+#------------------
+10
+20
+20
+10

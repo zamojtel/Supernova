@@ -100,6 +100,9 @@ public:
   virtual void enterExpr(GrammarParser::ExprContext * /*ctx*/) override { }
   virtual void exitExpr(GrammarParser::ExprContext * /*ctx*/) override { }
 
+  virtual void enterSelect(GrammarParser::SelectContext * /*ctx*/) override { }
+  virtual void exitSelect(GrammarParser::SelectContext * /*ctx*/) override { }
+
   virtual void enterNumber(GrammarParser::NumberContext * /*ctx*/) override { }
   virtual void exitNumber(GrammarParser::NumberContext * /*ctx*/) override { }
 

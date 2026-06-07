@@ -1,5 +1,5 @@
 
-IRArrayNode::IRArrayNode(const TypeRef& ref, size_t s) : m_element_type{ ref }, m_size{s} {
+IRArrayNode::IRArrayNode(const TypeRef& ref, size_t s) : m_element_type{ ref }, m_count{s} {
 	set_size(ref.get_size()*s);
 }
 
@@ -9,7 +9,7 @@ size_t IRArrayNode::calculate_size() {
 	// DOKONCZYC #TUTAJ
 	try {
 		size_t element_size = m_element_type.get_size();
-		return element_size * m_size;
+		return element_size * m_count;
 	}
 	catch (std::runtime_error e) {
 		throw e;

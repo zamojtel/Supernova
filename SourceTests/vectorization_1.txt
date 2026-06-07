@@ -1,0 +1,12 @@
+
+int main(){
+	int [10] t1;
+	int [10] t2;
+	print(t1);
+	// int [10] result = t1 + t2;
+	
+	return 0;
+}
+
+
+#------------------
