@@ -1,0 +1,20 @@
+
+int main(){
+	int *x = (int*)malloc(3*sizeof(int));
+	
+	x[0] = 10;
+	x[1] = 20;
+	x[2] = 30;
+
+	print(x[0]);
+	print(x[1]);
+	print(x[2]);
+	
+	free(x);
+	
+	return 0;
+}
+#------------------
+10
+20
+30

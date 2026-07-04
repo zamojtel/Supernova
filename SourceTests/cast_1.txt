@@ -1,0 +1,12 @@
+
+
+int main(){
+	double y = 13.33;
+	int x = (int)(y);
+	print(x);
+
+
+	return 0;
+}
+#------------------
+13
