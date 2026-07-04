@@ -117,7 +117,7 @@ public:
 	}
 
 	template <class To>
-	std::optional<To> convert_value_to() const {
+	std::optional<To> safe_convert_value_to() const {
 		if (!is_empty())
 			throw std::runtime_error("no type has been set");
 
@@ -155,6 +155,45 @@ public:
 		}
 	}
 
+	template <class To>
+	std::optional<To> unsafe_convert_value_to() const {
+		if (!is_empty())
+			throw std::runtime_error("no type has been set");
+
+		switch (m_data_type.value())
+		{
+		case IRBasicType::INT8:
+			return { static_cast<To>(get_value<int8_t>()) };
+		case IRBasicType::INT16:
+			return { static_cast<To>(get_value<int16_t>()) };
+		case IRBasicType::INT32: {
+			int32_t value = get_value<int32_t>();
+			return { static_cast<To>(value) };
+		}
+		case IRBasicType::INT64:
+			return { static_cast<To>(get_value<int64_t>()) };
+		case IRBasicType::UINT8:
+			return { static_cast<To>(get_value<uint8_t>()) };
+		case IRBasicType::UINT16:
+			return { static_cast<To>(get_value<uint16_t>()) };
+		case IRBasicType::UINT32:
+			return { static_cast<To>(get_value<uint32_t>()) };
+		case IRBasicType::UINT64:
+			return { static_cast<To>(get_value<uint64_t>()) };
+		case IRBasicType::FLOAT:
+			return { static_cast<To>(get_value<float>()) };
+		case IRBasicType::DOUBLE:
+			return { static_cast<To>(get_value<double>()) };
+		case IRBasicType::BOOL:
+			return { static_cast<To>(get_value<bool>()) };
+		case IRBasicType::VOID: {
+			break;
+		}
+		default:
+			break;
+		}
+	}
+
 	template <class T>
 	T get_value() const {
 		if(std::holds_alternative<T>(m_value))
@@ -173,7 +212,12 @@ public:
 		return m_data_type.value();
 	}
 
-	ConstantValue convert(IRBasicType convert_to) const;
+	//ConstantValue ConstantValue::safe_convert(IRBasicType convert_to) const
+
+	ConstantValue safe_convert(IRBasicType convert_to) const;
+
+	ConstantValue unsafe_convert(IRBasicType convert_to) const;
+
 	// move to cpp 
 	std::string to_string() const;
 

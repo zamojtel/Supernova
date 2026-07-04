@@ -168,9 +168,6 @@ stmt:
 		| expr ';'{
 				$ctx->m_node = $expr.ctx->m_node;
 		}
-		// |	assignment ';' {
-		//		$ctx->m_node = $assignment.ctx->m_node;
-		// }
 	;
 
 blockDecl: 
@@ -234,8 +231,7 @@ unionDecl:
 			$ctx->m_node = new UnionNode{id_node,decl_list}; 
 		}
 	;
-
-// find more suitable name for it 
+ 
 fundamentalType:
 			basicType  { $ctx->m_node = $basicType.ctx->m_node; }
 		|	identifier { $ctx->m_node = $identifier.ctx->m_node; }
@@ -325,6 +321,9 @@ expr:
 	|	'--' e = expr {
 			$ctx->m_node = new DecrementationNode{$e.ctx->m_node,false};
 		}
+	|	'-' e = expr {
+			$ctx->m_node = new UnaryMinusNode{$e.ctx->m_node};
+		}
 	|	'!' (e = expr) {
 			$ctx->m_node = new BooleanNotNode{$e.ctx->m_node};
 		}
@@ -359,6 +358,17 @@ expr:
 			}
 
 			$ctx -> m_node = new BinaryOperatorNode{$left.ctx->m_node,$right.ctx->m_node, basicType }; 
+		}
+	|	left = expr op = ( '>>' | '<<') right = expr {
+			std::string oper = $op->getText().data();
+			OperationType op_type;
+
+			if(oper == ">>")
+				op_type = OperationType::RIGHT_SHIFT;
+			else if (oper == "<<")
+				op_type = OperationType::LEFT_SHIFT;
+
+			$ctx->m_node = new BinaryOperatorNode{$left.ctx->m_node,$right.ctx->m_node,op_type};
 		}
 	|	left = expr op = ( '>' | '>=' | '<' | '<=' | '==' | '!=' ) right = expr {
 			std::string oper = $op->getText().data();
@@ -404,8 +414,14 @@ expr:
 	|	sizeOf { $ctx->m_node = $sizeOf.ctx->m_node; }
 	|	assertCondition { $ctx->m_node = $assertCondition.ctx->m_node; }
 	|	select {
-		$ctx->m_node = $select.ctx->m_node;
-	}
+			$ctx->m_node = $select.ctx->m_node;
+		}
+	| 'malloc' '(' e=expr ')' {
+			$ctx->m_node = new MallocNode($e.ctx->m_node);
+		}
+	| 'free' '(' e=expr ')' {
+			$ctx->m_node = new FreeNode($e.ctx->m_node);
+		}
 	;
 
 select:
@@ -427,6 +443,11 @@ number:
 		|	BOOL{
 				$ctx->m_node = new ConstantNode{ $BOOL -> getText() == "true" };
 			}
+		|	HEX|BINARY|OCTAL {
+				// funckcja konwertujaca 
+				// dla dziesietnego typu tez
+				
+			}
 		;
 
 identifier: ID{
@@ -438,10 +459,13 @@ identifier: ID{
 // TOKENS
 LINE_COMMENT : '//' ~[\r\n]* -> skip ;
 WS: [ \t\r\n] + -> skip ;
-INT     : [0-9]+ ;
+INT     : [0-9]([0-9]|'_'+[0-9])* ;
 FLOAT	: [0-9]+'.'[0-9]+'f' ;
 DOUBLE	: [0-9]+'.'[0-9]+ ;
 BOOL : 'true'|'false' ;
+BINARY : '0b'[0-1]([0-1]|'_'+[0-1])* ;
+OCTAL : '0o'[0-7]([0-7]|'_'+[0-7])* ;
+HEX : '0x'[0-9a-fA-F]([0-9a-fA-F]|'_'+[0-9a-fA-F])* ;
 // KEY WORDS
 CONTINUE : 'continue' ;
 BREAK : 'break' ;

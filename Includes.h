@@ -77,6 +77,9 @@
 #include "AddressOfNode.h"
 #include "DereferenceNode.h"
 #include "SelectNode.h"
+#include "UnaryMinusNode.h"
+#include "MallocNode.h"
+#include "FreeNode.h"
 
 #include "IRPrinter.h"
 #include "IRDataTypeTraits.h"

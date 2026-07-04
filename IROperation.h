@@ -21,9 +21,14 @@ enum class IROperation {
 	COPY,
 	INC,
 	DEC,
+	UNARY_MINUS,
 	BITWISE_AND,
 	BITWISE_OR,
 	BITWISE_XOR,
+	LEFT_SHIFT,
+	RIGHT_SHIFT,
+	MALLOC,
+	FREE,
 	JC, // jump if condition
 	JMP, // unconditional jump
 	// ARRAY ACCESS

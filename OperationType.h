@@ -15,4 +15,6 @@ enum class OperationType {
 	BITWISE_OR, // |
 	XOR, // ^
 	BITWISE_NOT, // ~
+	LEFT_SHIFT,	// <<
+	RIGHT_SHIFT, // >>
 };

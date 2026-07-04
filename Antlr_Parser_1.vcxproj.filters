@@ -181,6 +181,12 @@
     <Filter Include="Source Files\Tests\simple">
       <UniqueIdentifier>{9e4f0110-907d-4a10-8960-497d74f699d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Tests\BitwiseOperations">
+      <UniqueIdentifier>{11d9786f-9388-4b46-a8d3-ad935b7cb54b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\MallocAndFree">
+      <UniqueIdentifier>{bf869b98-c998-4904-9900-a263b6c19634}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -734,6 +740,15 @@
     <ClInclude Include="SelectNode.h">
       <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
     </ClInclude>
+    <ClInclude Include="UnaryMinusNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="MallocNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="commands.txt">
@@ -1122,6 +1137,12 @@
     </Text>
     <Text Include="print_arr.txt">
       <Filter>Source Files\Tests\Printing</Filter>
+    </Text>
+    <Text Include="left_shift.txt">
+      <Filter>Source Files\Tests\BitwiseOperations</Filter>
+    </Text>
+    <Text Include="right_shift.txt">
+      <Filter>Source Files\Tests\BitwiseOperations</Filter>
     </Text>
   </ItemGroup>
 </Project>

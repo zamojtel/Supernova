@@ -85,7 +85,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\zamoj\C++Projects\antlr4\runtime\Cpp\runtime\src</AdditionalIncludeDirectories>
@@ -102,7 +102,7 @@
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\zamoj\C++Projects\antlr4\runtime\Cpp\runtime\src</AdditionalIncludeDirectories>
@@ -119,7 +119,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\zamoj\C++Projects\antlr4\runtime\Cpp\runtime\src;D:\vcpkg\buildtrees\llvm\x64-windows-dbg\include;D:\vcpkg\buildtrees\llvm\src\org-18.1.6-167c29d834.clean\llvm\include</AdditionalIncludeDirectories>
@@ -136,7 +136,7 @@
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\zamoj\C++Projects\antlr4\runtime\Cpp\runtime\src</AdditionalIncludeDirectories>
@@ -360,6 +360,7 @@
     <ClInclude Include="DereferenceNode.h" />
     <ClInclude Include="DoWhileNode.h" />
     <ClInclude Include="ForNode.h" />
+    <ClInclude Include="FreeNode.h" />
     <ClInclude Include="IncrementationNode.h" />
     <ClInclude Include="Interpreter.h" />
     <ClInclude Include="IRArrayNode.h" />
@@ -461,6 +462,7 @@
     <ClInclude Include="IRVariable.h" />
     <ClInclude Include="FunctionParameterNode.h" />
     <ClInclude Include="Layer.h" />
+    <ClInclude Include="MallocNode.h" />
     <ClInclude Include="MemberAccessNode.h" />
     <ClInclude Include="MemberDeclarationNode.h" />
     <ClInclude Include="OrNode.h" />
@@ -481,6 +483,7 @@
     <ClInclude Include="IRTriple.h" />
     <ClInclude Include="TypeModifierNode.h" />
     <ClInclude Include="TypeRef.h" />
+    <ClInclude Include="UnaryMinusNode.h" />
     <ClInclude Include="UnionNode.h" />
     <ClInclude Include="WhileNode.h" />
   </ItemGroup>
@@ -578,6 +581,7 @@
     <Text Include="if_statements_3.txt" />
     <Text Include="inc1.txt" />
     <Text Include="inc2.txt" />
+    <Text Include="left_shift.txt" />
     <Text Include="loop1.txt" />
     <Text Include="loop3.txt" />
     <Text Include="loop4.txt" />
@@ -604,6 +608,7 @@
     <Text Include="reinterpret_cast_1.txt" />
     <Text Include="returnTest.txt" />
     <Text Include="returnTest2.txt" />
+    <Text Include="right_shift.txt" />
     <Text Include="sfc_1.txt" />
     <Text Include="simpleExpr1.txt" />
     <Text Include="simple_1.txt" />

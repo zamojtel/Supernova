@@ -109,39 +109,73 @@ std::optional<To> safe_numeric_cast(From value) {
     }
 }
 
-ConstantValue ConstantValue::convert(IRBasicType convert_to) const {
+ConstantValue ConstantValue::unsafe_convert(IRBasicType convert_to) const {
     IRBasicType to = convert_to;
 
     switch (to)
     {
     case IRBasicType::INT8:
-        return from_optional<int8_t>(convert_value_to<int8_t>());
+        return from_optional<int8_t>(unsafe_convert_value_to<int8_t>());
     case IRBasicType::INT16:
-        return from_optional<int16_t>(convert_value_to<int16_t>());
+        return from_optional<int16_t>(unsafe_convert_value_to<int16_t>());
     case IRBasicType::INT32:
-        return from_optional<int32_t>(convert_value_to<int32_t>());
+        return from_optional<int32_t>(unsafe_convert_value_to<int32_t>());
     case IRBasicType::INT64:
-        return from_optional<int64_t>(convert_value_to<int64_t>());
+        return from_optional<int64_t>(unsafe_convert_value_to<int64_t>());
     case IRBasicType::UINT8:
-        return from_optional<uint8_t>(convert_value_to<uint8_t>());
+        return from_optional<uint8_t>(unsafe_convert_value_to<uint8_t>());
     case IRBasicType::UINT16:
-        return from_optional<uint16_t>(convert_value_to<uint16_t>());
+        return from_optional<uint16_t>(unsafe_convert_value_to<uint16_t>());
     case IRBasicType::UINT32:
-        return from_optional<uint32_t>(convert_value_to<uint32_t>());
+        return from_optional<uint32_t>(unsafe_convert_value_to<uint32_t>());
     case IRBasicType::UINT64:
-        return from_optional<uint32_t>(convert_value_to<uint32_t>());
+        return from_optional<uint64_t>(unsafe_convert_value_to<uint64_t>());
     case IRBasicType::FLOAT:
-        return from_optional<float>(convert_value_to<float>());
+        return from_optional<float>(unsafe_convert_value_to<float>());
     case IRBasicType::DOUBLE:
-        return from_optional<double>(convert_value_to<double>());
+        return from_optional<double>(unsafe_convert_value_to<double>());
     case IRBasicType::BOOL:
-        return from_optional<bool>(convert_value_to<bool>());
+        return from_optional<bool>(unsafe_convert_value_to<bool>());
     case IRBasicType::VOID:
     default:
         throw std::runtime_error("can't convert value of this type");
         break;
     }
 
+}
+
+ConstantValue ConstantValue::safe_convert(IRBasicType convert_to) const {
+    IRBasicType to = convert_to;
+
+    switch (to)
+    {
+    case IRBasicType::INT8:
+        return from_optional<int8_t>(safe_convert_value_to<int8_t>());
+    case IRBasicType::INT16:
+        return from_optional<int16_t>(safe_convert_value_to<int16_t>());
+    case IRBasicType::INT32:
+        return from_optional<int32_t>(safe_convert_value_to<int32_t>());
+    case IRBasicType::INT64:
+        return from_optional<int64_t>(safe_convert_value_to<int64_t>());
+    case IRBasicType::UINT8:
+        return from_optional<uint8_t>(safe_convert_value_to<uint8_t>());
+    case IRBasicType::UINT16:
+        return from_optional<uint16_t>(safe_convert_value_to<uint16_t>());
+    case IRBasicType::UINT32:
+        return from_optional<uint32_t>(safe_convert_value_to<uint32_t>());
+    case IRBasicType::UINT64:
+        return from_optional<uint64_t>(safe_convert_value_to<uint64_t>());
+    case IRBasicType::FLOAT:
+        return from_optional<float>(safe_convert_value_to<float>());
+    case IRBasicType::DOUBLE:
+        return from_optional<double>(safe_convert_value_to<double>());
+    case IRBasicType::BOOL:
+        return from_optional<bool>(safe_convert_value_to<bool>());
+    case IRBasicType::VOID:
+    default:
+        throw std::runtime_error("can't convert value of this type");
+        break;
+    }
 }
 
 std::string ConstantValue::to_string() const {

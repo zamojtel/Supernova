@@ -26,6 +26,10 @@ IROperation ASTConverter::ast_op_to_ir_op(OperationType t) {
 		return IROperation::EQ;
 	case OperationType::NEQ:
 		return IROperation::NEQ;
+	case OperationType::LEFT_SHIFT:
+		return IROperation::LEFT_SHIFT;
+	case OperationType::RIGHT_SHIFT:
+		return IROperation::RIGHT_SHIFT;
 	default:
 		throw std::runtime_error("can't convert from ast operation to ir operation");
 	}
@@ -90,6 +94,20 @@ IROperand ASTConverter::get_op(const ReferencePtr<AbstractSyntaxTreeNode> &node)
 		auto casted_node = node.cast<SelectNode>();
 		break;
 	}
+	case TreeNodeType::UNARY_MINUS: {
+		auto casted_node = node.cast<UnaryMinusNode>();
+		break;
+	}
+	case TreeNodeType::MALLOC:
+	{
+		break;
+	}
+	case TreeNodeType::FREE: {
+		break;
+	}
+	case TreeNodeType::SIZE_OF:{
+		break;
+	}
 	default:
 		throw std::runtime_error("unkown tree node type");
 		break;
@@ -151,8 +169,8 @@ void ASTConverter::build_ir_data_type_from_ast(const ReferencePtr<DataTypeNode>&
 			ReferencePtr<AbstractSyntaxTreeNode> m_expr = node->get_expr();
 			if (m_expr->get_type()==TreeNodeType::CONSTANT) {
 				ReferencePtr<ConstantNode> constant = m_expr.cast<ConstantNode>();
-				if (constant->get_constant_value().convert_value_to<int>().has_value()) {
-					int value = constant->get_constant_value().convert_value_to<int>().value();
+				if (constant->get_constant_value().safe_convert_value_to<int>().has_value()) {
+					int value = constant->get_constant_value().safe_convert_value_to<int>().value();
 					current_ref = m_dtm->add_array(current_ref,value);
 				}
 			}
@@ -727,6 +745,25 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 
 		break;
 	}
+	case TreeNodeType::MALLOC: {
+		ReferencePtr<MallocNode> current_node = node.cast<MallocNode>();
+		post_order_traverse(current_node->m_expr);
+		IROperand expr = get_op(current_node->m_expr);
+
+		IRTriple* triple = m_coder.add_triple(current_node->get_line_number(),IROperation::MALLOC,expr);
+
+		set_op(current_node,triple);
+		break;
+	}
+	case TreeNodeType::FREE: {
+		ReferencePtr<FreeNode> current_node = node.cast<FreeNode>();
+		post_order_traverse(current_node->m_expr);
+
+		IROperand expr = get_op(current_node->m_expr);
+		m_coder.add_triple(current_node->get_line_number(), IROperation::FREE, expr);
+
+		break;
+	}
 	case TreeNodeType::ASSERT: {
 		ReferencePtr<AssertNode> current_node = node.cast<AssertNode>();
 		post_order_traverse(current_node->m_expr);
@@ -870,6 +907,16 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		IRTriple* triple = m_coder.add_triple(current_node->get_line_number(), IROperation::DEREFERENCE,expr_op);
 
 		set_op(current_node,triple);
+		break;
+	}
+	case TreeNodeType::UNARY_MINUS: {
+		ReferencePtr<UnaryMinusNode> current_node = node.cast<UnaryMinusNode>();
+		post_order_traverse(current_node->get_expr_node());
+
+		IROperand expr_op = get_op(current_node->get_expr_node());
+		IRTriple* triple = m_coder.add_triple(current_node->get_line_number(), IROperation::UNARY_MINUS, expr_op);
+		
+		set_op(current_node, triple);
 		break;
 	}
 	case TreeNodeType::MEMBER_ACCESS: {

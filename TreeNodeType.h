@@ -41,8 +41,11 @@ enum class TreeNodeType {
 	DEREFERENCE,
 	ADDRESS_OF,
 	SIZE_OF,
+	UNARY_MINUS,
 	ASSERT,
 	PRINT,
+	MALLOC,
+	FREE,
 	// Composite Types
 	//COMPOSITE
 	STRUCT,

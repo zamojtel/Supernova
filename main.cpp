@@ -189,6 +189,7 @@ void func() {
 	module->print(llvm::outs(), nullptr);
 }
 
+
 void check_asserts() {
 
 	// wczytanie source file 
@@ -468,9 +469,14 @@ int main() {
 		"vectorization_3",
 		"vectorization_4",
 		"vectorization_5",*/
-		"select_6",
-		"select_7",
-		"select_8"
+		//"select_6",
+		//"select_7",
+		//"select_8"
+		//"bit_shift_1"
+		//"bit_shift_logical"
+		//"malloc_1"
+		"hex_1"
+		//"cast_1"
 	};
 
 	Tester compiler_tester(test_folder, expected_outputs_folder);

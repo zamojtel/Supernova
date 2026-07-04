@@ -210,11 +210,52 @@ void IRChecker::check_triple(IRTriple* triple)
 		triple->m_data_type = result_type;
 		break;
 	}
+	case IROperation::LEFT_SHIFT: {
+		if (!op2->get_data_type().is_integer()) {
+			m_listener->add_error(triple->m_line_number, "right operand must be integer");
+		}
+
+		triple->m_data_type = op1->get_data_type();
+		break;
+	}
+	case IROperation::RIGHT_SHIFT: {
+		if (!op2->get_data_type().is_integer()) {
+			m_listener->add_error(triple->m_line_number, "right operand must be integer");
+		}
+
+		triple->m_data_type = op1->get_data_type();
+		break;
+	}
+	case IROperation::UNARY_MINUS: {
+
+		if (!op1->get_data_type().is_numeric()) {
+			m_listener->add_error(triple->m_line_number, "operand must be a number");
+		}
+
+		triple->m_data_type = op1->get_data_type();
+		break;
+	}
+	case IROperation::MALLOC: {
+		if (op1->get_data_type().is_integer()) {
+			m_listener->add_error(triple->m_line_number,"can't allocate non-integral number of bytes");
+		}
+
+		triple->m_data_type = op1->get_data_type();
+		break;
+	}
+	case IROperation::FREE: {
+
+		if (!op1->get_data_type().remove_qualifiers().remove_reference().is_pointer()) {
+			m_listener->add_error(triple->m_line_number, "can't free non-pointer variables");
+		}
+
+		triple->m_data_type = op1->get_data_type();
+		break;
+	}
+
 	default:
 		throw std::runtime_error("unknow operation while checking triple");
 	}
-
-	//deduce_triple_data_type(triple);
 }
 
 // 
