@@ -21,9 +21,9 @@ public:
     T__38 = 39, T__39 = 40, T__40 = 41, T__41 = 42, T__42 = 43, T__43 = 44, 
     T__44 = 45, T__45 = 46, T__46 = 47, T__47 = 48, T__48 = 49, T__49 = 50, 
     T__50 = 51, T__51 = 52, T__52 = 53, T__53 = 54, T__54 = 55, T__55 = 56, 
-    T__56 = 57, T__57 = 58, T__58 = 59, T__59 = 60, LINE_COMMENT = 61, WS = 62, 
-    INT = 63, FLOAT = 64, DOUBLE = 65, BOOL = 66, BINARY = 67, OCTAL = 68, 
-    HEX = 69, CONTINUE = 70, BREAK = 71, ID = 72
+    T__56 = 57, T__57 = 58, T__58 = 59, T__59 = 60, T__60 = 61, LINE_COMMENT = 62, 
+    WS = 63, INT = 64, FLOAT = 65, DOUBLE = 66, BOOL = 67, BINARY = 68, 
+    OCTAL = 69, HEX = 70, CONTINUE = 71, BREAK = 72, ID = 73
   };
 
   enum {
@@ -52,6 +52,9 @@ public:
   const antlr4::dfa::Vocabulary& getVocabulary() const override;
 
   antlr4::atn::SerializedATNView getSerializedATN() const override;
+
+
+  	ParserHelper* m_parser_helper;
 
 
   class WhileContext;
@@ -597,13 +600,16 @@ public:
 
   class  NumberContext : public MyContextSuperClass {
   public:
-    antlr4::Token *intToken = nullptr;
+    antlr4::Token *integerLiteral = nullptr;
     antlr4::Token *floatToken = nullptr;
     antlr4::Token *doubleToken = nullptr;
     antlr4::Token *boolToken = nullptr;
     NumberContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *INT();
+    antlr4::tree::TerminalNode *HEX();
+    antlr4::tree::TerminalNode *BINARY();
+    antlr4::tree::TerminalNode *OCTAL();
     antlr4::tree::TerminalNode *FLOAT();
     antlr4::tree::TerminalNode *DOUBLE();
     antlr4::tree::TerminalNode *BOOL();

@@ -38,5 +38,6 @@ enum class IROperation {
 	MEMBER_ACCESS,
 	ASSERT,
 	PRINT,
+	PRINT_TYPE,
 	SELECT,
 };

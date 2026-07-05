@@ -1,0 +1,8 @@
+
+int main(){
+	int [10] a;
+	print_type(a);
+	return 0;
+}
+#------------------
+INT32 [10]

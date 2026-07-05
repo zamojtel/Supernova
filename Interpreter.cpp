@@ -355,7 +355,6 @@ void Interpreter::execute_shift_operation(const IRBasicType& bt_1,const IRBasicT
 
 template <class T>
 void Interpreter::execute_unary_operation(IROperation operation,uint8_t* op1,uint8_t *res_addr) {
-	
 	if (operation == IROperation::UNARY_MINUS) {
 		*reinterpret_cast<T*>(res_addr) = -(*reinterpret_cast<T*>(op1));
 	}
@@ -718,6 +717,14 @@ void Interpreter::start() {
 				ConstantValue value = ConstantValue{basic_type,address};
 				m_listener->print_called(value.to_string());
 			}
+
+			break;
+		}
+		case IROperation::PRINT_TYPE: {
+			IROperand op = current_triple->m_operands[0];
+			TypeRef type = op.get_data_type();
+			std::string msg = type.to_string();
+			m_listener->print_called(msg);
 
 			break;
 		}

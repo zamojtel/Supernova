@@ -44,6 +44,7 @@ enum class TreeNodeType {
 	UNARY_MINUS,
 	ASSERT,
 	PRINT,
+	PRINT_TYPE,
 	MALLOC,
 	FREE,
 	// Composite Types

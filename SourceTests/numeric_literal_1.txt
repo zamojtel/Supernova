@@ -1,0 +1,10 @@
+
+int main(){
+	print_type(2_147_483_648);
+	print_type(2_147_483_647);
+	
+	return 0;
+}
+#------------------
+UINT32
+INT32

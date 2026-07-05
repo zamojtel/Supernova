@@ -20,6 +20,7 @@
 #include "IdentifierNode.h"
 
 #include "PrintNode.h"
+#include "PrintTypeNode.h"
 
 #include "QualifierNode.h"
 #include "ArrayNode.h"
@@ -87,6 +88,8 @@
 #include "IRToLLVMIRIncludes.h"
 #include "Error.h"
 #include "ErrorList.h"
+
+#include "ParserHelper.h"
 
 #include "ASTConvIncludes.h"
 #include "Tester.h"

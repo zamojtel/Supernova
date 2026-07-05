@@ -161,8 +161,14 @@ void IRChecker::check_triple(IRTriple* triple)
 	case IROperation::PRINT: {
 		// checking 
 		TypeRef data_type = op1->get_data_type();
-		if (!data_type.is_numeric())
-			m_listener->add_error(triple->m_line_number	,"expected numeric type value");
+		// pointers are also printed 
+		// check later
+		//if (!data_type.is_numeric())
+		//	m_listener->add_error(triple->m_line_number	,"expected numeric type value");
+
+		break;
+	}
+	case IROperation::PRINT_TYPE: {
 
 		break;
 	}

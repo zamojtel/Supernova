@@ -782,6 +782,15 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		set_op(current_node,triple);
 		break;
 	}
+	case TreeNodeType::PRINT_TYPE: {
+		ReferencePtr<PrintTypeNode> current_node = node.cast<PrintTypeNode>();
+		post_order_traverse(current_node->m_expr);
+		IROperand op = get_op(current_node->m_expr);
+
+		IRTriple* triple = m_coder.add_triple(current_node->get_line_number(), IROperation::PRINT_TYPE, op);
+		set_op(current_node, triple);
+		break;
+	}
 	case TreeNodeType::RETURN: {
 		ReferencePtr<ReturnNode> current_node = node.cast<ReturnNode>();
 		post_order_traverse(current_node->get_expr());
@@ -911,9 +920,49 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 	}
 	case TreeNodeType::UNARY_MINUS: {
 		ReferencePtr<UnaryMinusNode> current_node = node.cast<UnaryMinusNode>();
-		post_order_traverse(current_node->get_expr_node());
+		ReferencePtr<AbstractSyntaxTreeNode> expr = current_node->get_expr_node();
+		uint32_t int32_min_magnitude = 2147483648u;
+		uint64_t int64_min_magnitude = 9223372036854775808ull;
+		bool handled_as_constant = false;
 
-		IROperand expr_op = get_op(current_node->get_expr_node());
+		if (expr->get_type()==TreeNodeType::CONSTANT) {
+			ReferencePtr<ConstantNode> constant_node = expr.cast<ConstantNode>();
+			ConstantValue cv = constant_node->get_constant_value();
+
+			switch (cv.get_basic_type())
+			{
+			case IRBasicType::UINT32: {
+				uint32_t value = cv.get_value<uint32_t>();
+				if (value == int32_min_magnitude) {
+					ConstantValue min_value = ConstantValue(std::numeric_limits<int32_t>::min());
+					IRConstant* c = m_current_fn->add_constant(min_value);
+					set_op(current_node,c);
+
+					handled_as_constant = true;
+				}
+				break;
+			}
+			case IRBasicType::UINT64: {
+				uint64_t value = cv.get_value<uint64_t>();
+				if (value == int64_min_magnitude) {
+					ConstantValue min_value = ConstantValue(std::numeric_limits<int64_t>::min());
+					IRConstant *c = m_current_fn->add_constant(min_value);
+					set_op(current_node, c);
+
+					handled_as_constant = true;
+				}
+				break;
+			}
+			default:
+				break;
+			}
+		}
+
+		if (handled_as_constant)
+			break;
+
+		post_order_traverse(expr);
+		IROperand expr_op = get_op(expr);
 		IRTriple* triple = m_coder.add_triple(current_node->get_line_number(), IROperation::UNARY_MINUS, expr_op);
 		
 		set_op(current_node, triple);

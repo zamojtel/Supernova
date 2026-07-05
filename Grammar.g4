@@ -3,6 +3,10 @@ options{
 contextSuperClass = MyContextSuperClass;
 }
 
+@parser::members{
+	ParserHelper* m_parser_helper;
+}
+
 while: 
 	    'while' '(' expr ')' stmt {
 			$ctx->m_node = new WhileNode{$expr.ctx->m_node,$stmt.ctx->m_node};
@@ -92,7 +96,6 @@ functionParameter:
 		dataType identifier {
 			ReferencePtr<DataTypeNode> dtn = $dataType.ctx->m_node.cast<DataTypeNode>();
 			ReferencePtr<IdentifierNode> in = $identifier.ctx->m_node.cast<IdentifierNode>();
-
 			$ctx -> m_node = new FunctionParameterNode{dtn,in};
 		}
 	;
@@ -164,6 +167,9 @@ stmt:
 			}
 		| 'print' '(' expr ')' ';' {
 				$ctx->m_node = new PrintNode{$expr.ctx->m_node};
+			}
+		| 'print_type' '(' expr ')' ';' {
+				$ctx->m_node = new PrintTypeNode{$expr.ctx->m_node};
 			}
 		| expr ';'{
 				$ctx->m_node = $expr.ctx->m_node;
@@ -431,8 +437,8 @@ select:
 		;
 
 number:
-			INT{ 
-				$ctx -> m_node = new ConstantNode{ std::atoi($INT -> getText().data()) }; 
+			integerLiteral = (INT | HEX | BINARY | OCTAL)  { 
+				$ctx->m_node = m_parser_helper->parse_integer_literal($integerLiteral->getText().data());
 			}
 		|	FLOAT{
 				$ctx -> m_node = new ConstantNode{(float) std::atof($FLOAT -> getText().data()) };
@@ -443,29 +449,23 @@ number:
 		|	BOOL{
 				$ctx->m_node = new ConstantNode{ $BOOL -> getText() == "true" };
 			}
-		|	HEX|BINARY|OCTAL {
-				// funckcja konwertujaca 
-				// dla dziesietnego typu tez
-				
-			}
 		;
 
 identifier: ID{
 				$ctx -> m_node = new IdentifierNode{ $ID -> getText().data() };
 			};
 
-
 // LEXER
 // TOKENS
 LINE_COMMENT : '//' ~[\r\n]* -> skip ;
 WS: [ \t\r\n] + -> skip ;
-INT     : [0-9]([0-9]|'_'+[0-9])* ;
+INT     : [0-9]([0-9]|'_'+[0-9])*([ulUL])?([ulUL])? ;
 FLOAT	: [0-9]+'.'[0-9]+'f' ;
 DOUBLE	: [0-9]+'.'[0-9]+ ;
 BOOL : 'true'|'false' ;
-BINARY : '0b'[0-1]([0-1]|'_'+[0-1])* ;
-OCTAL : '0o'[0-7]([0-7]|'_'+[0-7])* ;
-HEX : '0x'[0-9a-fA-F]([0-9a-fA-F]|'_'+[0-9a-fA-F])* ;
+BINARY : '0b'[0-1]([0-1]|'_'+[0-1])*([ulUL])?([ulUL])? ;
+OCTAL : '0o'[0-7]([0-7]|'_'+[0-7])*([ulUL])?([ulUL])? ;
+HEX : '0x'[0-9a-fA-F]([0-9a-fA-F]|'_'+[0-9a-fA-F])*([ulUL])?([ulUL])? ;
 // KEY WORDS
 CONTINUE : 'continue' ;
 BREAK : 'break' ;
