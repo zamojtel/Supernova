@@ -79,22 +79,28 @@ public:
 		}
 
 		IntegerLiteralBase base;
-
-		if (prefix == "0b") {
-			converted_value = std::strtoull(cleaned_str.data() + 2, nullptr, 2);
-			base = IntegerLiteralBase::BINARY;
+		try {
+			if (prefix == "0b") {
+				converted_value = std::strtoull(cleaned_str.data() + 2, nullptr, 2);
+				base = IntegerLiteralBase::BINARY;
+			}
+			else if (prefix == "0o") {
+				converted_value = std::strtoull(cleaned_str.data() + 2, nullptr, 8);
+				base = IntegerLiteralBase::OCTAL;
+			}
+			else if (prefix == "0x") {
+				converted_value = std::strtoull(cleaned_str.data() + 2, nullptr, 16);
+				base = IntegerLiteralBase::HEXADECIMAL;
+			}
+			else {
+				converted_value = std::strtoull(cleaned_str.data(), nullptr, 10);
+				base = IntegerLiteralBase::DECIMAL;
+			}
 		}
-		else if (prefix == "0o") {
-			converted_value = std::strtoull(cleaned_str.data() + 2, nullptr, 8);
-			base = IntegerLiteralBase::OCTAL;
-		}
-		else if (prefix == "0x") {
-			converted_value = std::strtoull(cleaned_str.data() + 2, nullptr, 16);
-			base = IntegerLiteralBase::HEXADECIMAL;
-		}
-		else {
-			converted_value = std::strtoull(cleaned_str.data(), nullptr, 10);
-			base = IntegerLiteralBase::DECIMAL;
+		catch (std::runtime_error &e) {
+			// sprawdzic w dokumentacji jak dzia³a strtoull
+			// zeby wychwycic kiedy dostaniemy wartoœæ spoza
+			throw std::runtime_error("numeric literal out of range");
 		}
 
 		ConstantValue cv;

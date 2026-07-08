@@ -470,7 +470,9 @@ int main() {
 		//"malloc_1"
 		//"hex_1"
 		//"print_type_1"
-		"numeric_literal_1"
+		//"numeric_literal_1"
+		//"numeric_literal_3"
+		"numeric_literal_2"
 		//"bin_1"
 		//"cast_1"
 	};

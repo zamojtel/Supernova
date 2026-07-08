@@ -1,0 +1,46 @@
+
+int main(){
+
+	// max int32_t
+	print_type(2147483647);          // int
+
+	// max int32_t + 1
+	print_type(2147483648);          // uint
+
+	// min int32_t
+	print_type(-2147483648);         // int
+
+	// NOT min int32_t as type
+	print_type(-2147483648u);        // long
+
+	// long.max_value / int64_t
+	print_type(9223372036854775807); // long
+
+	// ulong / uint64_t
+	print_type(9223372036854775808); // ulong
+
+	// long.min_value / int64_t
+	print_type(-9223372036854775808); // long
+
+	// long.min_value / int64_t
+	print_type(-9223372036854775808L); // long
+
+	// max uint32_t
+	print_type(4294967295);          // uint
+
+	// max uint64_t
+	print_type(18446744073709551615);
+
+	return 0;
+}
+#------------------
+INT32
+UINT32
+INT32
+INT32
+INT64
+UINT64
+INT64
+INT64
+UINT32
+UINT64
