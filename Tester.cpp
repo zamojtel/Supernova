@@ -64,7 +64,7 @@ void Tester::run_all_tests(const std::vector<std::string>& test_names) {
     for (const std::string &test_name : test_names) {
         fs::path test_path =  m_source_dir + "\\" + test_name + ".txt";
         //fs::path expected_test_path =  m_source_dir +"\\" + test_name + "_output.txt";
-
+    
         std::cout << "Running test: " << test_path.filename().string() << "...\n";
 
         //if (!fs::exists(expected_test_path)) {

@@ -1,0 +1,11 @@
+
+int main(){
+
+	uint8 x = 7;
+	uint64 y = 12345;
+	y = x;
+	print(y);
+	return 0;
+}
+#------------------
+7

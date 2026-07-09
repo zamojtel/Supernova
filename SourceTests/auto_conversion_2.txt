@@ -1,0 +1,9 @@
+
+int main(){
+
+	float a = 7;
+	print(a);
+	return 0;
+}
+#------------------
+7

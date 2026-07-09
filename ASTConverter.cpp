@@ -327,6 +327,10 @@ void ASTConverter::find_function_signatures(const ReferencePtr<AbstractSyntaxTre
 	return;
 }
 
+ConstantValue ASTConverter::try_implicite_conversion(IRBasicType type,const ConstantValue &cv) {
+	return cv.safe_convert(type);
+}
+
 void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode> &node) {
 	if(!node)
 		return;
@@ -337,13 +341,28 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 	case TreeNodeType::ASSIGNMENT: {
 		// OK
 		ReferencePtr<AssignmentNode> current_node = node.cast<AssignmentNode>();
+		ReferencePtr<AbstractSyntaxTreeNode> left_expr = current_node->get_left_expr_node();
+		ReferencePtr<AbstractSyntaxTreeNode> right_expr = current_node->get_right_expr_node();
 
 		post_order_traverse(current_node->get_left_expr_node());
 		post_order_traverse(current_node->get_right_expr_node());
 
+		// TODO variable conversion 
 		IROperand variable = get_op(current_node->get_left_expr_node());
-		IROperand expr = get_op(current_node->get_right_expr_node());
+		if (right_expr->get_type() == TreeNodeType::CONSTANT) {
+			ReferencePtr<ConstantNode> constant_node =  right_expr.cast<ConstantNode>();
+			if (variable.get_data_type().get_ir_basic_type() != constant_node->get_constant_value().get_basic_type()) {
+				ConstantValue cv = try_implicite_conversion(variable.get_data_type().get_ir_basic_type(),constant_node->get_constant_value());
+				IRConstant* ir_constant = m_current_fn->add_constant(cv);
+				set_op(constant_node,ir_constant);
+			}
+		}
+		else {
 
+		}
+
+
+		IROperand expr = get_op(current_node->get_right_expr_node());
 		IRTriple* t = m_coder.add_triple(current_node->get_line_number(), IROperation::ASSIGN, variable, expr);
 		set_op(current_node, t);
 
@@ -424,11 +443,23 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 
 				set_op(current_item, variable);
 
-				AbstractSyntaxTreeNode* expr_node = current_item->get_expr_node();
+				ReferencePtr<AbstractSyntaxTreeNode> expr_node = current_item->get_expr_node();
 				post_order_traverse(expr_node);
 
-				if (expr_node != nullptr) {
+				if (expr_node.get_ptr() != nullptr) {
+					if (expr_node->get_type() == TreeNodeType::CONSTANT) {
+						ReferencePtr<ConstantNode> constant_node = expr_node.cast<ConstantNode>();
+						if (variable->get_data_type().get_ir_basic_type() != constant_node->get_constant_value().get_basic_type()) {
+							ConstantValue cv = try_implicite_conversion(variable->get_data_type().get_ir_basic_type(), constant_node->get_constant_value());
+							IRConstant* ir_constant = m_current_fn->add_constant(cv);
+							// todo 
+							// consider changing it later on
+							set_op(constant_node, ir_constant);
+						}
+					}
+
 					IROperand op_expr = get_op(expr_node);
+
 					m_coder.add_triple(current_node->get_line_number(), IROperation::INIT_ASSIGN, variable, op_expr);
 				}
 			}

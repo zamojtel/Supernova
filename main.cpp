@@ -452,7 +452,7 @@ int main() {
 		"simple_function_call_2",
 		"reference_as_argument_in_function_call_1",
 		"reference_to_reference",
-		"vectorization_1"
+		"vectorization_1"t .
 		"print_arr_1"
 		"print_pointer",
 		"vectorization_2",
@@ -472,7 +472,11 @@ int main() {
 		//"print_type_1"
 		//"numeric_literal_1"
 		//"numeric_literal_3"
-		"numeric_literal_2"
+		//"numeric_literal_2"
+		//"auto_conversion_1"
+		//"auto_conversion_2"
+		"promotion_1"
+		//"promotion_2"
 		//"bin_1"
 		//"cast_1"
 	};

@@ -23,6 +23,8 @@ public:
 	void find_function_signatures(const ReferencePtr<AbstractSyntaxTreeNode>& node);
 	void post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode>& node);
 	void convert(ASTConverterListener *listener);
+	ConstantValue try_implicite_conversion(IRBasicType type, const ConstantValue& cv);
+
 
 	IROperand get_op(const ReferencePtr<AbstractSyntaxTreeNode>& node);
 	void set_op(const ReferencePtr<AbstractSyntaxTreeNode>& node, const IROperand& op);
