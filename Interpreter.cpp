@@ -530,6 +530,7 @@ void Interpreter::start() {
 			
 			uint8_t* addr1 = get_operand_address(op1,true);
 			uint8_t* addr2 = get_operand_address(op2);
+			std::cout << "Casted to double : " << (*reinterpret_cast<double*>(addr2)) << std::endl;;
 			int32_t* value1 = nullptr;
 			if (op1.get_data_type().is_reference()) {
 				*reinterpret_cast<uint8_t**>(addr1) = addr2;

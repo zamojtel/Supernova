@@ -188,6 +188,8 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
         return false;
 
     ir_program.check_program();
+    //printer.
+    printer.print_ir_representation(ir_program);
 
     std::vector<IROperand> fn_arguments{};
     IRFunction* fn = ir_program.get_function("main", fn_arguments);

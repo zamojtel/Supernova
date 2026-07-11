@@ -23,6 +23,7 @@ public:
 	void find_function_signatures(const ReferencePtr<AbstractSyntaxTreeNode>& node);
 	void post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode>& node);
 	void convert(ASTConverterListener *listener);
+	//bool can_implicityly_convert_to();
 	ConstantValue try_implicite_conversion(IRBasicType type, const ConstantValue& cv);
 
 

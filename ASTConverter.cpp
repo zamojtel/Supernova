@@ -347,23 +347,44 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		post_order_traverse(current_node->get_left_expr_node());
 		post_order_traverse(current_node->get_right_expr_node());
 
-		// TODO variable conversion 
-		IROperand variable = get_op(current_node->get_left_expr_node());
-		if (right_expr->get_type() == TreeNodeType::CONSTANT) {
-			ReferencePtr<ConstantNode> constant_node =  right_expr.cast<ConstantNode>();
-			if (variable.get_data_type().get_ir_basic_type() != constant_node->get_constant_value().get_basic_type()) {
-				ConstantValue cv = try_implicite_conversion(variable.get_data_type().get_ir_basic_type(),constant_node->get_constant_value());
-				IRConstant* ir_constant = m_current_fn->add_constant(cv);
-				set_op(constant_node,ir_constant);
+		IROperand variable = get_op(left_expr);
+		IROperand expr_op = get_op(right_expr);
+
+		IRBasicType variable_bt = variable.get_data_type().get_ir_basic_type();
+		IRBasicType expr_bt = expr_op.get_data_type().get_ir_basic_type();
+		if (variable_bt != expr_bt) {
+			// here's where we check what we're dealing with
+			if (IRDataTypeTraits::can_implicitly_convert(expr_bt,variable_bt)) {
+				//IROperand cast_type_node = get_op(variable.get_data_type());
+				IROperand cast_type_node{ variable.get_data_type() };
+				IRTriple * cast = m_coder.add_triple(current_node->get_line_number(),IROperation::CAST,cast_type_node,expr_op);
+				expr_op = cast;
 			}
+			else if (right_expr->get_type() == TreeNodeType::CONSTANT) {
+				ReferencePtr<ConstantNode> constant_node = right_expr.cast<ConstantNode>();
+				if (variable.get_data_type().get_ir_basic_type() != constant_node->get_constant_value().get_basic_type()) {
+					ConstantValue cv = try_implicite_conversion(variable.get_data_type().get_ir_basic_type(), constant_node->get_constant_value());
+					IRConstant* ir_constant = m_current_fn->add_constant(cv);
+					//set_op(constant_node, ir_constant);
+					expr_op = ir_constant;
+				}
+			}
+			else {
+				//can't implicitly convert from type UINT8 to type INT32
+				std::string msg = std::format("can't implicitly convert from type {} to type {}", IRDataTypeTraits::get_name(expr_bt), IRDataTypeTraits::get_name(variable_bt));
+				m_ast_converter_listener->error({current_node->get_line_number(), msg});
+			}
+
+			////if (right_expr->get_type() == TreeNodeType::CONSTANT) {
+			//ReferencePtr<ConstantNode> constant_node =  right_expr.cast<ConstantNode>();
+			//if (variable.get_data_type().get_ir_basic_type() != constant_node->get_constant_value().get_basic_type()) {
+			//	ConstantValue cv = try_implicite_conversion(variable.get_data_type().get_ir_basic_type(),constant_node->get_constant_value());
+			//	IRConstant* ir_constant = m_current_fn->add_constant(cv);
+			//	set_op(constant_node,ir_constant);
+			//}
 		}
-		else {
-
-		}
-
-
-		IROperand expr = get_op(current_node->get_right_expr_node());
-		IRTriple* t = m_coder.add_triple(current_node->get_line_number(), IROperation::ASSIGN, variable, expr);
+		
+		IRTriple* t = m_coder.add_triple(current_node->get_line_number(), IROperation::ASSIGN, variable, expr_op);
 		set_op(current_node, t);
 
 		break;
@@ -447,20 +468,22 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 				post_order_traverse(expr_node);
 
 				if (expr_node.get_ptr() != nullptr) {
-					if (expr_node->get_type() == TreeNodeType::CONSTANT) {
-						ReferencePtr<ConstantNode> constant_node = expr_node.cast<ConstantNode>();
-						if (variable->get_data_type().get_ir_basic_type() != constant_node->get_constant_value().get_basic_type()) {
-							ConstantValue cv = try_implicite_conversion(variable->get_data_type().get_ir_basic_type(), constant_node->get_constant_value());
-							IRConstant* ir_constant = m_current_fn->add_constant(cv);
+					//if (expr_node->get_type() == TreeNodeType::CONSTANT) {
+					IROperand expr_op = get_op(expr_node);
+					if (expr_op.m_operand_type==IROperandType::CONSTANT) {
+						
+						IRConstant* ir_constant = expr_op.get_constant();
+						ConstantValue cv = ir_constant->get_value();
+						if (variable->get_data_type().get_ir_basic_type() != cv.get_basic_type()) {
+							ConstantValue new_cv = try_implicite_conversion(variable->get_data_type().get_ir_basic_type(),cv);
+							IRConstant* ir_constant = m_current_fn->add_constant(new_cv);
 							// todo 
 							// consider changing it later on
-							set_op(constant_node, ir_constant);
+							expr_op = ir_constant;
 						}
 					}
 
-					IROperand op_expr = get_op(expr_node);
-
-					m_coder.add_triple(current_node->get_line_number(), IROperation::INIT_ASSIGN, variable, op_expr);
+					m_coder.add_triple(current_node->get_line_number(), IROperation::INIT_ASSIGN, variable, expr_op);
 				}
 			}
 		}
@@ -955,6 +978,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		uint32_t int32_min_magnitude = 2147483648u;
 		uint64_t int64_min_magnitude = 9223372036854775808ull;
 		bool handled_as_constant = false;
+		IROperand expr_op;
 
 		if (expr->get_type()==TreeNodeType::CONSTANT) {
 			ReferencePtr<ConstantNode> constant_node = expr.cast<ConstantNode>();
@@ -962,41 +986,71 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 
 			switch (cv.get_basic_type())
 			{
+			case IRBasicType::INT32: {
+				int32_t value = cv.get_value<int32_t>();
+				IRConstant* c =m_current_fn->add_constant(-value);
+				expr_op = c;
+				break;
+			}
+			case IRBasicType::INT64:
+			{
+				int64_t value = cv.get_value<int64_t>();
+				IRConstant* c = m_current_fn->add_constant(-value);
+				expr_op = c;
+				break;
+			}
+			// special case 
 			case IRBasicType::UINT32: {
 				uint32_t value = cv.get_value<uint32_t>();
 				if (value == int32_min_magnitude) {
 					ConstantValue min_value = ConstantValue(std::numeric_limits<int32_t>::min());
 					IRConstant* c = m_current_fn->add_constant(min_value);
-					set_op(current_node,c);
-
-					handled_as_constant = true;
+					//set_op(current_node,c);
+					expr_op = c;
+				/*	handled_as_constant = true;*/
 				}
+				// value greater than int_max
+				// followed by c# numeric literals convention
+				else {
+					ConstantValue new_cv = cv.unsafe_convert(IRBasicType::INT64);
+					int64_t value = cv.get_value<int64_t>();
+					IRConstant* c = m_current_fn->add_constant(-value);
+					expr_op = c;
+				}
+
 				break;
 			}
+			// special case 
 			case IRBasicType::UINT64: {
 				uint64_t value = cv.get_value<uint64_t>();
 				if (value == int64_min_magnitude) {
 					ConstantValue min_value = ConstantValue(std::numeric_limits<int64_t>::min());
 					IRConstant *c = m_current_fn->add_constant(min_value);
-					set_op(current_node, c);
-
-					handled_as_constant = true;
+					expr_op = c;
+					//handled_as_constant = true;
 				}
+				else {
+					std::string msg = std::format("value overflow");
+					m_ast_converter_listener->error({ current_node->get_line_number(),msg });
+				}
+
 				break;
 			}
 			default:
 				break;
 			}
+
 		}
 
-		if (handled_as_constant)
-			break;
+		if (expr->get_type()!=TreeNodeType::CONSTANT) {
+			post_order_traverse(expr);
+			expr_op = get_op(expr);
+			IRTriple* triple = m_coder.add_triple(current_node->get_line_number(), IROperation::UNARY_MINUS, expr_op);
+			set_op(current_node, triple);
+		}
+		else
+			set_op(current_node,expr_op);
 
-		post_order_traverse(expr);
-		IROperand expr_op = get_op(expr);
-		IRTriple* triple = m_coder.add_triple(current_node->get_line_number(), IROperation::UNARY_MINUS, expr_op);
-		
-		set_op(current_node, triple);
 		break;
 	}
 	case TreeNodeType::MEMBER_ACCESS: {

@@ -23,11 +23,12 @@
 struct IRDataTypeTraits {
 	// size in bytes 
 	int size;
+	static bool can_implicitly_convert(IRBasicType from, IRBasicType to);
 	static bool is_floating_point(IRBasicType type);
 	static bool is_integer(IRBasicType type);
 	static bool is_boolean(IRBasicType type);
 	static bool is_unsigned(IRBasicType type);
-	static bool is_signed(IRBasicType type);
+	static bool is_signed_integer(IRBasicType type);
 
 	static std::string get_name(const IRBasicType type);
 };

@@ -18,6 +18,61 @@ std::array<const IRDataTypeTraits,(size_t)IRBasicType::NUMBER_OF_TYPES> ir_data_
 	}
 };
 
+bool IRDataTypeTraits::can_implicitly_convert(IRBasicType from, IRBasicType to) {
+	if (from == to)
+		return true;
+
+	switch (from)
+	{
+	case IRBasicType::INT8: {
+		if (to == IRBasicType::INT16 || to == IRBasicType::INT32 || to == IRBasicType::INT64)
+			return true;
+		return false;
+	}
+	case IRBasicType::INT16: {
+		if (to == IRBasicType::INT32 || to == IRBasicType::INT64)
+			return true;
+		return false;
+	}
+	case IRBasicType::INT32: {
+		if (to == IRBasicType::INT64 || to == IRBasicType::DOUBLE)
+			return true;
+		return false;
+	}
+	case IRBasicType::UINT8:
+	{
+		if (to == IRBasicType::UINT16 || to == IRBasicType::UINT32 || to == IRBasicType::UINT64)
+			return true;
+		return false;
+	}
+	case IRBasicType::UINT16: {
+		if (to == IRBasicType::UINT32 || to == IRBasicType::UINT64)
+			return true;
+		return false;
+	}
+	case IRBasicType::UINT32: {
+		if (to == IRBasicType::UINT64)
+			return true;
+		return false;
+	}
+	case IRBasicType::FLOAT:
+		if (to == IRBasicType::DOUBLE)
+			return true;
+		return false;
+	case IRBasicType::INT64:
+	case IRBasicType::UINT64:
+	case IRBasicType::DOUBLE:
+	case IRBasicType::BOOL:
+	case IRBasicType::VOID:
+		return false;
+	case IRBasicType::NUMBER_OF_TYPES:
+		break;
+	default:
+		break;
+	}
+	return false;
+}
+
 bool IRDataTypeTraits::is_floating_point(IRBasicType type) {
 	switch (type)
 	{
@@ -67,9 +122,10 @@ bool IRDataTypeTraits::is_unsigned(IRBasicType type) {
 	}
 }
 
-bool IRDataTypeTraits::is_signed(IRBasicType type) {
+bool IRDataTypeTraits::is_signed_integer(IRBasicType type) {
 	return !is_unsigned(type);
 }
+
 
 std::string IRDataTypeTraits::get_name(const IRBasicType type) {
 
