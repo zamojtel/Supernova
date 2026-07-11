@@ -1,0 +1,10 @@
+
+int main(){
+
+	uint16 x = 123;
+	uint64 y;
+	y = x; // promotion
+
+	return 0;
+}
+#------------------
