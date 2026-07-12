@@ -4,7 +4,34 @@ int main(){
 	uint16 x = 123;
 	uint64 y;
 	y = x; // promotion
+	print(y);
+	
+	uint32 a = 91;
+	uint32& b = a;
+	y = b;
+	print(y);
 
+	uint32 const& c = a; 
+	print(c);
+
+	// uint32& d = c;
+	
+	int value = 10;
+	int * ptr1 = &value;
+	int * const ptr2 = ptr1; // we can't assign anything new to this ptr2 
+	print(*ptr2);
+	
+	int const * ptr3 = ptr1; // this is okay
+	
+	print(*ptr3);
+
+	// int * ptr4 = ptr3; // this causes error
+	
 	return 0;
 }
 #------------------
+123
+91
+91
+10
+10

@@ -1,0 +1,16 @@
+int main(){
+	uint64 &z = x;
+	print(z);
+	
+
+	// another case with error msg
+	uint32 const& c = a; 
+	print(c);
+
+	uint32& d = c;
+
+
+	return 0;
+}
+#------------------
+error msg

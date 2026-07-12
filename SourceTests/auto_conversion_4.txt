@@ -1,0 +1,14 @@
+
+int main(){
+	int a = 123;
+	int * x = &a;
+
+
+	void * pointer = x;
+	float * fl_pointer = x;
+	
+	
+	// int to float 
+	return 0;
+}
+#------------------
