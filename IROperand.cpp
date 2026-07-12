@@ -48,6 +48,10 @@ TypeRef IROperand::get_data_type() const {
 	case IROperandType::MEMBER: {
 		return get_member()->get_data_type();
 	}
+	case IROperandType::NO_OPERAND: {
+		throw std::runtime_error("no operand no allowed");
+		break;
+	}
 	default:
 		throw std::runtime_error("not allowed operand type");
 		break;

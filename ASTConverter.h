@@ -24,8 +24,10 @@ public:
 	void post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode>& node);
 	void convert(ASTConverterListener *listener);
 	//bool can_implicityly_convert_to();
-	ConstantValue try_implicite_conversion(IRBasicType type, const ConstantValue& cv);
+	//void implicit_conversion(IROperand& variable, IROperand expr_op, int line_number);
 
+	void implicit_conversion(IROperand& variable, IROperand expr_op, size_t line_number);
+	ConstantValue try_implicite_conversion(IRBasicType type, const ConstantValue& cv);
 
 	IROperand get_op(const ReferencePtr<AbstractSyntaxTreeNode>& node);
 	void set_op(const ReferencePtr<AbstractSyntaxTreeNode>& node, const IROperand& op);

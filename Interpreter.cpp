@@ -530,7 +530,8 @@ void Interpreter::start() {
 			
 			uint8_t* addr1 = get_operand_address(op1,true);
 			uint8_t* addr2 = get_operand_address(op2);
-			std::cout << "Casted to double : " << (*reinterpret_cast<double*>(addr2)) << std::endl;;
+			//std::cout << "Casted to double : " << (*reinterpret_cast<double*>(addr2)) << std::endl;;
+
 			int32_t* value1 = nullptr;
 			if (op1.get_data_type().is_reference()) {
 				*reinterpret_cast<uint8_t**>(addr1) = addr2;
@@ -846,7 +847,7 @@ void Interpreter::start() {
 			uint8_t* op_1_addr = get_operand_address(op1);
 			uint8_t* result_addr = &m_current_frame->m_memory_stack[0] + current_triple->get_local_mem_offset();
 			int32_t* result = reinterpret_cast<int32_t*>(op_1_addr);
-			std::cout <<"Whta's in the mem: "<< * result << std::endl;
+			//std::cout <<"Whta's in the mem: "<< * result << std::endl
 			*reinterpret_cast<void**>(result_addr) = op_1_addr;
 			m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result_addr;
 
@@ -952,7 +953,7 @@ void Interpreter::start() {
 			uint8_t* op_2_addr = get_operand_address(current_triple->m_operands[1]);
 			
 			if (op1.get_data_type().is_basic_data_type()) {
-				ConstantValue value{op2.get_data_type().get_ir_basic_type(),op_2_addr};
+				ConstantValue value{op2.get_data_type().remove_reference().get_ir_basic_type(),op_2_addr};
 				ConstantValue casted_value = value.unsafe_convert(op1.get_data_type().get_ir_basic_type());
 				uint8_t* result_addr = m_current_frame->m_memory_stack.data() + current_triple->get_local_mem_offset();
 				memcpy(result_addr,casted_value.get_address(),op1.get_data_type().get_size());

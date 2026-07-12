@@ -21,6 +21,11 @@ TypeRef TypeRef::remove_pointer_with_qualifiers() const {
 	return !current_ref.is_pointer() ? *this : static_cast<IRPointerNode*>(current_ref.m_data_type_node)->m_element;
 }
 
+TypeRef TypeRef::remove_pointer() const {
+	TypeRef current_ref = *this;
+	return !current_ref.is_pointer() ? *this : static_cast<IRPointerNode*>(current_ref.m_data_type_node)->m_element;
+}
+
 TypeRef TypeRef::remove_reference() const {
 	TypeRef current_ref = *this;
 	return !current_ref.is_reference() ? *this : static_cast<IRReferenceNode*>(current_ref.m_data_type_node)->m_element;
@@ -232,6 +237,25 @@ std::string TypeRef::to_string() const {
 
 bool TypeRef::is_qualifiers() const {
 	return m_data_type_node && (m_data_type_node->get_node_type() == IRDataTypeNodeType::QUALIFIER);
+}
+
+bool TypeRef::is_const() const {
+	if (m_data_type_node && (m_data_type_node->get_node_type() == IRDataTypeNodeType::QUALIFIER)) {
+		IRQualifiersNode * qualifier_node = static_cast<IRQualifiersNode*>(m_data_type_node);
+		return qualifier_node->m_bit_mask & IRQualifiersNode::CONST;
+	}
+
+	return false;
+}
+
+
+bool TypeRef::is_volatile() const {
+	if (m_data_type_node && (m_data_type_node->get_node_type() == IRDataTypeNodeType::QUALIFIER)) {
+		IRQualifiersNode* qualifier_node = static_cast<IRQualifiersNode*>(m_data_type_node);
+		return qualifier_node->m_bit_mask & IRQualifiersNode::VOLATILE;
+	}
+
+	return false;
 }
 
 bool TypeRef::is_basic_data_type() const {

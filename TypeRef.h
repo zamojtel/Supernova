@@ -21,13 +21,17 @@ public:
 	TypeRef remove_pointer_with_qualifiers() const;
 	TypeRef remove_qualifiers() const;
 	TypeRef remove_reference() const;
+	TypeRef remove_pointer() const;
 	TypeRef remove_array() const;
 	TypeRef remove_extent() const;
 	TypeRef remove_all_extents() const;
 	std::vector<size_t> get_all_extents_size() const;
 
 	bool is_array() const;
+	// correct typo
 	bool is_qualifiers() const;
+	bool is_const() const;
+	bool is_volatile() const;
 	bool is_basic_data_type() const;
 	bool is_boolean() const;
 	bool is_void() const;

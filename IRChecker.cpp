@@ -53,9 +53,12 @@ void IRChecker::check_triple(IRTriple* triple)
 		break;
 	}
 	case IROperation::ASSIGN: {
+		
 		if (!check_operand_types(*op1, *op2)) {
 			m_listener->add_error(triple->m_line_number, "can't assign value of different types");
 		}
+
+
 		break;
 	}
 	case IROperation::INC:

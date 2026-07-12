@@ -331,6 +331,37 @@ ConstantValue ASTConverter::try_implicite_conversion(IRBasicType type,const Cons
 	return cv.safe_convert(type);
 }
 
+void ASTConverter::implicit_conversion(IROperand &variable,IROperand expr_op,size_t line_number) {
+	IRBasicType variable_bt = variable.get_data_type().get_ir_basic_type();
+	IRBasicType expr_bt = expr_op.get_data_type().remove_reference().get_ir_basic_type();
+	expr_op.get_constant();
+	
+	// segment responsible for implicit conversion 
+	if (variable_bt != expr_bt) {
+		// here's where we check what we're dealing with
+		if (IRDataTypeTraits::can_implicitly_convert(expr_bt, variable_bt)) {
+			//IROperand cast_type_node = get_op(variable.get_data_type());
+			IROperand cast_type_node{ variable.get_data_type() };
+			IRTriple* cast = m_coder.add_triple(line_number, IROperation::CAST, cast_type_node, expr_op);
+			expr_op = cast;
+		}
+		else if (expr_op.m_operand_type == IROperandType::CONSTANT) {
+			IRConstant * ir_c = expr_op.get_constant();
+			ConstantValue cv = ir_c->get_value();
+			if (variable.get_data_type().get_ir_basic_type() != cv.get_basic_type()) {
+				ConstantValue cv = try_implicite_conversion(variable.get_data_type().get_ir_basic_type(),cv);
+				IRConstant* ir_constant = m_current_fn->add_constant(cv);
+				expr_op = ir_constant;
+			}
+		}
+		else {
+			//can't implicitly convert from type UINT8 to type INT32
+			std::string msg = std::format("can't implicitly convert from type {} to type {}", IRDataTypeTraits::get_name(expr_bt), IRDataTypeTraits::get_name(variable_bt));
+			m_ast_converter_listener->error({ line_number, msg });
+		}
+	}
+}
+
 void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode> &node) {
 	if(!node)
 		return;
@@ -351,38 +382,33 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		IROperand expr_op = get_op(right_expr);
 
 		IRBasicType variable_bt = variable.get_data_type().get_ir_basic_type();
-		IRBasicType expr_bt = expr_op.get_data_type().get_ir_basic_type();
-		if (variable_bt != expr_bt) {
-			// here's where we check what we're dealing with
-			if (IRDataTypeTraits::can_implicitly_convert(expr_bt,variable_bt)) {
-				//IROperand cast_type_node = get_op(variable.get_data_type());
-				IROperand cast_type_node{ variable.get_data_type() };
-				IRTriple * cast = m_coder.add_triple(current_node->get_line_number(),IROperation::CAST,cast_type_node,expr_op);
-				expr_op = cast;
-			}
-			else if (right_expr->get_type() == TreeNodeType::CONSTANT) {
-				ReferencePtr<ConstantNode> constant_node = right_expr.cast<ConstantNode>();
-				if (variable.get_data_type().get_ir_basic_type() != constant_node->get_constant_value().get_basic_type()) {
-					ConstantValue cv = try_implicite_conversion(variable.get_data_type().get_ir_basic_type(), constant_node->get_constant_value());
-					IRConstant* ir_constant = m_current_fn->add_constant(cv);
-					//set_op(constant_node, ir_constant);
-					expr_op = ir_constant;
-				}
-			}
-			else {
-				//can't implicitly convert from type UINT8 to type INT32
-				std::string msg = std::format("can't implicitly convert from type {} to type {}", IRDataTypeTraits::get_name(expr_bt), IRDataTypeTraits::get_name(variable_bt));
-				m_ast_converter_listener->error({current_node->get_line_number(), msg});
-			}
+		IRBasicType expr_bt = expr_op.get_data_type().remove_reference().get_ir_basic_type();
+		implicit_conversion(variable,expr_op,current_node->get_line_number());
 
-			////if (right_expr->get_type() == TreeNodeType::CONSTANT) {
-			//ReferencePtr<ConstantNode> constant_node =  right_expr.cast<ConstantNode>();
-			//if (variable.get_data_type().get_ir_basic_type() != constant_node->get_constant_value().get_basic_type()) {
-			//	ConstantValue cv = try_implicite_conversion(variable.get_data_type().get_ir_basic_type(),constant_node->get_constant_value());
-			//	IRConstant* ir_constant = m_current_fn->add_constant(cv);
-			//	set_op(constant_node,ir_constant);
-			//}
-		}
+		// segment responsible for implicit conversion 
+		//if (variable_bt != expr_bt) {
+		//	// here's where we check what we're dealing with
+		//	if (IRDataTypeTraits::can_implicitly_convert(expr_bt,variable_bt)) {
+		//		//IROperand cast_type_node = get_op(variable.get_data_type());
+		//		IROperand cast_type_node{ variable.get_data_type() };
+		//		IRTriple * cast = m_coder.add_triple(current_node->get_line_number(),IROperation::CAST,cast_type_node,expr_op);
+		//		expr_op = cast;
+		//	}
+		//	else if (right_expr->get_type() == TreeNodeType::CONSTANT) {
+		//		ReferencePtr<ConstantNode> constant_node = right_expr.cast<ConstantNode>();
+		//		if (variable.get_data_type().get_ir_basic_type() != constant_node->get_constant_value().get_basic_type()) {
+		//			ConstantValue cv = try_implicite_conversion(variable.get_data_type().get_ir_basic_type(), constant_node->get_constant_value());
+		//			IRConstant* ir_constant = m_current_fn->add_constant(cv);
+		//			//set_op(constant_node, ir_constant);
+		//			expr_op = ir_constant;
+		//		}
+		//	}
+		//	else {
+		//		//can't implicitly convert from type UINT8 to type INT32
+		//		std::string msg = std::format("can't implicitly convert from type {} to type {}", IRDataTypeTraits::get_name(expr_bt), IRDataTypeTraits::get_name(variable_bt));
+		//		m_ast_converter_listener->error({current_node->get_line_number(), msg});
+		//	}
+		//}
 		
 		IRTriple* t = m_coder.add_triple(current_node->get_line_number(), IROperation::ASSIGN, variable, expr_op);
 		set_op(current_node, t);
@@ -467,8 +493,9 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 				ReferencePtr<AbstractSyntaxTreeNode> expr_node = current_item->get_expr_node();
 				post_order_traverse(expr_node);
 
+
 				if (expr_node.get_ptr() != nullptr) {
-					//if (expr_node->get_type() == TreeNodeType::CONSTANT) {
+				
 					IROperand expr_op = get_op(expr_node);
 					if (expr_op.m_operand_type==IROperandType::CONSTANT) {
 						
@@ -480,6 +507,34 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 							// todo 
 							// consider changing it later on
 							expr_op = ir_constant;
+						}
+					}
+
+
+					// for handling reference 
+					if (variable->get_data_type().is_reference()) {
+						if (variable->get_data_type().remove_reference().remove_qualifiers() != expr_op.get_data_type().remove_reference().remove_qualifiers()) {
+							std::string msg = std::format("can't assign value of different type to the reference variable");
+							m_ast_converter_listener->error({ current_item->get_line_number(),msg });
+						}
+
+						bool res1 = expr_op.get_data_type().remove_reference().is_const();
+						bool res2 = variable->get_data_type().remove_reference().is_const();
+						if (res1 && !res2) {
+							std::string msg = std::format("can't initialize non-const reference with const reference variable");
+							m_ast_converter_listener->error({ current_item->get_line_number(),msg });
+						}
+					}
+
+					// for handling pointers
+					if (variable->get_data_type().is_pointer() && expr_op.get_data_type().is_pointer()) {
+
+						bool res1 = expr_op.get_data_type().remove_pointer().is_const();
+						bool res2 = variable->get_data_type().remove_pointer().is_const();
+
+						if (res1 && !res2) {
+							std::string msg = std::format("can't initialize non-const pointer with const pointer variable");
+							m_ast_converter_listener->error({ current_item->get_line_number(),msg });
 						}
 					}
 
