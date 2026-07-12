@@ -19,5 +19,15 @@
       "configurePreset": "local-vs2022-x64",
       "configuration": "Debug"
     }
+  ],
+  "testPresets": [
+    {
+      "name": "local-vs2022-x64-debug",
+      "configurePreset": "local-vs2022-x64",
+      "configuration": "Debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
   ]
 }

@@ -11,7 +11,10 @@
       "displayName": "Visual Studio 2022 x64",
       "generator": "Visual Studio 17 2022",
       "architecture": "x64",
-      "binaryDir": "${sourceDir}/out/build/${presetName}"
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "BUILD_TESTING": true
+      }
     }
   ],
   "buildPresets": [
@@ -27,4 +30,3 @@
     }
   ]
 }
-

@@ -28,5 +28,18 @@ The executable is created under:
 out/build/vs2022-x64/Debug/Antlr_Parser_1.exe
 ```
 
+## Running tests
+
+GoogleTest is downloaded automatically by CMake and is kept outside the
+repository's tracked source files. Build and run the tests with:
+
+```powershell
+cmake --build --preset local-vs2022-x64-debug --target supernova_tests
+ctest --preset local-vs2022-x64-debug
+```
+
+The first configure requires an internet connection. The downloaded dependency
+is reused from the local `out` directory by subsequent builds.
+
 The existing Visual Studio solution remains available during the CMake
 migration.

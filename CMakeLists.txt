@@ -71,3 +71,39 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES
 )
 
 set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY VS_STARTUP_PROJECT supernova)
+
+include(CTest)
+
+if(BUILD_TESTING)
+    include(FetchContent)
+
+    # Keep GoogleTest's runtime-library choice consistent with the parent
+    # project when building with Visual Studio.
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+    FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/52eb8108c5bdec04579160ae17225d66034bd723.zip
+    )
+    FetchContent_MakeAvailable(googletest)
+
+    add_executable(supernova_tests
+        tests/ReferencePtrTests.cpp
+    )
+
+    target_link_libraries(supernova_tests PRIVATE
+        supernova_core
+        GTest::gtest_main
+    )
+
+    if(MSVC)
+        target_compile_options(supernova_tests PRIVATE /W3)
+    endif()
+
+    include(GoogleTest)
+    gtest_discover_tests(supernova_tests DISCOVERY_MODE PRE_TEST)
+
+    source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/tests" FILES
+        tests/ReferencePtrTests.cpp
+    )
+endif()
