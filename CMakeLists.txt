@@ -28,28 +28,36 @@ if(LLVM_PACKAGE_VERSION VERSION_LESS 18)
         "Supernova requires LLVM 18 or newer, but found ${LLVM_PACKAGE_VERSION}")
 endif()
 
-add_executable(supernova
-    main.cpp
+add_library(supernova_core STATIC
+    SupernovaCore.cpp
     ListNode.cpp
 )
+
+target_include_directories(supernova_core PUBLIC
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/GeneratedCLikeLanguage"
+)
+
+target_include_directories(supernova_core SYSTEM PUBLIC ${LLVM_INCLUDE_DIRS})
+target_link_directories(supernova_core PUBLIC ${LLVM_LIBRARY_DIRS})
+target_link_libraries(supernova_core PUBLIC ${SUPERNOVA_ANTLR_TARGET})
+
+if(LLVM_DEFINITIONS)
+    separate_arguments(SUPERNOVA_LLVM_DEFINITIONS NATIVE_COMMAND "${LLVM_DEFINITIONS}")
+    target_compile_options(supernova_core PUBLIC ${SUPERNOVA_LLVM_DEFINITIONS})
+endif()
+
+if(MSVC)
+    target_compile_options(supernova_core PRIVATE /W3)
+endif()
+
+add_executable(supernova main.cpp)
 
 set_target_properties(supernova PROPERTIES
     OUTPUT_NAME "Antlr_Parser_1"
 )
 
-target_include_directories(supernova PRIVATE
-    "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_CURRENT_SOURCE_DIR}/GeneratedCLikeLanguage"
-)
-
-target_include_directories(supernova SYSTEM PRIVATE ${LLVM_INCLUDE_DIRS})
-target_link_directories(supernova PRIVATE ${LLVM_LIBRARY_DIRS})
-target_link_libraries(supernova PRIVATE ${SUPERNOVA_ANTLR_TARGET})
-
-if(LLVM_DEFINITIONS)
-    separate_arguments(SUPERNOVA_LLVM_DEFINITIONS NATIVE_COMMAND "${LLVM_DEFINITIONS}")
-    target_compile_options(supernova PRIVATE ${SUPERNOVA_LLVM_DEFINITIONS})
-endif()
+target_link_libraries(supernova PRIVATE supernova_core)
 
 if(MSVC)
     target_compile_options(supernova PRIVATE /W3)
@@ -57,6 +65,8 @@ endif()
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES
     main.cpp
+    ParserContext.h
+    SupernovaCore.cpp
     ListNode.cpp
 )
 

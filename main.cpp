@@ -116,29 +116,21 @@
 #pragma comment(lib, "oleaut32.lib")
 #pragma comment(lib, "comdlg32.lib")
 
-class MyContextSuperClass : public antlr4::ParserRuleContext {
-public:
-	//int value;
-	//AbstractSyntaxTreeNode* m_node;
-	ReferencePtr<AbstractSyntaxTreeNode> m_node;
-	MyContextSuperClass() = default;
-	MyContextSuperClass(ParserRuleContext* parent, size_t invoking_state) : ParserRuleContext{ parent,invoking_state } {}
-};
+#include "ParserContext.h"
 
 #include "GeneratedCLikeLanguage/GrammarBaseListener.h"
 #include "GeneratedCLikeLanguage/GrammarLexer.h"
 #include "GeneratedCLikeLanguage/GrammarListener.h"
 #include "GeneratedCLikeLanguage/GrammarParser.h"
 
-#include "GeneratedCLikeLanguage/GrammarBaseListener.cpp"
-#include "GeneratedCLikeLanguage/GrammarLexer.cpp"
-#include "GeneratedCLikeLanguage/GrammarParser.cpp"
-
+using antlr4::Recognizer;
+using antlr4::Token;
+namespace atn = antlr4::atn;
+namespace dfa = antlr4::dfa;
 
 #include <Tree/ParseTreeListener.h>
 #include <Tree/IterativeParseTreeWalker.h>
 #include <tree/ErrorNode.h>
-#include "Includes.cpp"
 
 
 void func() {

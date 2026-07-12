@@ -226,7 +226,7 @@ public:
 };
 
 
-std::ostream& operator<<(std::ostream& o, const ConstantValue& val) {
+inline std::ostream& operator<<(std::ostream& o, const ConstantValue& val) {
 	o << val.to_string();
 	return o;
 }
