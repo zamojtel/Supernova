@@ -8,7 +8,7 @@ public:
 	std::string get_unary_operator_symbol(OperationType op);
 };
 
-std::string TreePrinter::get_binary_operator_symbol(OperationType op) {
+inline std::string TreePrinter::get_binary_operator_symbol(OperationType op) {
 	switch (op)
 	{
 	case OperationType::ADD: {
@@ -48,14 +48,14 @@ std::string TreePrinter::get_binary_operator_symbol(OperationType op) {
 		break;
 	}
 }
-std::string get_string_bool(bool value) {
+inline std::string get_string_bool(bool value) {
 	if (value)
 		return "true";
 	else
 		return "false";
 }
 
-void TreePrinter::print_node(const ReferencePtr<AbstractSyntaxTreeNode> &node,int indentation) {
+inline void TreePrinter::print_node(const ReferencePtr<AbstractSyntaxTreeNode> &node,int indentation) {
 
 	int spaces = 0;
 	std::string space_str = "";
@@ -389,7 +389,7 @@ void TreePrinter::print_node(const ReferencePtr<AbstractSyntaxTreeNode> &node,in
 	}
 }
 
-void TreePrinter::print_tree(const ReferencePtr<AbstractSyntaxTreeNode> &node,int space_between) {
+inline void TreePrinter::print_tree(const ReferencePtr<AbstractSyntaxTreeNode> &node,int space_between) {
 	print_node(node,space_between);
 	for (size_t i = 0; i < node->get_child_count();i++) {
 		print_tree(node->get_child(i),space_between+1);

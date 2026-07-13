@@ -32,6 +32,10 @@ obj/
 # CMake / other
 CMakeFiles/
 CMakeCache.txt
+out/
+CMakeUserPresets.json
+vcpkg_installed/
+_deps/
 
 # Test / temp
 *.tmp

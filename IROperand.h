@@ -28,7 +28,7 @@ public:
 	TypeRef get_data_type() const;
 };
 
-std::ostream& operator<<(std::ostream& o, const IROperand& op) {
+inline std::ostream& operator<<(std::ostream& o, const IROperand& op) {
 	switch (op.m_operand_type)
 	{
 	case IROperandType::CONSTANT: {

@@ -1,0 +1,33 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "local-vs2022-x64",
+      "displayName": "Local Visual Studio 2022 x64",
+      "inherits": "vs2022-x64",
+      "binaryDir": "${sourceDir}/out/build/vs2022-x64",
+      "cacheVariables": {
+        "ANTLR4_RUNTIME_ROOT": "C:/path/to/antlr4/runtime/Cpp/runtime",
+        "LLVM_DIR": "C:/path/to/llvm/lib/cmake/llvm",
+        "CMAKE_PREFIX_PATH": "C:/path/to/dependency/prefix"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "local-vs2022-x64-debug",
+      "configurePreset": "local-vs2022-x64",
+      "configuration": "Debug"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "local-vs2022-x64-debug",
+      "configurePreset": "local-vs2022-x64",
+      "configuration": "Debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}
