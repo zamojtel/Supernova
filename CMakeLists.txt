@@ -28,6 +28,11 @@ if(LLVM_PACKAGE_VERSION VERSION_LESS 18)
         "Supernova requires LLVM 18 or newer, but found ${LLVM_PACKAGE_VERSION}")
 endif()
 
+llvm_map_components_to_libnames(SUPERNOVA_LLVM_LIBRARIES
+    Core
+    Support
+)
+
 add_library(supernova_core STATIC
     SupernovaCore.cpp
     ListNode.cpp
@@ -40,7 +45,10 @@ target_include_directories(supernova_core PUBLIC
 
 target_include_directories(supernova_core SYSTEM PUBLIC ${LLVM_INCLUDE_DIRS})
 target_link_directories(supernova_core PUBLIC ${LLVM_LIBRARY_DIRS})
-target_link_libraries(supernova_core PUBLIC ${SUPERNOVA_ANTLR_TARGET})
+target_link_libraries(supernova_core PUBLIC
+    ${SUPERNOVA_ANTLR_TARGET}
+    ${SUPERNOVA_LLVM_LIBRARIES}
+)
 
 if(LLVM_DEFINITIONS)
     separate_arguments(SUPERNOVA_LLVM_DEFINITIONS NATIVE_COMMAND "${LLVM_DEFINITIONS}")
