@@ -530,7 +530,6 @@ void Interpreter::start() {
 			
 			uint8_t* addr1 = get_operand_address(op1,true);
 			uint8_t* addr2 = get_operand_address(op2);
-			//std::cout << "Casted to double : " << (*reinterpret_cast<double*>(addr2)) << std::endl;;
 
 			int32_t* value1 = nullptr;
 			if (op1.get_data_type().is_reference()) {
@@ -662,9 +661,9 @@ void Interpreter::start() {
 			continue;
 		}
 		case IROperation::JC: {
-			ConstantValue cond_value = get_operand_value(current_triple->m_operands[0]);
 
-			if (cond_value.get_value<bool>()) {
+			uint8_t* value_addr = get_operand_address(current_triple->m_operands[0]);
+			if (*value_addr) {
 				IROperand op = current_triple->m_operands[1];
 				current_blk = std::get<IRBasicBlock*>(op.m_value);
 				current_blk_triple_index = 0;

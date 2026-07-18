@@ -45,6 +45,8 @@
 
 #include "IRBasicBlock.h"
 
+#include "IRInliner.h"
+
 // Checker Class
 #include "IRCheckerListener.h"
 #include "IRChecker.h"

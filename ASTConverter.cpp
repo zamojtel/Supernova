@@ -148,7 +148,7 @@ void ASTConverter::build_ir_data_type_from_ast(const ReferencePtr<DataTypeNode>&
 			composed_type = result.value();
 		else {
 			std::string msg = std::format("type not defined", id_node->get_identifier());
-			m_ast_converter_listener->error({ id_node->get_line_number(),msg });
+			m_ast_converter_listener->error({ ErrorType::TYPE_NOT_DEFINED, id_node->get_line_number(),msg });
 		}
 		
 		current_ref = composed_type.get_data_type();
@@ -182,7 +182,7 @@ void ASTConverter::build_ir_data_type_from_ast(const ReferencePtr<DataTypeNode>&
 				current_ref = m_dtm->add_qualifiers(current_ref,node->get_mask());
 			}
 			catch (const std::runtime_error& e) {
-				m_ast_converter_listener->error({dtn->get_line_number(),e.what()});
+				m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR,dtn->get_line_number(),e.what()});
 			}
 			break;
 		}
@@ -238,7 +238,7 @@ void ASTConverter::find_function_signatures(const ReferencePtr<AbstractSyntaxTre
 
 		if (!m_symbol_table.can_add(fn_name)) {
 			std::string msg = std::format("symbol {} is already used.",fn_name);
-			m_ast_converter_listener->error({ current_node->get_line_number(),msg});
+			m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR ,current_node->get_line_number(),msg});
 		}
 
 		auto list_with_params = current_node->get_parameters();
@@ -283,7 +283,7 @@ void ASTConverter::find_function_signatures(const ReferencePtr<AbstractSyntaxTre
 
 			if (!m_symbol_table.can_add(variable_name)) {
 				std::string msg = std::format("symbol {} is already used.",variable_name);
-				m_ast_converter_listener->error({ current_node->get_line_number(),msg});
+				m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR,current_node->get_line_number(),msg});
 			}
 			// tutaj chyba coœ jest nie halo 
 			IRGlobalVariable* variable = m_ir_program->add_variable(variable_name, dtn->m_ir_data_type);
@@ -331,36 +331,67 @@ ConstantValue ASTConverter::try_implicite_conversion(IRBasicType type,const Cons
 	return cv.safe_convert(type);
 }
 
-void ASTConverter::implicit_conversion(IROperand &variable,IROperand expr_op,size_t line_number) {
-	IRBasicType variable_bt = variable.get_data_type().get_ir_basic_type();
-	IRBasicType expr_bt = expr_op.get_data_type().remove_reference().get_ir_basic_type();
-	expr_op.get_constant();
-	
+//void ASTConverter::implicit_conversion(const IROperand &variable,IROperand expr_op,size_t line_number) {
+//	IRBasicType variable_bt = variable.get_data_type().get_ir_basic_type();
+//	IRBasicType expr_bt = expr_op.get_data_type().remove_reference().get_ir_basic_type();
+//	expr_op.get_constant();
+//	
+//	// segment responsible for implicit conversion 
+//	if (variable_bt != expr_bt) {
+//		// here's where we check what we're dealing with
+//		if (IRDataTypeTraits::can_implicitly_convert(expr_bt, variable_bt)) {
+//			//IROperand cast_type_node = get_op(variable.get_data_type());
+//			IROperand cast_type_node{ variable.get_data_type() };
+//			IRTriple* cast = m_coder.add_triple(line_number, IROperation::CAST, cast_type_node, expr_op);
+//			expr_op = cast;
+//		}
+//		else if (expr_op.m_operand_type == IROperandType::CONSTANT) {
+//			IRConstant * ir_c = expr_op.get_constant();
+//			ConstantValue cv = ir_c->get_value();
+//			if (variable.get_data_type().get_ir_basic_type() != cv.get_basic_type()) {
+//				ConstantValue cv = try_implicite_conversion(variable.get_data_type().get_ir_basic_type(),cv);
+//				IRConstant* ir_constant = m_current_fn->add_constant(cv);
+//				expr_op = ir_constant;
+//			}
+//		}
+//		else {
+//			//can't implicitly convert from type UINT8 to type INT32
+//			std::string msg = std::format("can't implicitly convert from type {} to type {}", IRDataTypeTraits::get_name(expr_bt), IRDataTypeTraits::get_name(variable_bt));
+//			m_ast_converter_listener->error({ line_number, msg });
+//		}
+//	}
+//}
+
+void ASTConverter::implicit_conversion(const IROperand& left, IROperand& right, size_t line_number) {
+	IRBasicType left_bt = left.get_data_type().remove_reference().get_ir_basic_type();
+	IRBasicType right_bt = right.get_data_type().remove_reference().get_ir_basic_type();
+
 	// segment responsible for implicit conversion 
-	if (variable_bt != expr_bt) {
+	if (left_bt != right_bt) {
 		// here's where we check what we're dealing with
-		if (IRDataTypeTraits::can_implicitly_convert(expr_bt, variable_bt)) {
+		if (IRDataTypeTraits::can_implicitly_convert(right_bt, left_bt)) {
 			//IROperand cast_type_node = get_op(variable.get_data_type());
-			IROperand cast_type_node{ variable.get_data_type() };
-			IRTriple* cast = m_coder.add_triple(line_number, IROperation::CAST, cast_type_node, expr_op);
-			expr_op = cast;
+			IROperand cast_type_node{ left.get_data_type() };
+			IRTriple* cast = m_coder.add_triple(line_number, IROperation::CAST, cast_type_node, right);
+			right = cast;
 		}
-		else if (expr_op.m_operand_type == IROperandType::CONSTANT) {
-			IRConstant * ir_c = expr_op.get_constant();
+		else if (right.m_operand_type == IROperandType::CONSTANT) {
+			IRConstant* ir_c = right.get_constant();
 			ConstantValue cv = ir_c->get_value();
-			if (variable.get_data_type().get_ir_basic_type() != cv.get_basic_type()) {
-				ConstantValue cv = try_implicite_conversion(variable.get_data_type().get_ir_basic_type(),cv);
-				IRConstant* ir_constant = m_current_fn->add_constant(cv);
-				expr_op = ir_constant;
+			if (left.get_data_type().get_ir_basic_type() != cv.get_basic_type()) {
+				ConstantValue new_cv = try_implicite_conversion(left.get_data_type().get_ir_basic_type(), cv);
+				IRConstant* ir_constant = m_current_fn->add_constant(new_cv);
+				right = ir_constant;
 			}
 		}
 		else {
 			//can't implicitly convert from type UINT8 to type INT32
-			std::string msg = std::format("can't implicitly convert from type {} to type {}", IRDataTypeTraits::get_name(expr_bt), IRDataTypeTraits::get_name(variable_bt));
-			m_ast_converter_listener->error({ line_number, msg });
+			std::string msg = std::format("can't implicitly convert from type {} to type {}", IRDataTypeTraits::get_name(right_bt), IRDataTypeTraits::get_name(left_bt));
+			m_ast_converter_listener->error({ ErrorType::IMPLICIT_CAST_NOT_ALLOWED, line_number, msg });
 		}
 	}
 }
+
 
 void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode> &node) {
 	if(!node)
@@ -384,31 +415,6 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		IRBasicType variable_bt = variable.get_data_type().get_ir_basic_type();
 		IRBasicType expr_bt = expr_op.get_data_type().remove_reference().get_ir_basic_type();
 		implicit_conversion(variable,expr_op,current_node->get_line_number());
-
-		// segment responsible for implicit conversion 
-		//if (variable_bt != expr_bt) {
-		//	// here's where we check what we're dealing with
-		//	if (IRDataTypeTraits::can_implicitly_convert(expr_bt,variable_bt)) {
-		//		//IROperand cast_type_node = get_op(variable.get_data_type());
-		//		IROperand cast_type_node{ variable.get_data_type() };
-		//		IRTriple * cast = m_coder.add_triple(current_node->get_line_number(),IROperation::CAST,cast_type_node,expr_op);
-		//		expr_op = cast;
-		//	}
-		//	else if (right_expr->get_type() == TreeNodeType::CONSTANT) {
-		//		ReferencePtr<ConstantNode> constant_node = right_expr.cast<ConstantNode>();
-		//		if (variable.get_data_type().get_ir_basic_type() != constant_node->get_constant_value().get_basic_type()) {
-		//			ConstantValue cv = try_implicite_conversion(variable.get_data_type().get_ir_basic_type(), constant_node->get_constant_value());
-		//			IRConstant* ir_constant = m_current_fn->add_constant(cv);
-		//			//set_op(constant_node, ir_constant);
-		//			expr_op = ir_constant;
-		//		}
-		//	}
-		//	else {
-		//		//can't implicitly convert from type UINT8 to type INT32
-		//		std::string msg = std::format("can't implicitly convert from type {} to type {}", IRDataTypeTraits::get_name(expr_bt), IRDataTypeTraits::get_name(variable_bt));
-		//		m_ast_converter_listener->error({current_node->get_line_number(), msg});
-		//	}
-		//}
 		
 		IRTriple* t = m_coder.add_triple(current_node->get_line_number(), IROperation::ASSIGN, variable, expr_op);
 		set_op(current_node, t);
@@ -483,7 +489,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 				TypeRef type = dtn->m_ir_data_type;
 
 				if (!m_symbol_table.can_add(variable_name))
-					m_ast_converter_listener->error({ current_node->get_line_number(),"symbol " + variable_name + " is already used." });
+					m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR, current_node->get_line_number(),"symbol " + variable_name + " is already used." });
 
 				IRVariable* variable = m_current_fn->add_variable(variable_name, type);
 				m_symbol_table.add_symbol(variable_name,variable);
@@ -497,32 +503,33 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 				if (expr_node.get_ptr() != nullptr) {
 				
 					IROperand expr_op = get_op(expr_node);
-					if (expr_op.m_operand_type==IROperandType::CONSTANT) {
-						
-						IRConstant* ir_constant = expr_op.get_constant();
-						ConstantValue cv = ir_constant->get_value();
-						if (variable->get_data_type().get_ir_basic_type() != cv.get_basic_type()) {
-							ConstantValue new_cv = try_implicite_conversion(variable->get_data_type().get_ir_basic_type(),cv);
-							IRConstant* ir_constant = m_current_fn->add_constant(new_cv);
-							// todo 
-							// consider changing it later on
-							expr_op = ir_constant;
-						}
-					}
 
+					implicit_conversion(variable, expr_op, current_node->get_line_number());
+					//if (expr_op.m_operand_type==IROperandType::CONSTANT) {
+					//	
+					//	IRConstant* ir_constant = expr_op.get_constant();
+					//	ConstantValue cv = ir_constant->get_value();
+					//	if (variable->get_data_type().get_ir_basic_type() != cv.get_basic_type()) {
+					//		ConstantValue new_cv = try_implicite_conversion(variable->get_data_type().get_ir_basic_type(),cv);
+					//		IRConstant* ir_constant = m_current_fn->add_constant(new_cv);
+					//		// todo 
+					//		// consider changing it later on
+					//		expr_op = ir_constant;
+					//	}
+					//}
 
 					// for handling reference 
 					if (variable->get_data_type().is_reference()) {
 						if (variable->get_data_type().remove_reference().remove_qualifiers() != expr_op.get_data_type().remove_reference().remove_qualifiers()) {
 							std::string msg = std::format("can't assign value of different type to the reference variable");
-							m_ast_converter_listener->error({ current_item->get_line_number(),msg });
+							m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR,current_item->get_line_number(),msg });
 						}
 
 						bool res1 = expr_op.get_data_type().remove_reference().is_const();
 						bool res2 = variable->get_data_type().remove_reference().is_const();
 						if (res1 && !res2) {
 							std::string msg = std::format("can't initialize non-const reference with const reference variable");
-							m_ast_converter_listener->error({ current_item->get_line_number(),msg });
+							m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR,current_item->get_line_number(),msg });
 						}
 					}
 
@@ -534,7 +541,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 
 						if (res1 && !res2) {
 							std::string msg = std::format("can't initialize non-const pointer with const pointer variable");
-							m_ast_converter_listener->error({ current_item->get_line_number(),msg });
+							m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR,current_item->get_line_number(),msg });
 						}
 					}
 
@@ -573,16 +580,16 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 
 		m_coder.set_basic_block(stmt_blk);
 		post_order_traverse(current_node->m_stmt);
-
+		// USUNAC jmp W PRZYPADKU IF które koñcz¹ siê return 
 		if (current_node->m_else_stmt) {
+			m_coder.set_basic_block(else_stmt_blk);
 			post_order_traverse(current_node->m_else_stmt);
-			m_coder.set_basic_block(current_blk);
 
 			m_coder.set_basic_block(stmt_blk);
-			m_coder.add_triple(current_node->m_stmt->get_line_number(), IROperation::JMP, after_if_basic_block); // 1 
+			m_coder.add_triple(current_node->m_stmt->get_line_number(), IROperation::JMP, after_if_basic_block); 
 
 			m_coder.set_basic_block(else_stmt_blk);
-			m_coder.add_triple(current_node->m_else_stmt->get_line_number(), IROperation::JMP, after_if_basic_block);//1
+			m_coder.add_triple(current_node->m_else_stmt->get_line_number(), IROperation::JMP, after_if_basic_block);
 
 			m_coder.set_basic_block(after_if_basic_block);
 		}
@@ -590,7 +597,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 			m_coder.set_basic_block(current_blk);
 
 			m_coder.set_basic_block(stmt_blk);
-			m_coder.add_triple(current_node->m_stmt->get_line_number(), IROperation::JMP, after_if_basic_block); // 1
+			m_coder.add_triple(current_node->m_stmt->get_line_number(), IROperation::JMP, after_if_basic_block);
 			m_coder.set_basic_block(after_if_basic_block);
 		}
 
@@ -680,7 +687,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		if (!m_after_loop_blk.empty())
 			m_coder.add_triple(current_node->get_line_number(), IROperation::JMP, m_after_loop_blk.back());
 		else
-			m_ast_converter_listener->error({ current_node->get_line_number(),"a break statement can only be used within a loop or a switch" });
+			m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR, current_node->get_line_number(),"a break statement can only be used within a loop or a switch" });
 		break;
 	}
 	case TreeNodeType::CONTINUE: {
@@ -689,7 +696,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		if (!m_condition_loop_blk.empty())
 			m_coder.add_triple(current_node->get_line_number(), IROperation::JMP, m_condition_loop_blk.back());
 		else
-			m_ast_converter_listener->error({ current_node->get_line_number(),"a continue statement can only be used within a loop" });
+			m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR, current_node->get_line_number(),"a continue statement can only be used within a loop" });
 
 		break;
 	}
@@ -710,7 +717,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 			else
 			{
 				std::string msg = std::format("identifier {} not found",current_node->get_identifier());
-				m_ast_converter_listener->error({ current_node->get_line_number(), msg });
+				m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR,current_node->get_line_number(), msg });
 			}
 		}
 
@@ -778,7 +785,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 					casted_composite_node_type->close();
 				}
 				catch (std::runtime_error& e) {
-					m_ast_converter_listener->error({ composite_node->get_line_number(),e.what() });
+					m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR, composite_node->get_line_number(),e.what() });
 				}
 
 			}
@@ -845,7 +852,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 			size = (uint64_t)dtn->m_ir_data_type.get_size();
 		}
 		catch (std::runtime_error &e) {
-			m_ast_converter_listener->error({ current_node->get_line_number(),e.what()});
+			m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR, current_node->get_line_number(),e.what()});
 		}
 	
 		ConstantValue cv = { size };
@@ -1086,7 +1093,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 				}
 				else {
 					std::string msg = std::format("value overflow");
-					m_ast_converter_listener->error({ current_node->get_line_number(),msg });
+					m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR, current_node->get_line_number(),msg });
 				}
 
 				break;
@@ -1135,7 +1142,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 				data_type_ref = data_type_ref.remove_pointer_with_qualifiers();
 			else {
 				std::string msg = std::format("arrow used on non-pointer type");
-				m_ast_converter_listener->error({ current_node->get_line_number(),msg });
+				m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR, current_node->get_line_number(),msg });
 				break;
 			}
 		}
@@ -1151,7 +1158,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 			}
 			else {
 				std::string msg = std::format("composite type does not have field with name {}", field_name);
-				m_ast_converter_listener->error({ current_node->get_line_number(),msg });
+				m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR, current_node->get_line_number(),msg });
 				break;
 			}
 		}

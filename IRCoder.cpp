@@ -19,7 +19,8 @@ IRTriple* IRCoder::add_triple(size_t line_number, IROperation operation, const I
 
 IRTriple* IRCoder::add_triple(size_t line_number, IROperation operation, const std::vector<IROperand>& operands) {
 	IRFunction* current_fn = m_current_basic_blk->get_function();
-	IRTriple* triple = new IRTriple{ line_number,current_fn->get_triple_count(),m_current_basic_blk->m_triples.size(),operation,operands };
+
+	IRTriple* triple = new IRTriple{m_current_basic_blk,line_number,current_fn->get_triple_count(),m_current_basic_blk->m_triples.size(),operation,operands };
 
 	insert_triple(triple);
 	return triple;

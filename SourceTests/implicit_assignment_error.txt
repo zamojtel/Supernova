@@ -1,0 +1,10 @@
+
+int main(){
+    int64 a = 500;
+    int16 b;
+    b = a;
+
+    return 0;
+}
+#------------------
+4 IMPLICIT_CAST_NOT_ALLOWED

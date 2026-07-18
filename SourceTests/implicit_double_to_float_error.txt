@@ -1,6 +1,6 @@
 int main(){
-	int x = 123;
-	uint32 y = x;
+	double a = 12.5;
+	float b = a;
 	 
 	return 0;
 }

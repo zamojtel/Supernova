@@ -1,0 +1,9 @@
+
+int main(){
+	int16 x = -123;
+	int64 y;
+
+	// assignment should work
+	y = x;
+	return 0;
+}

@@ -401,6 +401,7 @@ void check_prints(const std::string& file_name, const std::vector<std::string>& 
 
 	class ASTConverterImpl : public ASTConverterListener {
 	public:
+		std::vector<ASTConverterError> m_errors;
 		void error(const ASTConverterError& err) override { std::cout << "ASTConverterError: Line " << err.get_line_number() << " : " << err.get_msg() << std::endl; }
 	};
 
@@ -431,59 +432,23 @@ int main() {
 	std::string expected_outputs_folder = "C:\\Users\\zamoj\\OneDrive\\Pulpit\\ProjectKompilator\\SourceTests";
 
 	std::vector<std::string> test_names{
-		//simple array tests:
-	/*	"all_in_one",
-		"arr_1",
-		"arr_2",
-		"arr_3",
-		"arr_4",
-		"arr_5",
-		"address_of_1",
-		"simple_test_1",
-		"dereference_1",
-		"double_swap_1",
-		"pointer_1",
-		"pointer_to_a_struct_field",
-		"pointer_to_the_element_of_array",
-		"read_array_from_pointers",
-		"member_pointer",
-		"regular_function_call",
-		"simple_function_call_1",
-		"simple_function_call_2",
-		"reference_as_argument_in_function_call_1",
-		"reference_to_reference",
-		"vectorization_1"t .
-		"print_arr_1"
-		"print_pointer",
-		"vectorization_2",
-		"print_arr_2",
-		"print_const_ptr_1",
-		"vectorization_2",
-		"vectorization_3",
-		"vectorization_4",
-		"vectorization_5",*/
-		//"select_6",
-		//"select_7",
-		//"select_8"
-		//"bit_shift_1"
-		//"bit_shift_logical"
-		//"malloc_1"
-		//"hex_1"
-		//"print_type_1"
-		//"numeric_literal_1"
-		//"numeric_literal_3"
-		//"numeric_literal_2"
-		//"auto_conversion_1"
-		//"auto_conversion_2"
-		//"promotion_1"
-		//"implicit_conversion_1"
-		//"numeric_literal_2"
-		//"auto_conversion_3"
-		//"auto_conversion_4"
-		"promotion_1"
-		//"promotion_2"
-		//"bin_1"
-		//"cast_1"
+		//"implicit_type_widening"
+		//"implicit_unsigned_widening"
+		//"implicit_assignment_widening"
+		//"implicit_float_to_double"
+		//"implicit_reference_widening"
+		//"add_function_call"
+		"many_blocks"
+	};
+
+	std::vector<std::string> test_errors{
+		//"implicit_error_1"
+		//"implicit_cast_not_allowed_error_1"
+		//"implicit_unsigned_widening_1"
+		//"implicit_narrowing_error"
+		//"implicit_signed_to_unsigned_error"
+		//"implicit_double_to_float_error"
+		//"implicit_assignment_error"
 	};
 
 	std::cout<<"TypeName: "<<typeid(decltype(-2'147'483'648)).name();
@@ -492,7 +457,7 @@ int main() {
 	std::cout<<"\nTypeName: "<<typeid(decltype(-0x80000001)).name();
 
 	Tester compiler_tester(test_folder, expected_outputs_folder);
-	compiler_tester.run_all_tests(test_names);
+	compiler_tester.run_all_tests(test_names,test_errors);
 
 	return 0;
 }

@@ -1,7 +1,7 @@
+
 int main(){
-	int x = 123;
-	uint32 y = x;
-	 
+	int64 a = 525;
+	int8 b = a;
 	return 0;
 }
 #------------------

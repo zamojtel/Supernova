@@ -1,7 +1,8 @@
+
 int main(){
-	int x = 123;
+	int32 x = -123;
 	uint32 y = x;
-	 
+
 	return 0;
 }
 #------------------

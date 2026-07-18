@@ -39,6 +39,8 @@
 
 #include "IRCoder.cpp"
 
+#include "IRInliner.cpp"
+
 #include "ArrayIterator.cpp"
 
 #include "Interpreter.cpp"

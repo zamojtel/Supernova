@@ -1,0 +1,14 @@
+int main(){
+    uint8 a = 250;
+    uint16 b = a;
+    uint32 c = b;
+    uint64 d = c;
+
+    print(b);
+    print(d);
+
+    return 0;
+}
+#------------------
+250
+250

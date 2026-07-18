@@ -1,10 +1,15 @@
 
-Tester::Tester(const std::string& s_d,const std::string& e_d) :m_source_dir{ s_d }, m_expected_dir{ e_d } {}
+Tester::Tester(const std::string& s_d,const std::string& e_d) :m_source_dir{ s_d }, m_expected_dir{ e_d } {
+    for (int i = 0; i < (int)ErrorType::ERROR_COUNT;i++) {
+        ErrorType e_type = ErrorType{i};
+        m_error_name_to_error_type[ErrorTraits::get_name(e_type)] = e_type;
+    }
+}
 
-// wPISdu
+
 std::string Tester::read_entire_file(const fs::path& file_path) {
     std::vector<std::string> lines;
-	std::fstream file(file_path);
+	std::ifstream file(file_path);
 	if (!file.is_open())
 		return {};
 
@@ -48,7 +53,7 @@ std::vector<std::string> Tester::read_expected_lines(const fs::path& file_path) 
 	return lines;
 }
 
-void Tester::run_all_tests(const std::vector<std::string>& test_names) {
+void Tester::run_all_tests(const std::vector<std::string>& test_names,const std::vector<std::string>& test_error_names) {
     if (!fs::exists(m_source_dir)) {
         std::cout << "source directory does not exit\n";
         return;
@@ -59,66 +64,56 @@ void Tester::run_all_tests(const std::vector<std::string>& test_names) {
         return;
     }
 
-    size_t passed = 0;
-    size_t failed = 0;
+    size_t tests_passed = 0;
+    size_t tests_failed = 0;
     for (const std::string &test_name : test_names) {
         fs::path test_path =  m_source_dir + "\\" + test_name + ".txt";
-        //fs::path expected_test_path =  m_source_dir +"\\" + test_name + "_output.txt";
     
         std::cout << "Running test: " << test_path.filename().string() << "...\n";
 
-        //if (!fs::exists(expected_test_path)) {
-        //    std::cout << "Test skipped, no expected file\n";
-        //    continue;
-        //}
-
         std::cout << "===========================\n";
-        if (run_single_test(test_path, "")) {
+        if (run_single_test(test_path, "",false)) {
             std::cout << "Passed\n";
-            passed++;
+            tests_passed++;
         }
         else {
             std::cout << "Failed\n";
-            failed++;
+            tests_failed++;
         }
         std::cout << "===========================\n";
 
     }
+    std::cout << "Wrap up: " << std::endl;
+    std::cout << "Number of tests passed: " << tests_passed << std::endl;
+    std::cout << "Number of tests failed: " << tests_failed << std::endl;
 
-    //test_1.txt
-    //test_1_output.txt
+    size_t error_tests_passed = 0;
+    size_t error_tests_failed = 0;
+    std::cout << "\n\n\n";
+
+    for (const std::string &test_error_name : test_error_names) {
+        fs::path test_path =  m_source_dir + "\\" + test_error_name + ".txt";
     
-    //for (const auto& entry : fs::directory_iterator(m_source_dir)) {
-    //    if (entry.is_regular_file()) {
-    //        fs::path source_path = entry.path();
-    //        fs::path expected_path = fs::path(m_expected_dir) / source_path.filename();
+        std::cout << "Running error test: " << test_path.filename().string() << "...\n";
 
-    //        std::cout << "Running test: " << source_path.filename().string() << "...\n";
-
-    //        if (!fs::exists(expected_path)) {
-    //            std::cout << "Test skipped, no expected file\n";
-    //            continue;
-    //        }
-
-    //        if (run_single_test(source_path, expected_path)) {
-    //            std::cout << "Passed\n";
-    //            passed++;
-    //        }
-    //        else {
-    //            std::cout << "Failed\n";
-    //            failed++;
-    //        }
-
-    //    }
-    //}
+        std::cout << "===========================\n";
+        if (run_single_test(test_path, "",true)) {
+            std::cout << "Passed\n";
+            error_tests_passed++;
+        }
+        else {
+            std::cout << "Failed\n";
+            error_tests_failed++;
+        }
+        std::cout << "===========================\n";
+    }
 
     std::cout << "Wrap up: " << std::endl;
-    std::cout << "Number of tests passed: " << passed << std::endl;
-    std::cout << "Number of tests failed: " << failed << std::endl;
+    std::cout << "Number of error tests passed: " << error_tests_passed << std::endl;
+    std::cout << "Number of error tests failed: " << error_tests_failed << std::endl;
 }
 
-
-bool Tester::run_single_test(const fs::path& source_file, const fs::path& expected_path) {
+bool Tester::run_single_test(const fs::path& source_file, const fs::path& expected_path,bool is_error_test) {
     IRPrinter printer;
     std::string source_code = read_entire_file(source_file);
     std::vector<std::string> expected_outputs = read_expected_lines(source_file);
@@ -164,6 +159,9 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
         void visitTerminal(antlr4::tree::TerminalNode*) override {}
     };
 
+
+   
+
     antlr4::tree::IterativeParseTreeWalker walker;
     Listener listener;
     walker.walk(&listener, tree);
@@ -176,19 +174,22 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
     class ASTConverterImpl : public ASTConverterListener {
     public:
         bool has_error = false;
+        std::vector<ASTConverterError> m_errors;
         void error(const ASTConverterError& err) override { 
             has_error = true;
-            std::cout << "ASTConverterError: Line " << err.get_line_number() << " : " << err.get_msg() << std::endl; }
+            m_errors.push_back(err);
+            std::cout << "ASTConverterError: Line " << err.get_line_number() << " : " << err.get_msg() << std::endl; 
+        }
+        const std::vector<ASTConverterError>& get_errors() const { return m_errors; }
     };
 
     ASTConverterImpl ast_conv_impl{};
     converter.convert(&ast_conv_impl);
 
-    if (ast_conv_impl.has_error) 
-        return false;
+    //if (ast_conv_impl.has_error) 
+    //    return false;
 
     ir_program.check_program();
-    //printer.
     printer.print_ir_representation(ir_program);
 
     std::vector<IROperand> fn_arguments{};
@@ -199,27 +200,64 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
         return false;
     }
 
-    TestInterpreterListener test_listener;
-    Interpreter interpreter{ &ir_program,fn,fn_arguments };
-    interpreter.set_listener(&test_listener);
-    
-    interpreter.start();
 
-    auto& actual_outputs = test_listener.get_messages();
 
-    if (actual_outputs.size() != expected_outputs.size()) {
-        std::cout << "differenet number of results, expected: " << expected_outputs.size() << "\n ";
-        std::cout << "Got: " << actual_outputs.size() << "\n";
-    }
-
-    for (size_t i = 0; i < expected_outputs.size(); i++) {
-        if (actual_outputs[i] != expected_outputs[i]) {
-            std::cout << "wrong result at the line :" << (i + 1) << "\n";
-            std::cout << "expected :" << expected_outputs[i] << "\n";
-            std::cout << "received :" << actual_outputs[i] << "\n";
-            system("pause");
-            
+    if (is_error_test) {
+        auto expected_errors = ast_conv_impl.get_errors();
+        if (expected_outputs.size() != expected_errors.size())
             return false;
+
+        for (int i = 0; i < expected_errors.size();i++) {
+            std::istringstream stream{expected_outputs[i]};
+            int output_line_number;
+            stream >> output_line_number;
+            std::string output_error_type_str;
+            stream >> output_error_type_str;
+            ErrorType output_error_type = m_error_name_to_error_type.at(output_error_type_str);
+
+            int expeceted_line_number = expected_errors[i].get_line_number();
+            ErrorType expected_error_type = expected_errors[i].get_error_type();
+            
+            if (output_line_number==expeceted_line_number && output_error_type==expected_error_type) {
+                std::cout << "wrong result at the line :" << (i + 1) << "\n";
+                std::cout << "expected :" << expected_errors[i].get_msg() << "\n";
+                std::cout << "at the line: " << expeceted_line_number << "\n";
+
+                std::cout << "received :" << output_error_type_str << "\n";
+                std::cout << "at the line: " << output_line_number << "\n";
+
+                system("pause");
+
+                return false;
+
+            }
+        }
+
+        return true;
+    }
+    else {
+        TestInterpreterListener test_listener;
+        Interpreter interpreter{ &ir_program,fn,fn_arguments };
+        interpreter.set_listener(&test_listener);
+    
+        interpreter.start();
+
+        auto& actual_outputs = test_listener.get_messages();
+
+        if (actual_outputs.size() != expected_outputs.size()) {
+            std::cout << "differenet number of results, expected: " << expected_outputs.size() << "\n ";
+            std::cout << "Got: " << actual_outputs.size() << "\n";
+        }
+
+        for (size_t i = 0; i < expected_outputs.size(); i++) {
+            if (actual_outputs[i] != expected_outputs[i]) {
+                std::cout << "wrong result at the line :" << (i + 1) << "\n";
+                std::cout << "expected :" << expected_outputs[i] << "\n";
+                std::cout << "received :" << actual_outputs[i] << "\n";
+                system("pause");
+            
+                return false;
+            }
         }
     }
 

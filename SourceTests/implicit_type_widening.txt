@@ -1,0 +1,14 @@
+int main(){
+	int8 a = -8;
+	int16 b = a;
+	int32 c = b;
+	int64 d = c;
+
+	print(b);
+	print(d);
+
+	return 0;
+}
+#------------------
+-8
+-8

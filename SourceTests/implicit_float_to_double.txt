@@ -1,0 +1,11 @@
+
+int main(){
+	float a = 12.5f;
+	double b = a;
+
+	print(b);
+
+	return 0;
+}
+#------------------
+12.5

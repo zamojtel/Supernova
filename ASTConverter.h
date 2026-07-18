@@ -26,7 +26,8 @@ public:
 	//bool can_implicityly_convert_to();
 	//void implicit_conversion(IROperand& variable, IROperand expr_op, int line_number);
 
-	void implicit_conversion(IROperand& variable, IROperand expr_op, size_t line_number);
+	//void implicit_conversion(const IROperand& variable, IROperand expr_op, size_t line_number);
+	void implicit_conversion(const IROperand& left, IROperand& right, size_t line_number);
 	ConstantValue try_implicite_conversion(IRBasicType type, const ConstantValue& cv);
 
 	IROperand get_op(const ReferencePtr<AbstractSyntaxTreeNode>& node);

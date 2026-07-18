@@ -1,0 +1,13 @@
+
+int main(){
+
+	int16 x = -120;
+	int16& y = x;
+	int64 z = y;
+	
+	print(z);
+
+	return 0;
+}
+#------------------
+-120

@@ -1,7 +1,6 @@
 #ifndef INCLUDES_H
 #define INCLUDES_H
 
-
 #include "TreeNodeType.h"
 #include "OperationType.h"
 
@@ -86,8 +85,12 @@
 #include "IRDataTypeTraits.h"
 
 #include "IRToLLVMIRIncludes.h"
+
+// Error
+#include "ErrorType.h"
 #include "Error.h"
 #include "ErrorList.h"
+#include "ErrorTraits.h"
 
 #include "ParserHelper.h"
 

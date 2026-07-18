@@ -11,5 +11,6 @@
 #include "AbstractSyntaxTreeNode.cpp"
 #include "ConstantValue.cpp"
 #include "Tester.cpp"
+#include "ErrorTraits.cpp"
 
 #endif INCLUDES_CPP

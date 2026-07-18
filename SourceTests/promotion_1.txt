@@ -2,9 +2,8 @@
 int main(){
 
 	uint8 x = 7;
-	//uint64 y = 12345;
-	//y = x;
-	//print(y);
+	uint64 y = 12345;
+	print(y);
 
 	uint8& z = x; 
 	uint64 w = z; // promotion
@@ -13,5 +12,5 @@ int main(){
 	return 0;
 }
 #------------------
-7
+12345
 7

@@ -187,6 +187,12 @@
     <Filter Include="Source Files\Tests\MallocAndFree">
       <UniqueIdentifier>{bf869b98-c998-4904-9900-a263b6c19634}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\NewFilter1">
+      <UniqueIdentifier>{5bccde8d-819c-48de-a6f8-b567f5ec7085}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\IR\IRInliner">
+      <UniqueIdentifier>{45d7ad53-4903-41ac-b95d-ef26c0e32b38}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -353,6 +359,12 @@
     </ClCompile>
     <ClCompile Include="ArrayIterator.cpp">
       <Filter>Source Files\Interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="ErrorTraits.cpp">
+      <Filter>Source Files\Error</Filter>
+    </ClCompile>
+    <ClCompile Include="IRInliner.cpp">
+      <Filter>Source Files\IR\IRInliner</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -749,6 +761,12 @@
     <ClInclude Include="FreeNode.h">
       <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
     </ClInclude>
+    <ClInclude Include="ErrorTraits.h">
+      <Filter>Source Files\Error</Filter>
+    </ClInclude>
+    <ClInclude Include="IRInliner.h">
+      <Filter>Source Files\IR\IRInliner</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="commands.txt">
@@ -1144,5 +1162,15 @@
     <Text Include="right_shift.txt">
       <Filter>Source Files\Tests\BitwiseOperations</Filter>
     </Text>
+    <Text Include="SourceTests\implicit_unsigned_widening.txt" />
+    <Text Include="SourceTests\implicit_assignment_widening.txt" />
+    <Text Include="SourceTests\implicit_float_to_double.txt" />
+    <Text Include="SourceTests\implicit_reference_widening.txt" />
+    <Text Include="SourceTests\implicit_narrowing_error.txt" />
+    <Text Include="SourceTests\implicit_signed_to_unsigned_error.txt" />
+    <Text Include="SourceTests\implicit_double_to_float_error.txt" />
+    <Text Include="SourceTests\implicit_assignment_error.txt" />
+    <Text Include="SourceTests\add_function_call.txt" />
+    <Text Include="SourceTests\many_blocks.txt" />
   </ItemGroup>
 </Project>

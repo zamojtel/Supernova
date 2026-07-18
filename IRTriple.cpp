@@ -1,14 +1,14 @@
 
-IRTriple::IRTriple(size_t l_n, size_t g_i, size_t i, IROperation operation, const IROperand& op1, const IROperand& op2, const IROperand& op3) :m_line_number{ l_n }, m_global_index{ g_i }, m_index{ i }, m_operation{ operation }, m_operands{op1,op2,op3} {
+IRTriple::IRTriple(IRBasicBlock* blk ,size_t l_n, size_t g_i, size_t i, IROperation operation, const IROperand& op1, const IROperand& op2, const IROperand& op3) : m_basic_blk{ blk }, m_line_number{ l_n }, m_global_index{ g_i }, m_index{ i }, m_operation{ operation }, m_operands{op1,op2,op3} {
 }
 
-IRTriple::IRTriple(size_t l_n, size_t g_i, size_t i, IROperation operation, const IROperand& op1, const IROperand& op2) :m_line_number{ l_n }, m_global_index{ g_i }, m_index{ i }, m_operation{ operation }, m_operands{op1,op2} {
+IRTriple::IRTriple(IRBasicBlock* blk, size_t l_n, size_t g_i, size_t i, IROperation operation, const IROperand& op1, const IROperand& op2) :m_basic_blk{ blk }, m_line_number{ l_n }, m_global_index{ g_i }, m_index{ i }, m_operation{ operation }, m_operands{op1,op2} {
 }
 
-IRTriple::IRTriple(size_t l_n, size_t g_i, size_t i, IROperation operation, const IROperand& op1) :m_line_number{ l_n }, m_global_index{ g_i }, m_index{ i }, m_operation{ operation }, m_operands{op1} {
+IRTriple::IRTriple(IRBasicBlock* blk, size_t l_n, size_t g_i, size_t i, IROperation operation, const IROperand& op1) :m_basic_blk{ blk }, m_line_number{ l_n }, m_global_index{ g_i }, m_index{ i }, m_operation{ operation }, m_operands{op1} {
 }
 
-IRTriple::IRTriple(size_t l_n, size_t g_i, size_t i, IROperation operation, const std::vector<IROperand>& operands) :m_line_number{ l_n }, m_global_index{ g_i }, m_index{ i }, m_operation{ operation }, m_operands{operands} {
+IRTriple::IRTriple(IRBasicBlock* blk, size_t l_n, size_t g_i, size_t i, IROperation operation, const std::vector<IROperand>& operands) : m_basic_blk{blk}, m_line_number { l_n }, m_global_index{ g_i }, m_index{ i }, m_operation{ operation }, m_operands{ operands } {
 	
 }
 
