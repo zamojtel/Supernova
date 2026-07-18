@@ -3,6 +3,7 @@ class IRFunction;
 class IRBasicBlock {
 private:
 	friend class IRCoder;
+	friend class IRInliner;
 	size_t m_index;
 	std::vector<IRTriple*> m_triples;
 	IRFunction * m_current_function;
@@ -19,5 +20,4 @@ public:
 	size_t get_number_of_triples();
 	IRFunction* get_function() const;
 	std::string get_basic_blk_name();
-	//const std::vector<IRTriple*>& get_triples() const;
 };

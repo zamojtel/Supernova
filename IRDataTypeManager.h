@@ -31,6 +31,7 @@ private:
 			return h1 ^ (h2 + 0x9e3779b97f4a7c15ULL + (h1 << 6) + (h1 >> 2));
 		}
 	};
+
 	TypeRef m_error_type;
 	std::vector<IRDataTypeNode*> m_all_data_types;
 	std::unordered_map<IRBasicType,IRBasicTypeNode*> m_basic_types;

@@ -126,3 +126,5 @@ const std::string& IRFunction::get_identifier() const {
 size_t IRFunction::get_required_size() {
 	return m_total_size_required;
 }
+
+IRProgram* IRFunction::get_ir_prgram() { return m_ir_program; }

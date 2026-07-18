@@ -30,6 +30,10 @@ void IRCoder::set_basic_block(IRBasicBlock* blk) {
 	m_current_basic_blk = blk;
 }
 
+void IRCoder::set_position_after(IRTriple* triple) {
+	m_position = triple->m_index + 1;	
+}
+
 void IRCoder::insert_triple(IRTriple* triple) {
 	m_checker->check_triple(triple);
 	m_current_basic_blk->m_current_function->m_triple_count++;

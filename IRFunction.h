@@ -10,6 +10,7 @@ private:
 	// inside of the function we remember how many triples we have
 	size_t m_triple_count;
 	size_t m_index;
+
 	std::vector<IRBasicBlock*> m_basic_blocks;
 	std::vector<IRConstant*> m_constants;
 	std::vector<IRVariable*> m_variables;
@@ -34,6 +35,7 @@ public:
 	const IRConstant* get_constant(size_t index) const;
 	const std::vector<IRConstant*>& get_constants() const;
 	bool has_variable(const std::string& name) const;
+
 	//void check_function();
 	void set_checker_listener(IRCheckerListener* listener);
 	size_t get_triple_count();
@@ -47,4 +49,5 @@ public:
 	size_t get_index();
 	size_t get_required_size();
 	const std::string& get_identifier() const;
+	IRProgram* get_ir_prgram();
 };
