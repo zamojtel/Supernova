@@ -1,8 +1,16 @@
 
 #ifndef IR_INCLUDES_H
 #define IR_INCLUDES_H
+class IRUsedObject;
+class IRUseSite;
+class IRTriple;
+class IRFunction;
+class IRConstant;
+class IRVariable;
+class IRMember;
 
 #include "IRError.h"
+
 #include "IROperandType.h"
 #include "IROperation.h"
 
@@ -17,6 +25,10 @@
 #include "IRErrorTypeNode.h"
 
 #include "TypeRef.h"
+
+#include "IROperand.h"
+#include "IRUsedObject.h"
+
 #include "IRMember.h"
 #include "IRCompositeTypeNode.h"
 #include "IRStruct.h"
@@ -29,13 +41,9 @@
 #include "IRLocalVariable.h"
 
 
-//void IRCompositeType::add_field(const TypeRef ref_type, std::string f_name) {
-
-#include "IROperand.h"
 #include "IRTriple.h"
 
 // IR Data Types:
-
 
 #include "IRArrayNode.h"
 
@@ -56,11 +64,15 @@
 #include "IRProgram.h"
 
 #include "IRCoder.h"
-// Interpreter: 
+
 #include "IRInterpreterListener.h"
 #include "IRInterpreterForTests.h"
 #include "IRStackFrame.h"
 
+#include "IRUseSite.h"
+
+#include "IRUnreachableBlockFinder.h"
+#include "FunctionReturnChecker.h"
 #include "ArrayIterator.h"
 
 #include "Interpreter.h"

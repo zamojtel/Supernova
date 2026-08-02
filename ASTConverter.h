@@ -23,8 +23,6 @@ public:
 	void find_function_signatures(const ReferencePtr<AbstractSyntaxTreeNode>& node);
 	void post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode>& node);
 	void convert(ASTConverterListener *listener);
-	//bool can_implicityly_convert_to();
-	//void implicit_conversion(IROperand& variable, IROperand expr_op, int line_number);
 
 	//void implicit_conversion(const IROperand& variable, IROperand expr_op, size_t line_number);
 	void implicit_conversion(const IROperand& left, IROperand& right, size_t line_number);
@@ -33,8 +31,6 @@ public:
 	IROperand get_op(const ReferencePtr<AbstractSyntaxTreeNode>& node);
 	void set_op(const ReferencePtr<AbstractSyntaxTreeNode>& node, const IROperand& op);
 	IROperation ast_op_to_ir_op(OperationType t);
-
-	//IRBasicType data_type_to_ir_data_type(DataTypeNode type);
 
 	void build_ir_data_type_from_ast(const ReferencePtr<DataTypeNode>& node);
 	void convert_control_flow_condition(const ReferencePtr<AbstractSyntaxTreeNode>& condition,IRBasicBlock* true_blk,IRBasicBlock* false_blk);

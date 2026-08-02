@@ -1,4 +1,3 @@
-
 int main(){
 	int64 a = -8;
 	float e = a;

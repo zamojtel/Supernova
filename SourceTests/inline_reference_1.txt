@@ -1,0 +1,27 @@
+
+inline void swap(int& a,int &b){
+	int temp = a;
+	a = b;
+	b = temp;
+	return;
+}
+
+int main(){
+	int x=10;
+	int y=20;
+
+	print(x);
+	print(y);
+
+	swap(x,y);
+
+	print(x);
+	print(y);
+
+	return 0;
+}
+#------------------
+10
+20
+20
+10

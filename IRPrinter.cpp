@@ -75,11 +75,6 @@ std::string IRPrinter::ir_operation_to_string(const IROperation op) const {
 	}
 }
 
-//void IRPrinter::print_variable(const IRVariable* v) {
-//	std::cout << "V" << v->m_index << " "<<v->m_identifier<<" "<< v->get_data_type().to_string() << std::endl;
-//}
-
-
 void IRPrinter::print_variable(const IRVariable* v) {
 	std::cout << "V" << v->m_index << " "<<v->m_identifier<<" "<< v->get_data_type().to_string() << std::endl;
 }
@@ -129,7 +124,7 @@ void IRPrinter::print_triple(IRTriple* triple) {
 	// TODO remove get_name(...)
 	std::string data_type_str = triple->get_data_type().to_string();
 	size_t gl_index = triple->get_global_index();
-	std::cout <<gl_index << " : "<< data_type_str << " T" << triple->m_index << " " << ir_operation_to_string(triple->m_operation) << " ";
+	std::cout <<"T"<<gl_index << " : " << data_type_str << " T" << triple->m_index << " " << ir_operation_to_string(triple->m_operation) << " ";
 	for (size_t i = 0; i < triple->m_operands.size();i++) {
 		print_operand(triple->m_operands[i]);
 		std::cout << " ";
@@ -206,7 +201,8 @@ void IRPrinter::print_operand(const IROperand& op) const {
 	}
 	case IROperandType::TRIPLE: {
 		IRTriple* triple = op.get_triple();
-		std::cout << "T" << triple->m_index;
+		//std::cout << "T" << triple->m_index;
+		std::cout << "T" << triple->get_global_index();
 		break;
 	}
 	case IROperandType::VARIABLE: {

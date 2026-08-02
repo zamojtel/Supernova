@@ -1,17 +1,19 @@
 
-int min(int a, int b){
+inline int min(int a,int b){
 	if(a>=b){
 		return b;
 	}else{
 		return a;
 	}
+
+	int x = 123;
 }
 
 int main(){
-	int x = 10;
-	int y = 20;
-	int result = min(x,y)+1;
-	
+	int x = 11;
+	int y = 33;
+
+	int result = min(x,y);
 	print(result);
 	return 0;
 }

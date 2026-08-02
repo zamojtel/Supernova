@@ -10,7 +10,6 @@
 #include "IRBasicBlock.cpp"
 
 #include "IRPrinter.cpp"
-
 #include "IRChecker.cpp"
 
 #include "IRErrorCollector.cpp"
@@ -26,7 +25,7 @@
 #include "IRErrorTypeNode.cpp"
 #include "IRQualifiersNode.cpp"
 #include "IRReferenceNode.cpp"
-//#include "IR"
+
 #include "IRDataTypeManager.cpp"
 
 #include "IRCompositeTypeNode.cpp"
@@ -40,11 +39,18 @@
 #include "IRCoder.cpp"
 
 #include "IRInliner.cpp"
+#include "IRUnreachableBlockFinder.cpp"
+
+#include "FunctionReturnChecker.cpp"
 
 #include "ArrayIterator.cpp"
 
 #include "Interpreter.cpp"
 #include "IRInterpreterForTests.cpp"
 #include "IRStackFrame.cpp"
+
+#include "IRUsedObject.cpp"
+#include "IRUseSite.cpp"
+
 
 #endif IR_H

@@ -10,13 +10,15 @@ std::string ErrorTraits::get_name(ErrorType type) {
 		return "IMPLICIT_CAST_NOT_ALLOWED";
 	}
 	case ErrorType::TYPE_NOT_DEFINED: {
-		return "IMPLICIT_CAST_NOT_ALLOWED";
+		return "TYPE_NOT_DEFINED";
 	}
 	case ErrorType::UNKNOWN_ERROR: {
 		return "UNKNOWN_ERROR";
 	}
 	case ErrorType::ERROR_COUNT:
 		return "ERROR_COUNT";
+	case ErrorType::NO_RETURN_ERROR:
+		return "NO_RETURN_ERROR";
 	default:
 		throw std::runtime_error("type not found");
 		break;

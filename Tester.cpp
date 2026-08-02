@@ -159,9 +159,6 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
         void visitTerminal(antlr4::tree::TerminalNode*) override {}
     };
 
-
-   
-
     antlr4::tree::IterativeParseTreeWalker walker;
     Listener listener;
     walker.walk(&listener, tree);
@@ -186,20 +183,43 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
     ASTConverterImpl ast_conv_impl{};
     converter.convert(&ast_conv_impl);
 
-    //if (ast_conv_impl.has_error) 
-    //    return false;
-
     ir_program.check_program();
     printer.print_ir_representation(ir_program);
 
-    std::vector<IROperand> fn_arguments{};
-    IRFunction* fn = ir_program.get_function("main", fn_arguments);
     
-    if (!fn) {
+    IRInliner inliner;
+    std::vector<IROperand> fn_arguments{};
+    IRFunction* main_fn = ir_program.get_function("main", fn_arguments);
+
+    if (!main_fn) {
         std::cout << "there's no main function in the source file";
         return false;
     }
 
+    size_t expected_inline_expansions = 0;
+
+    for (IRBasicBlock* block : main_fn->get_basic_blocks()) {
+        for (IRTriple* triple : block->get_all_triples()) {
+            if (triple->get_ir_operation() != IROperation::FUNCTION_CALL)
+                continue;
+
+            IRFunction* callee = triple->m_operands[0].get_function();
+
+            if (callee != main_fn && callee->is_inline())
+                expected_inline_expansions++;
+        }
+    }
+
+    const size_t expansions_before = inliner.m_inline_instance_counter;
+
+    if (!is_error_test)
+        inliner.expand_functions(main_fn);
+
+    if (!is_error_test &&
+        inliner.m_inline_instance_counter - expansions_before < expected_inline_expansions) {
+        std::cout << "not all inline function calls were expanded\n";
+        return false;
+    }
 
 
     if (is_error_test) {
@@ -218,7 +238,7 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
             int expeceted_line_number = expected_errors[i].get_line_number();
             ErrorType expected_error_type = expected_errors[i].get_error_type();
             
-            if (output_line_number==expeceted_line_number && output_error_type==expected_error_type) {
+            if (output_line_number != expeceted_line_number || output_error_type != expected_error_type) {
                 std::cout << "wrong result at the line :" << (i + 1) << "\n";
                 std::cout << "expected :" << expected_errors[i].get_msg() << "\n";
                 std::cout << "at the line: " << expeceted_line_number << "\n";
@@ -237,7 +257,7 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
     }
     else {
         TestInterpreterListener test_listener;
-        Interpreter interpreter{ &ir_program,fn,fn_arguments };
+        Interpreter interpreter{ &ir_program,main_fn,fn_arguments };
         interpreter.set_listener(&test_listener);
     
         interpreter.start();
@@ -247,6 +267,7 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
         if (actual_outputs.size() != expected_outputs.size()) {
             std::cout << "differenet number of results, expected: " << expected_outputs.size() << "\n ";
             std::cout << "Got: " << actual_outputs.size() << "\n";
+            return false;
         }
 
         for (size_t i = 0; i < expected_outputs.size(); i++) {
@@ -255,7 +276,6 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
                 std::cout << "expected :" << expected_outputs[i] << "\n";
                 std::cout << "received :" << actual_outputs[i] << "\n";
                 system("pause");
-            
                 return false;
             }
         }

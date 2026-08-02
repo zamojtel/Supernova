@@ -1,0 +1,22 @@
+
+int a(){
+	int c = 0;
+}
+
+int b(){
+	return 10;
+}
+
+void c(){
+}
+
+void d(){
+	int x =123;
+}
+
+int main(){
+	int x =123;
+	return 0;
+}
+#------------------
+2 NO_RETURN_ERROR

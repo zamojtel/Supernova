@@ -193,6 +193,18 @@
     <Filter Include="Source Files\IR\IRInliner">
       <UniqueIdentifier>{45d7ad53-4903-41ac-b95d-ef26c0e32b38}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\IR\IRUnreachableBlockFinder">
+      <UniqueIdentifier>{861f1095-ab8d-415a-9795-c0e4bc2e7e1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\UnreachableBlocks">
+      <UniqueIdentifier>{39aa9b3e-65bb-495c-8c32-9589ca0f2779}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\IR\IRUsed">
+      <UniqueIdentifier>{89e8e7cb-7024-4883-b260-502029b37413}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\IRFunctionReturnChecker">
+      <UniqueIdentifier>{78cdec45-f0e1-4fc0-a79e-2ccd855a745a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -365,6 +377,18 @@
     </ClCompile>
     <ClCompile Include="IRInliner.cpp">
       <Filter>Source Files\IR\IRInliner</Filter>
+    </ClCompile>
+    <ClCompile Include="IRUnreachableBlockFinder.cpp">
+      <Filter>Source Files\IR\IRUnreachableBlockFinder</Filter>
+    </ClCompile>
+    <ClCompile Include="IRUsedObject.cpp">
+      <Filter>Source Files\IR\IRUsed</Filter>
+    </ClCompile>
+    <ClCompile Include="IRUseSite.cpp">
+      <Filter>Source Files\IR\IRUsed</Filter>
+    </ClCompile>
+    <ClCompile Include="FunctionReturnChecker.cpp">
+      <Filter>Source Files\IRFunctionReturnChecker</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -766,6 +790,18 @@
     </ClInclude>
     <ClInclude Include="IRInliner.h">
       <Filter>Source Files\IR\IRInliner</Filter>
+    </ClInclude>
+    <ClInclude Include="IRUnreachableBlockFinder.h">
+      <Filter>Source Files\IR\IRUnreachableBlockFinder</Filter>
+    </ClInclude>
+    <ClInclude Include="IRUseSite.h">
+      <Filter>Source Files\IR\IRUsed</Filter>
+    </ClInclude>
+    <ClInclude Include="IRUsedObject.h">
+      <Filter>Source Files\IR\IRUsed</Filter>
+    </ClInclude>
+    <ClInclude Include="FunctionReturnChecker.h">
+      <Filter>Source Files\IRFunctionReturnChecker</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1172,5 +1208,14 @@
     <Text Include="SourceTests\implicit_assignment_error.txt" />
     <Text Include="SourceTests\add_function_call.txt" />
     <Text Include="SourceTests\many_blocks.txt" />
+    <Text Include="SourceTests\inline_expanding_1.txt" />
+    <Text Include="SourceTests\inline_function_1.txt" />
+    <Text Include="SourceTests\inline_recursive_call_1.txt" />
+    <Text Include="SourceTests\inline_reference_1.txt" />
+    <Text Include="SourceTests\inline_one_return_1.txt" />
+    <Text Include="SourceTests\inline_function_2.txt" />
+    <Text Include="SourceTests\recursion_limit_1.txt" />
+    <Text Include="SourceTests\unreachable_blk_1.txt" />
+    <Text Include="SourceTests\no_return_1.txt" />
   </ItemGroup>
 </Project>

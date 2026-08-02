@@ -1,5 +1,5 @@
 
-int min(int a, int b){
+inline int32 min(int32 a,int32 b){
 	if(a>=b){
 		return b;
 	}else{
@@ -8,12 +8,11 @@ int min(int a, int b){
 }
 
 int main(){
-	int x = 10;
-	int y = 20;
-	int result = min(x,y)+1;
-	
+	int32 a = 10;
+	int32 result = min(a,25);
 	print(result);
+
 	return 0;
 }
 #------------------
-11
+10

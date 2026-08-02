@@ -1,0 +1,22 @@
+
+inline int f() {
+	int x = 123;
+	return x;
+}
+
+int g(){
+	int z =444;
+	return z;
+}
+
+
+int main(){
+	int first_one = f();
+	int second_one = g();
+	print(first_one);
+	print(second_one);
+	return 0;
+}
+#------------------
+123
+444

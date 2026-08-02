@@ -1,0 +1,16 @@
+inline int32 a(int n){
+	if(n==0){
+		return 0;
+	}
+
+	return a(n-1)+1;
+}
+
+int main(){
+	int32 n = 5;
+	int32 result = a(n);
+	print(result);
+	return 0;
+}
+#------------------
+5

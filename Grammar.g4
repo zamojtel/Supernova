@@ -73,12 +73,13 @@ progElement:
 	;
 
 function:
-		dataType identifier '(' functionParameters ')' block {
+		(inline_keyword='inline')? dataType identifier '(' functionParameters ')' block {
 			ReferencePtr<DataTypeNode> dtn = $dataType.ctx->m_node.cast<DataTypeNode>();
 			ReferencePtr<IdentifierNode> in = $identifier.ctx->m_node.cast<IdentifierNode>();
 			ReferencePtr<ListNode<FunctionParameterNode>> params = $functionParameters.ctx->m_node.cast<ListNode<FunctionParameterNode>>();
 			ReferencePtr<BlockNode> blk = $block.ctx->m_node.cast<BlockNode>();
-			$ctx->m_node = new FunctionNode{dtn,in,params,blk};
+			bool is_inline = $inline_keyword != nullptr;
+			$ctx->m_node = new FunctionNode{is_inline,dtn,in,params,blk};
 		}
 	;
 

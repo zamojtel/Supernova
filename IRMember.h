@@ -1,5 +1,5 @@
 
-class IRMember  {
+class IRMember : public IRUsedObject {
 private:
 	TypeRef m_data_type;
 	std::string m_name;
@@ -10,4 +10,6 @@ public:
 	const std::string get_field_name() const;
 	size_t get_offset() const;
 	void set_offset(size_t offset);
+	IROperandType get_operand_type() const;
+	IROperand get_operand() override;
 };

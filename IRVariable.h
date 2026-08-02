@@ -1,4 +1,4 @@
-class IRVariable {
+class IRVariable : public IRUsedObject {
 public:
 	std::string m_identifier;
 	TypeRef m_data_type;
@@ -10,4 +10,6 @@ public:
 	size_t get_index() const;
 	size_t get_local_mem_offset() const;
 	virtual bool is_global() const = 0;
+	IROperandType get_operand_type() const;
+	IROperand get_operand() override;
 };

@@ -1,5 +1,5 @@
 
-class IRConstant {
+class IRConstant : public IRUsedObject {
 private:
 	size_t m_index;
 	ConstantValue m_constant_value;
@@ -9,4 +9,6 @@ public:
 	const ConstantValue& get_value();
 	const TypeRef& get_data_type() const;
 	size_t get_index() const;
+	IROperandType get_operand_type() const;
+	IROperand get_operand() override;
 };

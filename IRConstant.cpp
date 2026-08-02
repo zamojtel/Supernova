@@ -5,4 +5,10 @@ const TypeRef& IRConstant::get_data_type() const { return m_data_type; }
 
 const ConstantValue& IRConstant::get_value() { return m_constant_value; }
 
+IROperandType IRConstant::get_operand_type() const {
+	return IROperandType::CONSTANT;
+}
+
 size_t IRConstant::get_index() const { return m_index; }
+
+IROperand IRConstant::get_operand() { return this; }

@@ -227,11 +227,8 @@ void ASTConverter::find_function_signatures(const ReferencePtr<AbstractSyntaxTre
 	case TreeNodeType::FUNCTION: {
 		ReferencePtr<FunctionNode> current_node = node.cast<FunctionNode>();
 		std::string fn_name = current_node->get_identifier_node()->get_identifier();
-		current_node;
 
 		ReferencePtr<DataTypeNode> fn_return_type = current_node->get_data_type_node();
-		/*IRBasicType fn_type = current_node->get_data_type_node()->get_basic_type()->get_data_type();*/
-		//std::cout << "Built type: " << std::endl;
 		build_ir_data_type_from_ast(fn_return_type);
 
 		std::vector<IRVariable*> fn_parameters;
@@ -255,8 +252,7 @@ void ASTConverter::find_function_signatures(const ReferencePtr<AbstractSyntaxTre
 			l_param_types.push_back(parameter_type_node->m_ir_data_type);
 			l_param_names.push_back(parameter_name);
 		}
-	
-		IRFunction* fn = m_ir_program->add_function(fn_name, fn_return_type->m_ir_data_type, l_param_names, l_param_types);
+		IRFunction* fn = m_ir_program->add_function(fn_name,current_node->is_inline(),fn_return_type->m_ir_data_type, l_param_names, l_param_types);
 		current_node->set_function_ptr(fn);
 
 		break;
@@ -331,37 +327,6 @@ ConstantValue ASTConverter::try_implicite_conversion(IRBasicType type,const Cons
 	return cv.safe_convert(type);
 }
 
-//void ASTConverter::implicit_conversion(const IROperand &variable,IROperand expr_op,size_t line_number) {
-//	IRBasicType variable_bt = variable.get_data_type().get_ir_basic_type();
-//	IRBasicType expr_bt = expr_op.get_data_type().remove_reference().get_ir_basic_type();
-//	expr_op.get_constant();
-//	
-//	// segment responsible for implicit conversion 
-//	if (variable_bt != expr_bt) {
-//		// here's where we check what we're dealing with
-//		if (IRDataTypeTraits::can_implicitly_convert(expr_bt, variable_bt)) {
-//			//IROperand cast_type_node = get_op(variable.get_data_type());
-//			IROperand cast_type_node{ variable.get_data_type() };
-//			IRTriple* cast = m_coder.add_triple(line_number, IROperation::CAST, cast_type_node, expr_op);
-//			expr_op = cast;
-//		}
-//		else if (expr_op.m_operand_type == IROperandType::CONSTANT) {
-//			IRConstant * ir_c = expr_op.get_constant();
-//			ConstantValue cv = ir_c->get_value();
-//			if (variable.get_data_type().get_ir_basic_type() != cv.get_basic_type()) {
-//				ConstantValue cv = try_implicite_conversion(variable.get_data_type().get_ir_basic_type(),cv);
-//				IRConstant* ir_constant = m_current_fn->add_constant(cv);
-//				expr_op = ir_constant;
-//			}
-//		}
-//		else {
-//			//can't implicitly convert from type UINT8 to type INT32
-//			std::string msg = std::format("can't implicitly convert from type {} to type {}", IRDataTypeTraits::get_name(expr_bt), IRDataTypeTraits::get_name(variable_bt));
-//			m_ast_converter_listener->error({ line_number, msg });
-//		}
-//	}
-//}
-
 void ASTConverter::implicit_conversion(const IROperand& left, IROperand& right, size_t line_number) {
 	IRBasicType left_bt = left.get_data_type().remove_reference().get_ir_basic_type();
 	IRBasicType right_bt = right.get_data_type().remove_reference().get_ir_basic_type();
@@ -412,7 +377,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		IROperand variable = get_op(left_expr);
 		IROperand expr_op = get_op(right_expr);
 
-		IRBasicType variable_bt = variable.get_data_type().get_ir_basic_type();
+		IRBasicType variable_bt = variable.get_data_type().remove_reference().get_ir_basic_type();
 		IRBasicType expr_bt = expr_op.get_data_type().remove_reference().get_ir_basic_type();
 		implicit_conversion(variable,expr_op,current_node->get_line_number());
 		
@@ -505,18 +470,6 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 					IROperand expr_op = get_op(expr_node);
 
 					implicit_conversion(variable, expr_op, current_node->get_line_number());
-					//if (expr_op.m_operand_type==IROperandType::CONSTANT) {
-					//	
-					//	IRConstant* ir_constant = expr_op.get_constant();
-					//	ConstantValue cv = ir_constant->get_value();
-					//	if (variable->get_data_type().get_ir_basic_type() != cv.get_basic_type()) {
-					//		ConstantValue new_cv = try_implicite_conversion(variable->get_data_type().get_ir_basic_type(),cv);
-					//		IRConstant* ir_constant = m_current_fn->add_constant(new_cv);
-					//		// todo 
-					//		// consider changing it later on
-					//		expr_op = ir_constant;
-					//	}
-					//}
 
 					// for handling reference 
 					if (variable->get_data_type().is_reference()) {
@@ -586,10 +539,13 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 			post_order_traverse(current_node->m_else_stmt);
 
 			m_coder.set_basic_block(stmt_blk);
-			m_coder.add_triple(current_node->m_stmt->get_line_number(), IROperation::JMP, after_if_basic_block); 
+			IRTriple* last_triple = stmt_blk->get_all_triples().back();
+			if (last_triple->get_ir_operation() != IROperation::RETURN && last_triple->get_ir_operation() != IROperation::JMP)
+				m_coder.add_triple(current_node->m_else_stmt->get_line_number(), IROperation::JMP, after_if_basic_block);
 
 			m_coder.set_basic_block(else_stmt_blk);
-			m_coder.add_triple(current_node->m_else_stmt->get_line_number(), IROperation::JMP, after_if_basic_block);
+			if (else_stmt_blk->get_all_triples().back()->m_operation!=IROperation::RETURN)
+				m_coder.add_triple(current_node->m_else_stmt->get_line_number(), IROperation::JMP, after_if_basic_block);
 
 			m_coder.set_basic_block(after_if_basic_block);
 		}
@@ -597,7 +553,8 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 			m_coder.set_basic_block(current_blk);
 
 			m_coder.set_basic_block(stmt_blk);
-			m_coder.add_triple(current_node->m_stmt->get_line_number(), IROperation::JMP, after_if_basic_block);
+			if (stmt_blk->get_all_triples().back()->m_operation != IROperation::RETURN && stmt_blk->get_all_triples().back()->m_operation != IROperation::JMP)
+				m_coder.add_triple(current_node->m_else_stmt->get_line_number(), IROperation::JMP, after_if_basic_block);
 			m_coder.set_basic_block(after_if_basic_block);
 		}
 
@@ -806,10 +763,11 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 				if (m_current_fn->get_return_type().is_void()) {
 					auto blks = m_current_fn->get_basic_blocks();
 					for (size_t i = 0; i < blks.size(); i++) {
-						if (
+						if ( blks[i]->get_all_triples().size()==0 || (
 							blks[i]->get_all_triples().back()->get_ir_operation() != IROperation::RETURN &&
 							blks[i]->get_all_triples().back()->get_ir_operation() != IROperation::JMP &&
 							blks[i]->get_all_triples().back()->get_ir_operation() != IROperation::JC
+							)
 							) {
 							m_coder.set_basic_block(blks[i]);
 							m_coder.add_triple(current_node->get_line_number(), IROperation::RETURN, std::vector<IROperand>{});
@@ -818,6 +776,13 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 				}
 
 				m_symbol_table.pop_layer();
+
+				FunctionReturnChecker return_checker;
+				std::vector<IRBasicBlock*> blks_without_terminator_stmts = return_checker.check_all_paths(m_current_fn);
+				for (auto blk : blks_without_terminator_stmts) {
+					std::string msg = std::format("block with no return stmt {}", blk->get_index());
+					m_ast_converter_listener->error({ ErrorType::NO_RETURN_ERROR, current_node->get_line_number(), msg });
+				}
 			}
 		}
 		break;
@@ -830,16 +795,6 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		break;
 	}
 	case TreeNodeType::FUNCTION: {
-		//ReferencePtr<FunctionNode> current_node = node.cast<FunctionNode>();
-		//ReferencePtr<ListNode<FunctionParameterNode>> list = current_node->get_parameters();
-		//m_current_fn = current_node->get_function_ptr();
-
-
-		//for (size_t i = 0; i < list->get_child_count();i++) {
-		//	ReferencePtr<FunctionParameterNode> param_node = list->get_child(i).cast<FunctionParameterNode>();
-		//	ReferencePtr<IdentifierNode> id_node = param_node->get_identifier_node();
-
-		//}
 
 		break;
 	}
@@ -1194,6 +1149,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		post_order_traverse(expr_true);
 		post_order_traverse(expr_false);
 
+
 		IROperand condition_expr_op = get_op(condition_expr);
 		IROperand expr_true_op = get_op(expr_true);
 		IROperand expr_false_op = get_op(expr_false);
@@ -1271,13 +1227,25 @@ void ASTConverter::convert_expression_to_bool(const ReferencePtr<AbstractSyntaxT
 void ASTConverter::convert(ASTConverterListener* listener) {
 	m_ast_converter_listener = listener;
 	m_dtm->get_void();
-	//m_global_fn = m_ir_program->add_function("_global_function", IRBasicType::VOID, {}, {});
-	m_global_fn = m_ir_program->add_function("_global_function", m_dtm->get_void(), {}, {});
+	m_global_fn = m_ir_program->add_function("_global_function",false, m_dtm->get_void(), {}, {});
 
 	m_symbol_table.add_layer();
 	first_pass(m_prog);
 	second_pass(m_prog);
 	m_symbol_table.pop_layer();
+	IRPrinter printer;
+	printer.print_ir_representation(*m_ir_program);
+	//printer
+	auto& map = m_ir_program->get_functions();
+	for (auto& [key,fns] : map) {
+		for (auto&fn :fns) {
+			IRUnreachableBlockFinder finder(fn);
+			auto blks = finder.find_unreachable_blocks();
+			for (auto blk : blks) {
+				fn->remove_blk(blk);
+			}
+		}
+	}
 
 	// TODO MOVE FROM HERE 
 	m_ir_program->calculate_memory_layout();

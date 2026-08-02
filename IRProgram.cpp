@@ -5,11 +5,11 @@ IRDataTypeManager* IRProgram::get_dtm_manager() { return &m_dtm; }
 
 IRChecker* IRProgram::get_ir_checker() { return &m_checker; }
 
-IRFunction* IRProgram::add_function(const std::string& name,const TypeRef& return_type, const std::vector<std::string>& l_param_names, const std::vector<TypeRef>& l_param_types) {
+IRFunction* IRProgram::add_function(const std::string& name,bool is_in,const TypeRef& return_type, const std::vector<std::string>& l_param_names, const std::vector<TypeRef>& l_param_types) {
 	if (l_param_names.size() != l_param_types.size())
 		throw std::runtime_error("number of parameters is different from number of types passed");
 
-	IRFunction* ir_function = new IRFunction{m_functions.size(), name,return_type,this};
+	IRFunction* ir_function = new IRFunction{m_functions.size(), name,is_in,return_type,this};
 	m_functions[name].push_back(ir_function);
 
 	std::vector<IRVariable*> params;

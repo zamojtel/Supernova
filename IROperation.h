@@ -40,4 +40,5 @@ enum class IROperation {
 	PRINT,
 	PRINT_TYPE,
 	SELECT,
+	NO_OPERATION
 };

@@ -8,6 +8,15 @@ const std::string& IRFunction::get_name() {
 	return m_identifier;
 }
 
+
+IROperandType IRFunction::get_operand_type() const {
+	return IROperandType::FUNCTION;
+}
+
+IROperand IRFunction::get_operand() {
+	return this;
+}
+
 void IRFunction::add_parameter(const std::string &name, const TypeRef& type) {
 	IRVariable* parameter = new IRLocalVariable{name,type,m_parameters.size()};
 	// its present in both vectors
@@ -19,6 +28,19 @@ IRVariable* IRFunction::add_variable(const std::string& name,const TypeRef& type
 	IRVariable* variable = new IRLocalVariable{ name,type,m_variables.size() };
 	m_variables.push_back(variable);
 	return variable;
+}
+
+bool IRFunction::is_inline() const { return m_is_inline; }
+
+void IRFunction::remove_blk(IRBasicBlock* blk) {
+	// First of all, we have to clean after removing the block
+	if (!blk)
+		throw std::runtime_error("block is nullptr");
+
+	blk->replace_all_usages(nullptr);
+	blk->clear();
+	m_basic_blocks.erase(m_basic_blocks.begin()+blk->get_index());
+	delete blk;
 }
 
 IRConstant* IRFunction::add_constant(const ConstantValue &c) {
@@ -96,6 +118,20 @@ IRBasicBlock* IRFunction::add_basic_block(const std::string& name) {
 
 size_t IRFunction::get_triple_count() {
 	return m_triple_count;
+}
+
+void IRFunction::reindex_triples() {
+	size_t global_index = 0;
+
+	for (IRBasicBlock *blk : m_basic_blocks) {
+		auto& triples = blk->get_all_triples();
+		for (size_t local_index = 0; local_index < triples.size();local_index++) {
+			triples[local_index]->m_index = local_index;
+			triples[local_index]->m_global_index = global_index++;
+		}
+	}
+
+	m_triple_count = global_index;
 }
 
 const TypeRef& IRFunction::get_return_type() const {

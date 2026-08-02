@@ -8,3 +8,7 @@ const TypeRef& IRVariable::get_data_type() const { return m_data_type; }
 size_t IRVariable::get_index() const { return m_index;  }
 
 size_t IRVariable::get_local_mem_offset() const { return m_local_mem_offset; }
+
+IROperandType IRVariable::get_operand_type() const { return IROperandType::VARIABLE; };
+
+IROperand IRVariable::get_operand() { return this; }

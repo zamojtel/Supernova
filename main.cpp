@@ -3,6 +3,7 @@
 #include <vector>
 #include <array>
 #include <variant>
+#include <queue>
 #include <string>
 #include <format>
 #include <fstream>
@@ -385,7 +386,6 @@ void check_prints(const std::string& file_name, const std::vector<std::string>& 
 		void visitTerminal(antlr4::tree::TerminalNode* node) override {
 
 		};
-
 	};
 
 	antlr4::tree::IterativeParseTreeWalker walker;
@@ -427,28 +427,36 @@ void check_prints(const std::string& file_name, const std::vector<std::string>& 
 }
 
 int main() {
-	// tests:
 	std::string test_folder = "C:\\Users\\zamoj\\OneDrive\\Pulpit\\ProjectKompilator\\SourceTests";
 	std::string expected_outputs_folder = "C:\\Users\\zamoj\\OneDrive\\Pulpit\\ProjectKompilator\\SourceTests";
 
 	std::vector<std::string> test_names{
-		//"implicit_type_widening"
-		//"implicit_unsigned_widening"
-		//"implicit_assignment_widening"
-		//"implicit_float_to_double"
-		//"implicit_reference_widening"
-		//"add_function_call"
-		"many_blocks"
+		"implicit_type_widening",
+		"implicit_unsigned_widening",
+		"implicit_assignment_widening",
+		"implicit_float_to_double",
+		"implicit_reference_widening",
+		"add_function_call",
+		"many_blocks",
+		"inline_expanding_1",
+		"inline_function_1",
+		"inline_recursive_call_1",
+		"inline_reference_1",
+		"inline_one_return_1",
+		"inline_function_2",
+		"recursion_limit_1",
+		"unreachable_blk_1"
 	};
 
 	std::vector<std::string> test_errors{
-		//"implicit_error_1"
-		//"implicit_cast_not_allowed_error_1"
-		//"implicit_unsigned_widening_1"
-		//"implicit_narrowing_error"
-		//"implicit_signed_to_unsigned_error"
-		//"implicit_double_to_float_error"
-		//"implicit_assignment_error"
+		"implicit_error_1",
+		"implicit_cast_not_allowed_error_1",
+		//"implicit_unsigned_widening_1",
+		"implicit_narrowing_error",
+		"implicit_signed_to_unsigned_error",
+		"implicit_double_to_float_error",
+		"implicit_assignment_error",
+		"no_return_1",
 	};
 
 	std::cout<<"TypeName: "<<typeid(decltype(-2'147'483'648)).name();
