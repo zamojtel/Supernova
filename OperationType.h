@@ -13,7 +13,7 @@ enum class OperationType {
 	NEQ,   // !=
 	BITWISE_AND, // &
 	BITWISE_OR, // |
-	XOR, // ^
+	BITWISE_XOR, // ^
 	BITWISE_NOT, // ~
 	LEFT_SHIFT,	// <<
 	RIGHT_SHIFT, // >>

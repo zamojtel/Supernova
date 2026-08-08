@@ -331,7 +331,10 @@ expr:
 	|	'-' e = expr {
 			$ctx->m_node = new UnaryMinusNode{$e.ctx->m_node};
 		}
-	|	'!' (e = expr) {
+	|	'~' e = expr {
+			$ctx->m_node = new BitwiseNotNode{$e.ctx->m_node};
+		}
+	|	'!' e = expr {
 			$ctx->m_node = new BooleanNotNode{$e.ctx->m_node};
 		}
 	|	'*' e = expr {
@@ -340,22 +343,25 @@ expr:
 	|   '&' e = expr {
 			$ctx->m_node = new AddressOfNode{$e.ctx->m_node};
 		}
-	|	left = expr op = ('/'|'*') right = expr { 
-			char oper = $op->getText().data()[0];
+	|	left = expr op = ('/'|'*'|'%') right = expr { 
+			char operation = $op->getText().data()[0];
 			OperationType basicType;
-			switch(oper){
+			switch(operation){
 			case '*':
 				basicType = OperationType::MUL;
 				break;
 			case '/':
 				basicType = OperationType::DIV;
 				break;
+			case '%':
+				basicType = OperationType::MOD;
+				break;
 			}
 			$ctx -> m_node = new BinaryOperatorNode{$left.ctx->m_node,$right.ctx->m_node, basicType }; }
-	|	left = expr op = ('+'|'-') right = expr { 
-			char oper = $op->getText().data()[0];
+	|	left = expr op = ('+'|'-') right = expr {
+			char operation = $op->getText().data()[0];
 			OperationType basicType;
-			switch(oper){
+			switch(operation){
 			case '+':
 				basicType = OperationType::ADD;
 				break;
@@ -396,17 +402,20 @@ expr:
 
 			$ctx->m_node = new BinaryOperatorNode{$left.ctx->m_node,$right.ctx->m_node,basicType};
 		}
+	|	left = expr op = '&' right = expr {
+			$ctx->m_node = new BinaryOperatorNode{$left.ctx->m_node,$right.ctx->m_node,OperationType::BITWISE_AND};
+		}
+	|	left = expr op = '^' right = expr {
+			$ctx->m_node = new BinaryOperatorNode{$left.ctx->m_node,$right.ctx->m_node,OperationType::BITWISE_XOR};
+		}
+	|	left = expr op = '|' right = expr {
+			$ctx->m_node = new BinaryOperatorNode{$left.ctx->m_node,$right.ctx->m_node,OperationType::BITWISE_OR};
+		}
 	|	left = expr op = '&&' right = expr {
 			$ctx->m_node = new AndNode{$left.ctx->m_node,$right.ctx->m_node};
 		}
 	|	left = expr op = '||' right = expr {
 			$ctx->m_node = new OrNode{$left.ctx->m_node,$right.ctx->m_node};
-		}
-	|	left = expr op = '&' right = expr {
-			$ctx->m_node = new BinaryOperatorNode{$left.ctx->m_node,$right.ctx->m_node,OperationType::BITWISE_AND};
-		}
-	|	left = expr op = '|' right = expr {
-			$ctx->m_node = new BinaryOperatorNode{$left.ctx->m_node,$right.ctx->m_node,OperationType::BITWISE_OR};
 		}
 	|	functionCall{ $ctx->m_node = $functionCall.ctx->m_node; }
 	|	identifier{ $ctx->m_node = $identifier.ctx->m_node; }

@@ -30,6 +30,14 @@ IROperation ASTConverter::ast_op_to_ir_op(OperationType t) {
 		return IROperation::LEFT_SHIFT;
 	case OperationType::RIGHT_SHIFT:
 		return IROperation::RIGHT_SHIFT;
+	case OperationType::BITWISE_XOR:
+		return IROperation::BITWISE_XOR;
+	case OperationType::BITWISE_AND:
+		return IROperation::BITWISE_AND;
+	case OperationType::BITWISE_NOT:
+		return IROperation::BITWISE_NOT;
+	case OperationType::BITWISE_OR:
+		return IROperation::BITWISE_OR;
 	default:
 		throw std::runtime_error("can't convert from ast operation to ir operation");
 	}
@@ -98,6 +106,9 @@ IROperand ASTConverter::get_op(const ReferencePtr<AbstractSyntaxTreeNode> &node)
 		auto casted_node = node.cast<UnaryMinusNode>();
 		break;
 	}
+	case TreeNodeType::BITWISE_NOT: {
+		break;
+	}
 	case TreeNodeType::MALLOC:
 	{
 		break;
@@ -106,6 +117,12 @@ IROperand ASTConverter::get_op(const ReferencePtr<AbstractSyntaxTreeNode> &node)
 		break;
 	}
 	case TreeNodeType::SIZE_OF:{
+		break;
+	}
+	case TreeNodeType::INC: {
+		break;
+	}
+	case TreeNodeType::DEC: {
 		break;
 	}
 	default:
@@ -1070,6 +1087,17 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 
 		break;
 	}
+	case TreeNodeType::BITWISE_NOT: {
+		ReferencePtr<BitwiseNotNode> current_node = node.cast<BitwiseNotNode>();
+		ReferencePtr<AbstractSyntaxTreeNode> expr = current_node->get_expr_node();
+		post_order_traverse(expr);
+		IROperand expr_op = get_op(expr);
+
+		IRTriple* triple = m_coder.add_triple(current_node->get_line_number(),IROperation::BITWISE_NOT,expr_op);
+
+		set_op(current_node,triple);
+		break;
+	}
 	case TreeNodeType::MEMBER_ACCESS: {
 		// TODO wygenerowaæ triple 
 		/*
@@ -1233,8 +1261,6 @@ void ASTConverter::convert(ASTConverterListener* listener) {
 	first_pass(m_prog);
 	second_pass(m_prog);
 	m_symbol_table.pop_layer();
-	IRPrinter printer;
-	printer.print_ir_representation(*m_ir_program);
 	//printer
 	auto& map = m_ir_program->get_functions();
 	for (auto& [key,fns] : map) {

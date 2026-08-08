@@ -71,6 +71,8 @@ class IRMember;
 
 #include "IRUseSite.h"
 
+#include "IROperationExecutor.h"
+
 #include "IRUnreachableBlockFinder.h"
 #include "FunctionReturnChecker.h"
 #include "ArrayIterator.h"

@@ -283,6 +283,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="IROperationExecutor.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="IRPointerNode.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -384,6 +390,7 @@
     <ClInclude Include="BinaryOperatorNode.h" />
     <ClInclude Include="ASTConverter.h" />
     <ClInclude Include="ASTConvIncludes.h" />
+    <ClInclude Include="BitwiseNotNode.h" />
     <ClInclude Include="BlockNode.h" />
     <ClInclude Include="BooleanNotNode.h" />
     <ClInclude Include="BreakNode.h" />
@@ -399,6 +406,7 @@
     <ClInclude Include="ForNode.h" />
     <ClInclude Include="FreeNode.h" />
     <ClInclude Include="FunctionReturnChecker.h" />
+    <ClInclude Include="IROperationExecutor.h" />
     <ClInclude Include="IRUnreachableBlockFinder.h" />
     <ClInclude Include="IncrementationNode.h" />
     <ClInclude Include="Interpreter.h" />
@@ -669,6 +677,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </Text>
+    <Text Include="SourceTests\bitwise_operations_1.txt" />
+    <Text Include="SourceTests\constant_conversion_1.txt" />
     <Text Include="SourceTests\implicit_assignment_error.txt">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -729,7 +739,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </Text>
+    <Text Include="SourceTests\modulo_division.txt" />
     <Text Include="SourceTests\no_return_1.txt" />
+    <Text Include="SourceTests\post_incrementation_1.txt" />
+    <Text Include="SourceTests\post_incrementation_2.txt" />
+    <Text Include="SourceTests\pre_incrementation_1.txt" />
     <Text Include="SourceTests\recursion_limit_1.txt" />
     <Text Include="SourceTests\unreachable_blk_1.txt" />
     <Text Include="ss_1.txt" />

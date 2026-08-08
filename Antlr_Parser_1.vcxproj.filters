@@ -205,6 +205,9 @@
     <Filter Include="Source Files\IRFunctionReturnChecker">
       <UniqueIdentifier>{78cdec45-f0e1-4fc0-a79e-2ccd855a745a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\IR\IROperationExecutor">
+      <UniqueIdentifier>{ae39dd6b-cc66-41cd-a5bf-372f91aa6dce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -389,6 +392,9 @@
     </ClCompile>
     <ClCompile Include="FunctionReturnChecker.cpp">
       <Filter>Source Files\IRFunctionReturnChecker</Filter>
+    </ClCompile>
+    <ClCompile Include="IROperationExecutor.cpp">
+      <Filter>Source Files\IR\IROperationExecutor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -802,6 +808,12 @@
     </ClInclude>
     <ClInclude Include="FunctionReturnChecker.h">
       <Filter>Source Files\IRFunctionReturnChecker</Filter>
+    </ClInclude>
+    <ClInclude Include="IROperationExecutor.h">
+      <Filter>Source Files\IR\IROperationExecutor</Filter>
+    </ClInclude>
+    <ClInclude Include="BitwiseNotNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1217,5 +1229,11 @@
     <Text Include="SourceTests\recursion_limit_1.txt" />
     <Text Include="SourceTests\unreachable_blk_1.txt" />
     <Text Include="SourceTests\no_return_1.txt" />
+    <Text Include="SourceTests\bitwise_operations_1.txt" />
+    <Text Include="SourceTests\post_incrementation_1.txt" />
+    <Text Include="SourceTests\pre_incrementation_1.txt" />
+    <Text Include="SourceTests\post_incrementation_2.txt" />
+    <Text Include="SourceTests\constant_conversion_1.txt" />
+    <Text Include="SourceTests\modulo_division.txt" />
   </ItemGroup>
 </Project>

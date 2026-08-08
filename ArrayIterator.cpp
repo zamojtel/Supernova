@@ -1,15 +1,21 @@
 
-ArrayIterator::ArrayIterator(uint8_t* start, TypeRef type) : m_start{ start }, m_current_address{start}, m_current_index { 0 } {
+ArrayIterator ::ArrayIterator(uint8_t* start, TypeRef type) : m_start{ start }, m_current_address{start}, m_current_index { 0 } {
 	m_element_type = type.remove_reference().remove_all_extents();
 	m_element_size = m_element_type.get_size();
+
 	if (type.is_array()) {
-		//m_element_size = m_element_type.get_size();
 		IRArrayNode *arr_node = static_cast<IRArrayNode*>(type.get_data_type_node());
-		m_count = arr_node->m_count;
+		size_t total_count = arr_node->m_count;
+		IRArrayNode* current_node = arr_node;
+		while (current_node->m_element_type.is_array()) {
+			IRArrayNode * node = static_cast<IRArrayNode*>(current_node->m_element_type.get_data_type_node());
+			total_count *= node->m_count;
+			current_node = node;
+		}
+		m_count = total_count;
 	}
 	else {
 		// it's scalar value
-		//m_element_size = type.get_size();
 		m_count = 1;
 	}
 }

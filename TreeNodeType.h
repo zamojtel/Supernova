@@ -41,6 +41,7 @@ enum class TreeNodeType {
 	DEREFERENCE,
 	ADDRESS_OF,
 	SIZE_OF,
+	BITWISE_NOT,
 	UNARY_MINUS,
 	ASSERT,
 	PRINT,

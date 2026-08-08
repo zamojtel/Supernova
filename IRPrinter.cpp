@@ -70,6 +70,18 @@ std::string IRPrinter::ir_operation_to_string(const IROperation op) const {
 	case IROperation::UNARY_MINUS: {
 		return "UNARY_MINUS";
 	}
+	case IROperation::BITWISE_AND: {
+		return "BITWISE_AND";
+	}
+	case IROperation::BITWISE_OR: {
+		return "BITWISE_OR";
+	}
+	case IROperation::BITWISE_XOR: {
+		return "BITWISE_XOR";
+	}
+	case IROperation::BITWISE_NOT: {
+		return "BITWISE_NOT";
+	}
 	default:
 		throw std::runtime_error("can't find such ir operation");
 	}

@@ -42,8 +42,9 @@
 #include "IRUnreachableBlockFinder.cpp"
 
 #include "FunctionReturnChecker.cpp"
-
 #include "ArrayIterator.cpp"
+
+#include "IROperationExecutor.cpp"
 
 #include "Interpreter.cpp"
 #include "IRInterpreterForTests.cpp"
