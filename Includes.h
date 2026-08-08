@@ -77,6 +77,7 @@
 #include "AddressOfNode.h"
 #include "DereferenceNode.h"
 #include "SelectNode.h"
+#include "BitwiseNotNode.h"
 #include "UnaryMinusNode.h"
 #include "MallocNode.h"
 #include "FreeNode.h"

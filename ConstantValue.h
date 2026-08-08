@@ -222,7 +222,7 @@ public:
 	std::string to_string() const;
 
 	//uint8_t* get_address() const;
-	const uint8_t* get_address() const;
+	uint8_t* get_address();
 };
 
 

@@ -5,6 +5,8 @@ const TypeRef& IRConstant::get_data_type() const { return m_data_type; }
 
 const ConstantValue& IRConstant::get_value() { return m_constant_value; }
 
+uint8_t* IRConstant::get_address() { return m_constant_value.get_address(); }
+
 IROperandType IRConstant::get_operand_type() const {
 	return IROperandType::CONSTANT;
 }

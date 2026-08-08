@@ -5,22 +5,20 @@ std::optional<To> safe_numeric_cast(From value) {
     static_assert(std::is_arithmetic_v<From>, "From must be arithmetic");
     static_assert(std::is_arithmetic_v<To>, "To must be arithmetic");
 
-    // ----- CASE 1: int -> int -----
     if constexpr (std::is_integral_v<From> && std::is_integral_v<To>) {
-        // a) oba maj¹ ten sam "signedness"
         if constexpr (std::is_signed_v<From> == std::is_signed_v<To>) {
             From s1 = static_cast<From>(std::numeric_limits<To>::min());
             From s2 = static_cast<From>(std::numeric_limits<To>::max());
 
             if (value < s1 ||
                 value > s2 ){
-                return std::nullopt; // wyjœcie poza zakres typu docelowego
+                return std::nullopt;
             }
         }
-        // b) From signed, To unsigned
+     
         else if constexpr (std::is_signed_v<From> && !std::is_signed_v<To>) {
             if (value < 0) {
-                return std::nullopt; // liczba ujemna nie mieœci siê w typie bez znaku
+                return std::nullopt;
             }
             using UFrom = std::make_unsigned_t<From>;
             if (static_cast<UFrom>(value) >
@@ -28,10 +26,10 @@ std::optional<To> safe_numeric_cast(From value) {
                 return std::nullopt;
             }
         }
-        // c) From unsigned, To signed
-        else { // (!signed_v<From> && signed_v<To>)
+
+        else {
             using UTo = std::make_unsigned_t<To>;
-            // dolna granica To jest <= 0, wiêc tylko górn¹ trzeba pilnowaæ
+       
             if (value >
                 static_cast<UTo>(std::numeric_limits<To>::max())) {
                 return std::nullopt;
@@ -41,21 +39,19 @@ std::optional<To> safe_numeric_cast(From value) {
         return static_cast<To>(value);
     }
 
-    // ----- CASE 2: float -> int -----
     else if constexpr (std::is_floating_point_v<From> && std::is_integral_v<To>) {
         if (!std::isfinite(value)) {
-            return std::nullopt; // NaN / inf
+            return std::nullopt;
         }
 
         long double v = static_cast<long double>(value);
 
-        // sprawdŸ zakres
         if (v < static_cast<long double>(std::numeric_limits<To>::min()) ||
             v > static_cast<long double>(std::numeric_limits<To>::max())) {
             return std::nullopt;
         }
 
-        // wymagamy, ¿eby wartoœæ by³a "ca³kowita" (¿eby nie ucinaæ czêœci u³amkowej)
+ 
         if (std::trunc(v) != v) {
             return std::nullopt;
         }
@@ -63,38 +59,37 @@ std::optional<To> safe_numeric_cast(From value) {
         return static_cast<To>(value);
     }
 
-    // ----- CASE 3: int -> float -----
+
     else if constexpr (std::is_integral_v<From> && std::is_floating_point_v<To>) {
         // sprawdzamy tylko czy nie wyjdziemy w nieskoñczonoœæ po konwersji
         long double v = static_cast<long double>(value);
 
-        // zakres dodatni i ujemny (float/double nie maj¹ sensownego min() sym.)
+     
         if (v > static_cast<long double>(std::numeric_limits<To>::max()) ||
             v < -static_cast<long double>(std::numeric_limits<To>::max())) {
-            return std::nullopt; // posz³oby w +/-inf
+            return std::nullopt; 
         }
 
         return static_cast<To>(value);
     }
-    // ----- CASE 4: float -> float -----
+  
     else if constexpr (std::is_floating_point_v<From> && std::is_floating_point_v<To>) {
         if (!std::isfinite(value)) {
-            return std::nullopt; // NaN / inf
+            return std::nullopt; 
         }
 
         long double v = static_cast<long double>(value);
         if (v > static_cast<long double>(std::numeric_limits<To>::max()) ||
             v < -static_cast<long double>(std::numeric_limits<To>::max())) {
-            return std::nullopt; // overflow po konwersji
+            return std::nullopt;
         }
 
         return static_cast<To>(value);
     }
 
-    // ----- CASE 5: bool i inne egzotyki -----
+
     else {
-        // bool -> liczba i liczba -> bool s¹ zawsze bezpieczne semantycznie:
-        // false -> 0, true -> 1
+
         if constexpr (std::is_same_v<To, bool>) {
             return static_cast<bool>(value);
         }
@@ -102,8 +97,7 @@ std::optional<To> safe_numeric_cast(From value) {
             return static_cast<To>(value ? 1 : 0);
         }
         else {
-            // fallback (teoretycznie nie powinniœmy tu trafiæ,
-            // bo pokryliœmy wszystkie arithmetic)
+  
             return static_cast<To>(value);
         }
     }
@@ -141,7 +135,6 @@ ConstantValue ConstantValue::unsafe_convert(IRBasicType convert_to) const {
         throw std::runtime_error("can't convert value of this type");
         break;
     }
-
 }
 
 ConstantValue ConstantValue::safe_convert(IRBasicType convert_to) const {
@@ -187,7 +180,6 @@ std::string ConstantValue::to_string() const {
     {
     case IRBasicType::BOOL: {
         msg = std::format("{}",std::to_string(get_value<bool>()));
-        //return std::to_string(get_value<bool>());
         return msg;
     }
     case IRBasicType::DOUBLE: {
@@ -228,9 +220,6 @@ std::string ConstantValue::to_string() const {
     }
 }
 
-//const uint8_t* ConstantValue::get_address() const {
-//    return reinterpret_cast<uint8_t*>(m_data);
-//}
-const uint8_t* ConstantValue::get_address() const {
-    return reinterpret_cast<const uint8_t*>(&m_data);
+uint8_t* ConstantValue::get_address() {
+    return reinterpret_cast<uint8_t*>(&m_data);
 }

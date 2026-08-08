@@ -18,13 +18,11 @@ void IRChecker::check_triple(IRTriple* triple)
 	IROperand* op1 = nullptr;
 	IROperand* op2 = nullptr;
 	IROperand* op3 = nullptr;
+
 	if (triple->m_operands.size() == 1) {
-		//left_op_type = triple->m_operands[0].m_operand_type;
 		op1 = &triple->m_operands[0];
 	}
 	else if(triple->m_operands.size()==2) {
-		//left_op_type = triple->m_operands[0].m_operand_type;
-		//right_op_type = triple->m_operands[1].m_operand_type;
 		op1 = &triple->m_operands[0];
 		op2 = &triple->m_operands[1];
 	}
@@ -42,22 +40,31 @@ void IRChecker::check_triple(IRTriple* triple)
 	case IROperation::ADD:
 	case IROperation::DIV:
 	case IROperation::MUL:
-	case IROperation::MOD:
 	case IROperation::SUB:
-	case IROperation::BITWISE_AND:
-	case IROperation::BITWISE_OR:
-	case IROperation::BITWISE_XOR:
 	{
 		TypeRef data_type_ref = check_arithmetic_operation_possible(triple);
 		triple->m_data_type = data_type_ref;
 		break;
 	}
+	case IROperation::MOD: {
+		TypeRef left = op1->get_data_type().remove_reference().remove_all_extents().remove_qualifiers();
+		TypeRef right = op2->get_data_type().remove_reference().remove_all_extents().remove_qualifiers();
+
+		if (!left.is_integer() || !right.is_integer()) {
+			m_listener->add_error(triple->get_line(),"modulo operation requires integer operands");
+			
+			triple->m_data_type = m_dtm->get_error();
+			break;
+		}
+
+		triple->m_data_type = check_arithmetic_operation_possible(triple);
+		break;
+	}
 	case IROperation::ASSIGN: {
 		
 		if (!check_operand_types(*op1, *op2)) {
-			m_listener->add_error(triple->m_line_number, "can't assign value of different types");
+			m_listener->add_error(triple->get_line(), "can't assign value of different types");
 		}
-
 
 		break;
 	}
@@ -256,6 +263,43 @@ void IRChecker::check_triple(IRTriple* triple)
 		triple->m_data_type = op1->get_data_type();
 		break;
 	}
+	case IROperation::BITWISE_AND:
+	case IROperation::BITWISE_OR:
+	case IROperation::BITWISE_XOR: {
+		TypeRef left_type = op1->get_data_type().remove_reference().remove_all_extents().remove_qualifiers();
+		TypeRef right_type = op2->get_data_type().remove_reference().remove_all_extents().remove_qualifiers();
+
+		// both type should be integers 
+		if (!left_type.is_integer() || !right_type.is_integer()) {
+			m_listener->add_error(
+				triple->m_line_number,
+				"bitwise operation requires integer operands"
+			);
+
+			triple->m_data_type = m_dtm->get_error();
+			break;
+		}
+
+		triple->m_data_type = check_arithmetic_operation_possible(triple);
+
+		break;
+	}
+	case IROperation::BITWISE_NOT: {
+		TypeRef operand_type = op1->get_data_type().remove_reference().remove_all_extents().remove_qualifiers();
+
+		if (!operand_type.is_integer()) {
+			m_listener->add_error(
+				triple->m_line_number,
+				"bitwise not requires integer operand"
+			);
+			
+			triple->m_data_type = m_dtm->get_error();
+			break;
+		}
+
+		triple->m_data_type = op1->get_data_type();
+		break;
+	}
 
 	default:
 		throw std::runtime_error("unknow operation while checking triple");
@@ -264,7 +308,6 @@ void IRChecker::check_triple(IRTriple* triple)
 
 // 
 bool IRChecker::check_data_type_size(const TypeRef& type1,const TypeRef& type2) const {
-	//return ir_data_type_traits[(int)type1].size == ir_data_type_traits[(int)type2].size;
 	return true;
 }
 
@@ -294,7 +337,11 @@ size_t IRChecker::get_number_of_operands_for_operation(IROperation op) {
 	case IROperation::MUL:
 	case IROperation::SUB:
 	case IROperation::ASSIGN:
+	case IROperation::BITWISE_AND:
+	case IROperation::BITWISE_OR:
+	case IROperation::BITWISE_XOR:
 		return 2;
+	case IROperation::BITWISE_NOT:
 	case IROperation::RETURN:
 		return 1;
 	default:
@@ -310,7 +357,6 @@ TypeRef IRChecker::check_arithmetic_operation_possible(IRTriple *triple) const {
 	IROperation operation = triple->get_ir_operation();
 
 	if (r1.is_pointer_with_qualifiers() && r2.is_pointer_with_qualifiers()) {
-
 		if (r1.remove_pointer_with_qualifiers() == r2.remove_pointer_with_qualifiers() && operation == IROperation::SUB)
 			return m_dtm->get_basic_type_node(IRBasicType::INT64);
 		else {
@@ -435,6 +481,7 @@ void IRChecker::deduce_triple_data_type(IRTriple* triple) {
 	case IROperation::BITWISE_AND:
 	case IROperation::BITWISE_OR:
 	{
+		// here
 		if (!check_operand_types(*op1,*op2)) {
 			triple->m_data_type = m_dtm->get_error();
 			return;

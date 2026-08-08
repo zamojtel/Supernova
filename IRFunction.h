@@ -17,7 +17,7 @@ private:
 	std::vector<IRVariable*> m_variables;
 	std::vector<IRVariable*> m_parameters;
 	TypeRef m_return_type;
-	size_t m_total_size_required;
+	size_t m_total_size_required{0};
 public:
 	IRFunction(size_t index) :m_triple_count{ 0 }, m_index{index} { m_basic_blocks.push_back(new IRBasicBlock{ this, m_basic_blocks.size() }); }
 	IRFunction(size_t index, const std::string& name, bool is_in, const TypeRef& r_t, IRProgram* p) : m_triple_count{ 0 }, m_index{ index }, m_identifier{ name }, m_is_inline{is_in}, m_return_type { r_t }, m_ir_program{ p } { m_basic_blocks.push_back(new IRBasicBlock{ this, m_basic_blocks.size() }); }

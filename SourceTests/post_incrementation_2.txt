@@ -1,0 +1,10 @@
+int main(){
+	int x = 10;
+	int j = x++;
+	print(j);
+	print(x);
+	return 0;
+}
+#------------------
+10
+11

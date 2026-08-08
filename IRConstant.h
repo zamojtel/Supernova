@@ -11,4 +11,5 @@ public:
 	size_t get_index() const;
 	IROperandType get_operand_type() const;
 	IROperand get_operand() override;
+	uint8_t* get_address();
 };
