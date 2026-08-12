@@ -8,4 +8,5 @@ enum class IRDataTypeNodeType {
 	UNION,
 	BASIC_TYPE,
 	ERROR,
+	NULLPTR,
 };

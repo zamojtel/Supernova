@@ -1,0 +1,15 @@
+
+uint8 value = 123;
+
+void* fun(){
+	uint8* ptr = &value;
+	return ptr;
+}
+
+int main(){
+	uint8 * ptr2 = (uint8*)fun();
+	print(*ptr2);	
+	return 0;
+}
+#------------------
+123

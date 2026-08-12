@@ -1,0 +1,25 @@
+
+int64 fun(){
+	int32 value = 4; 
+	return value;
+}
+
+int64 expression(){
+	return 10+5;
+}
+
+int main(){
+
+	print_type(fun());
+	print(fun());
+
+	print_type(expression());
+	print(expression());
+
+	return 0;
+}
+#------------------
+INT64
+4
+INT64
+15

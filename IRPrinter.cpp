@@ -46,42 +46,34 @@ std::string IRPrinter::ir_operation_to_string(const IROperation op) const {
 		return "DEC";
 	case IROperation::MEMBER_ACCESS:
 		return "MEMBER_ACCESS";
-	case IROperation::ARRAY_ACCESS: {
+	case IROperation::ARRAY_ACCESS:
 		return "ARRAY_ACCESS";
-	}
-	case IROperation::ASSERT: {
+	case IROperation::ASSERT:
 		return "ASSERT";
-	}
-	case IROperation::PRINT: {
+	case IROperation::PRINT:
 		return "PRINT";
-	}
-	case IROperation::PRINT_TYPE: {
+	case IROperation::PRINT_TYPE:
 		return "PRINT_TYPE";
-	}
-	case IROperation::ADREESS_OF: {
+	case IROperation::ADREESS_OF:
 		return "ADDRESS_OF";
-	}
-	case IROperation::DEREFERENCE: {
+	case IROperation::DEREFERENCE:
 		return "DEREFERENCE";
-	}
-	case IROperation::INIT_ASSIGN: {
+	case IROperation::INIT_ASSIGN:
 		return "INIT_ASSIGN";
-	}
-	case IROperation::UNARY_MINUS: {
+	case IROperation::UNARY_MINUS:
 		return "UNARY_MINUS";
-	}
-	case IROperation::BITWISE_AND: {
+	case IROperation::BITWISE_AND:
 		return "BITWISE_AND";
-	}
-	case IROperation::BITWISE_OR: {
+	case IROperation::BITWISE_OR:
 		return "BITWISE_OR";
-	}
-	case IROperation::BITWISE_XOR: {
+	case IROperation::BITWISE_XOR:
 		return "BITWISE_XOR";
-	}
-	case IROperation::BITWISE_NOT: {
+	case IROperation::BITWISE_NOT:
 		return "BITWISE_NOT";
-	}
+	case IROperation::LEFT_SHIFT:
+		return "LEFT_SHIFT";
+	case IROperation::RIGHT_SHIFT:
+		return "RIGHT_SHIFT";
 	default:
 		throw std::runtime_error("can't find such ir operation");
 	}

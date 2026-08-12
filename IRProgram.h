@@ -7,6 +7,7 @@ private:
 	IRChecker m_checker;
 	IRDataTypeManager m_dtm;
 public:
+	size_t m_required_for_global_variables;
 	IRProgram();
 	//void enumerate_triples();
 	IRFunction* add_function(const std::string& name, bool is_in, const TypeRef& return_type, const std::vector<std::string>& l_param_names, const std::vector<TypeRef>& l_param_types);

@@ -36,7 +36,7 @@ const std::unordered_map<std::string, std::vector<IRFunction*>>& IRProgram::get_
 }
 
 void IRProgram::calculate_memory_layout() {
-	calculate_size_required_for_global_variables();
+	m_required_for_global_variables = calculate_size_required_for_global_variables();
 	calculate_required_size_for_all_fns();
 }
 
@@ -90,7 +90,7 @@ size_t IRProgram::calculate_size_required_for_global_variables() {
 	size_t current_offset = 0;
 	for (size_t i = 0; i < m_global_variables.size();i++) {
 		size_t size = m_global_variables[i]->get_data_type().get_size();
-		m_global_variables[i]->m_local_mem_offset = current_offset + size;
+		m_global_variables[i]->m_local_mem_offset = current_offset;
 		current_offset += size;
 	}
 

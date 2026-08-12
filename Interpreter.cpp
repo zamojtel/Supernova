@@ -1,7 +1,8 @@
 
 Interpreter::Interpreter(IRProgram* p, IRFunction* fn, std::vector<IROperand>& fn_arguments) :m_ir_program{ p }, m_current_function{ fn }, m_fn_arguments{ fn_arguments } {
 	m_global_variables.resize(p->get_global_variables().size());
-	m_meomory_for_gl_variables.resize(p->get_function("_global_function", {})->get_required_size());
+	std::cout << m_ir_program->m_required_for_global_variables;
+	m_meomory_for_gl_variables.resize(m_ir_program->m_required_for_global_variables);
 }
 
 void Interpreter::set_listener(IRInterpreterListener* l) {
@@ -36,7 +37,10 @@ uint8_t* Interpreter::get_operand_address(IROperand op,bool ignore_reference) {
 		}
 
 		if (variable->is_global()) {
-			throw std::runtime_error("dont use global");
+			size_t offset = variable->get_local_mem_offset();
+			uint8_t* result =  m_meomory_for_gl_variables.data() + offset;
+			std::cout << "Found value " << (int)(*result) << std::endl;
+			return result;
 		}
 		else {
 			size_t offset = variable->get_local_mem_offset();
@@ -62,10 +66,11 @@ void Interpreter::pop_frame() {
 	m_frames.pop_back();
 }
 
-void Interpreter::start() {
+void Interpreter::start(IRFunction* fn) {
+	m_current_function = fn;
 	auto basic_blks = m_current_function->get_basic_blocks();
 	auto variables = m_current_function->get_variables();
-
+	
 	std::vector<IROperand> args;
 	bool finished = false;
 	IRBasicBlock* current_blk = basic_blks[0];
@@ -392,7 +397,6 @@ void Interpreter::start() {
 			break;
 		}
 		case IROperation::ADREESS_OF: {
-
 			IROperand op1 = current_triple->m_operands[0];
 			uint8_t* op_1_addr = get_operand_address(op1);
 			uint8_t* result_addr = &m_current_frame->m_memory_stack[0] + current_triple->get_local_mem_offset();

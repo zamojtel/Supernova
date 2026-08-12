@@ -21,11 +21,14 @@ public:
 	void second_pass(const ReferencePtr<AbstractSyntaxTreeNode>& node);
 
 	void find_function_signatures(const ReferencePtr<AbstractSyntaxTreeNode>& node);
+	bool prepare_for_binary_operation_integer_unsigned_types(size_t line_number, IRBasicType to, IROperand& left, IROperand& right); 
+	bool prepare_for_binary_operation_signed_types(size_t line_number, IRBasicType to, IROperand& left, IROperand& right);
+	void cast_if_necessary(size_t line_number, IRBasicType to, IROperand& operand);
 	void post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode>& node);
 	void convert(ASTConverterListener *listener);
 
-	//void implicit_conversion(const IROperand& variable, IROperand expr_op, size_t line_number);
-	void implicit_conversion(const IROperand& left, IROperand& right, size_t line_number);
+	//void implicit_conversion(const IROperand& left, IROperand& right, size_t line_number);
+	void implicit_conversion(size_t line_number, const TypeRef& to, IROperand& right);
 	ConstantValue try_implicite_conversion(IRBasicType type, const ConstantValue& cv);
 
 	IROperand get_op(const ReferencePtr<AbstractSyntaxTreeNode>& node);

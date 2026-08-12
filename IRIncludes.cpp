@@ -29,6 +29,8 @@
 #include "IRDataTypeManager.cpp"
 
 #include "IRCompositeTypeNode.cpp"
+#include "IRNullptrNode.cpp"
+
 #include "IRStruct.cpp"
 #include "IRUnion.cpp"
 
@@ -42,8 +44,10 @@
 #include "IRUnreachableBlockFinder.cpp"
 
 #include "FunctionReturnChecker.cpp"
+#include "UselessControlFlowEliminator.cpp"
 #include "ArrayIterator.cpp"
 
+#include "IROptimizer.cpp"
 #include "IROperationExecutor.cpp"
 
 #include "Interpreter.cpp"
@@ -52,6 +56,5 @@
 
 #include "IRUsedObject.cpp"
 #include "IRUseSite.cpp"
-
 
 #endif IR_H

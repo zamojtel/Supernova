@@ -1,0 +1,11 @@
+
+int main(){
+	uint32 value = 10;
+	int shift = 2;
+	value = value >> shift;
+	print(value);
+
+	return 0;
+}
+#------------------
+2

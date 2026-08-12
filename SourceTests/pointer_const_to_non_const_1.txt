@@ -1,0 +1,9 @@
+
+int main(){
+	int val = 10;
+	void * ptr2;
+	ptr2 = &val;
+
+	return 0;
+}
+#------------------

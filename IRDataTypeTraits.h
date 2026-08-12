@@ -23,6 +23,7 @@
 struct IRDataTypeTraits {
 	// size in bytes 
 	int size;
+	static bool can_implicitly_convert_pointers(const TypeRef& from, const TypeRef& to);
 	static bool can_implicitly_convert(IRBasicType from, IRBasicType to);
 	static bool is_floating_point(IRBasicType type);
 	static bool is_integer(IRBasicType type);
