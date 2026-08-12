@@ -19,6 +19,8 @@ std::string ErrorTraits::get_name(ErrorType type) {
 		return "ERROR_COUNT";
 	case ErrorType::NO_RETURN_ERROR:
 		return "NO_RETURN_ERROR";
+	case ErrorType::INVALID_OPERAND_TYPE:
+		return "INVALID_OPERAND_TYPE";
 	default:
 		throw std::runtime_error("type not found");
 		break;

@@ -205,6 +205,12 @@
     <Filter Include="Source Files\IRFunctionReturnChecker">
       <UniqueIdentifier>{78cdec45-f0e1-4fc0-a79e-2ccd855a745a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\UselessControlFlowEliminator">
+      <UniqueIdentifier>{0c735c2a-ff0c-499f-ba36-3b82b7f77aaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\IR\IROptimizer">
+      <UniqueIdentifier>{5978ab3e-bd64-4bf2-afa1-8e7d6dc60994}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\IR\IROperationExecutor">
       <UniqueIdentifier>{ae39dd6b-cc66-41cd-a5bf-372f91aa6dce}</UniqueIdentifier>
     </Filter>
@@ -393,8 +399,17 @@
     <ClCompile Include="FunctionReturnChecker.cpp">
       <Filter>Source Files\IRFunctionReturnChecker</Filter>
     </ClCompile>
+    <ClCompile Include="UselessControlFlowEliminator.cpp">
+      <Filter>Source Files\UselessControlFlowEliminator</Filter>
+    </ClCompile>
+    <ClCompile Include="IROptimizer.cpp">
+      <Filter>Source Files\IR\IROptimizer</Filter>
+    </ClCompile>
     <ClCompile Include="IROperationExecutor.cpp">
       <Filter>Source Files\IR\IROperationExecutor</Filter>
+    </ClCompile>
+    <ClCompile Include="IRNullptrNode.cpp">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -809,11 +824,23 @@
     <ClInclude Include="FunctionReturnChecker.h">
       <Filter>Source Files\IRFunctionReturnChecker</Filter>
     </ClInclude>
+    <ClInclude Include="UselessControlFlowEliminator.h">
+      <Filter>Source Files\UselessControlFlowEliminator</Filter>
+    </ClInclude>
+    <ClInclude Include="IROptimizer.h">
+      <Filter>Source Files\IR\IROptimizer</Filter>
+    </ClInclude>
     <ClInclude Include="IROperationExecutor.h">
       <Filter>Source Files\IR\IROperationExecutor</Filter>
     </ClInclude>
     <ClInclude Include="BitwiseNotNode.h">
       <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceTests\constant_replacement_1.txt">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IRNullptrNode.h">
+      <Filter>Source Files\IR\IRDataTypes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1230,10 +1257,27 @@
     <Text Include="SourceTests\unreachable_blk_1.txt" />
     <Text Include="SourceTests\no_return_1.txt" />
     <Text Include="SourceTests\bitwise_operations_1.txt" />
+    <Text Include="SourceTests\useless_statements_1.txt" />
     <Text Include="SourceTests\post_incrementation_1.txt" />
     <Text Include="SourceTests\pre_incrementation_1.txt" />
     <Text Include="SourceTests\post_incrementation_2.txt" />
     <Text Include="SourceTests\constant_conversion_1.txt" />
     <Text Include="SourceTests\modulo_division.txt" />
+    <Text Include="SourceTests\promotions.txt" />
+    <Text Include="SourceTests\return_promotion_1.txt" />
+    <Text Include="SourceTests\return_promotion_error.txt" />
+    <Text Include="SourceTests\promotion_core_logic_1.txt" />
+    <Text Include="SourceTests\return_pointer_1.txt" />
+    <Text Include="SourceTests\pointer_const_to_non_const_1.txt" />
+    <Text Include="SourceTests\pointer_const_to_non_const_2.txt" />
+    <Text Include="SourceTests\pointer_const_to_non_const_3.txt" />
+    <Text Include="SourceTests\invalid_conversion_1.txt" />
+    <Text Include="SourceTests\left_bitwise_shift_1.txt" />
+    <Text Include="SourceTests\left_bitwise_shift_with_cast_1.txt" />
+    <Text Include="SourceTests\left_bitwise_shift_cast_error_1.txt" />
+    <Text Include="SourceTests\right_bitwise_shift_1.txt" />
+    <Text Include="SourceTests\right_bitwise_shift_with_cast_1.txt" />
+    <Text Include="SourceTests\right_bitwise_shift_cast_error_1.txt" />
+    <Text Include="SourceTests\logical_vs_arithmetical_shift_1.txt" />
   </ItemGroup>
 </Project>

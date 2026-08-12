@@ -1,0 +1,12 @@
+
+int main(){
+	uint8 value = 10;
+	uint16 shift = 2;
+	print(value<<shift);
+	print_type(value<<shift);
+
+	return 0;
+}
+#------------------
+2
+INT32

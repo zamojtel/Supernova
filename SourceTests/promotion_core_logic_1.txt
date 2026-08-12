@@ -1,0 +1,37 @@
+int main(){
+	uint8 byte_left = 10;
+    uint8 byte_right = 20;
+
+    int32 signed_value = -4;
+    uint32 unsigned_value = 5u;
+
+    float float_value = 1.5f;
+    double double_value = 2.5;
+
+    print_type(byte_left + byte_right);
+    print(bye_left + byte_right);
+
+    print_type(signed_value + unsigned_value);
+    print_type(unsigned_value + signed_value);
+    print(signed_value+unsigned_value);
+    print(unsigned_value+signed_value);
+
+    print_type(signed_value + float_value);
+    print_type(float_value + signed_value);
+
+    print_type(float_value + double_value);
+    print_type(double_value + float_value);
+
+	return 0;
+}
+#------------------
+INT32
+30
+INT64
+INT64
+1
+1
+FLOAT
+FLOAT
+DOUBLE
+DOUBLE

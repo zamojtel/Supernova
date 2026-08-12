@@ -41,6 +41,7 @@ private:
 	std::unordered_map<IRDataTypeNode*,IRDataTypeNode*> m_reference_types;
 	std::unordered_map<ArrayKey,IRDataTypeNode*,ArrayKeyHasher> m_existing_array_types;
 	std::unordered_map<QualifierKey,IRDataTypeNode*,QualifierKeyHasher> m_existing_qualified_types;
+	IRDataTypeNode* m_nullptr_node=nullptr;
 public:
 	IRDataTypeManager();
 	TypeRef add_qualifiers(const TypeRef& type_node, uint8_t mask);
@@ -56,4 +57,5 @@ public:
 	TypeRef get_int() const;
 	TypeRef get_error() const;
 	TypeRef get_void() const;
+	TypeRef get_nullptr() const;
 };

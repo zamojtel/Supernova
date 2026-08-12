@@ -90,6 +90,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\zamoj\C++Projects\antlr4\runtime\Cpp\runtime\src</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -107,6 +108,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\zamoj\C++Projects\antlr4\runtime\Cpp\runtime\src</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -124,6 +126,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\zamoj\C++Projects\antlr4\runtime\Cpp\runtime\src;D:\vcpkg\buildtrees\llvm\x64-windows-dbg\include;D:\vcpkg\buildtrees\llvm\src\org-18.1.6-167c29d834.clean\llvm\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,6 +144,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\zamoj\C++Projects\antlr4\runtime\Cpp\runtime\src</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -277,6 +281,12 @@
     <ClCompile Include="IRMember.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="IRNullptrNode.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="IROperand.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -284,6 +294,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="IROperationExecutor.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IROptimizer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -377,6 +393,12 @@
     <ClCompile Include="TypeRef.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="UselessControlFlowEliminator.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClInclude Include="AbstractSyntaxTreeNode.h" />
     <ClCompile Include="DataType.h" />
     <ClInclude Include="AddressOfNode.h" />
@@ -406,7 +428,9 @@
     <ClInclude Include="ForNode.h" />
     <ClInclude Include="FreeNode.h" />
     <ClInclude Include="FunctionReturnChecker.h" />
+    <ClInclude Include="IRNullptrNode.h" />
     <ClInclude Include="IROperationExecutor.h" />
+    <ClInclude Include="IROptimizer.h" />
     <ClInclude Include="IRUnreachableBlockFinder.h" />
     <ClInclude Include="IncrementationNode.h" />
     <ClInclude Include="Interpreter.h" />
@@ -526,6 +550,7 @@
     <ClInclude Include="SelectNode.h" />
     <ClInclude Include="SizeOfNode.h" />
     <ClInclude Include="IRStackFrame.h" />
+    <ClInclude Include="SourceTests\constant_replacement_1.txt" />
     <ClInclude Include="StructNode.h" />
     <ClInclude Include="SymbolTable.h" />
     <ClInclude Include="Tester.h" />
@@ -535,6 +560,7 @@
     <ClInclude Include="TypeRef.h" />
     <ClInclude Include="UnaryMinusNode.h" />
     <ClInclude Include="UnionNode.h" />
+    <ClInclude Include="UselessControlFlowEliminator.h" />
     <ClInclude Include="WhileNode.h" />
   </ItemGroup>
   <ItemGroup>
@@ -678,6 +704,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </Text>
     <Text Include="SourceTests\bitwise_operations_1.txt" />
+    <Text Include="SourceTests\logical_vs_arithmetical_shift_1.txt" />
+    <Text Include="SourceTests\right_bitwise_shift_cast_error_1.txt" />
+    <Text Include="SourceTests\left_bitwise_shift_1.txt" />
     <Text Include="SourceTests\constant_conversion_1.txt" />
     <Text Include="SourceTests\implicit_assignment_error.txt">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -733,6 +762,9 @@
     <Text Include="SourceTests\inline_one_return_1.txt" />
     <Text Include="SourceTests\inline_recursive_call_1.txt" />
     <Text Include="SourceTests\inline_reference_1.txt" />
+    <Text Include="SourceTests\invalid_conversion_1.txt" />
+    <Text Include="SourceTests\left_bitwise_shift_cast_error_1.txt" />
+    <Text Include="SourceTests\left_bitwise_shift_with_cast_1.txt" />
     <Text Include="SourceTests\many_blocks.txt">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -741,11 +773,22 @@
     </Text>
     <Text Include="SourceTests\modulo_division.txt" />
     <Text Include="SourceTests\no_return_1.txt" />
+    <Text Include="SourceTests\pointer_const_to_non_const_1.txt" />
+    <Text Include="SourceTests\pointer_const_to_non_const_2.txt" />
+    <Text Include="SourceTests\pointer_const_to_non_const_3.txt" />
     <Text Include="SourceTests\post_incrementation_1.txt" />
     <Text Include="SourceTests\post_incrementation_2.txt" />
     <Text Include="SourceTests\pre_incrementation_1.txt" />
+    <Text Include="SourceTests\promotions.txt" />
+    <Text Include="SourceTests\promotion_core_logic_1.txt" />
     <Text Include="SourceTests\recursion_limit_1.txt" />
+    <Text Include="SourceTests\return_pointer_1.txt" />
+    <Text Include="SourceTests\return_promotion_1.txt" />
+    <Text Include="SourceTests\return_promotion_error.txt" />
+    <Text Include="SourceTests\right_bitwise_shift_1.txt" />
+    <Text Include="SourceTests\right_bitwise_shift_with_cast_1.txt" />
     <Text Include="SourceTests\unreachable_blk_1.txt" />
+    <Text Include="SourceTests\useless_statements_1.txt" />
     <Text Include="ss_1.txt" />
     <Text Include="ss_2.txt" />
     <Text Include="ss_3.txt" />

@@ -1,0 +1,11 @@
+int8 fun() {
+	int64 value = 300l;
+	return value;
+}
+
+int main(){
+
+	return 0;
+}
+#------------------
+3 IMPLICIT_CAST_NOT_ALLOWED

@@ -18,6 +18,37 @@ std::array<const IRDataTypeTraits,(size_t)IRBasicType::NUMBER_OF_TYPES> ir_data_
 	}
 };
 
+bool IRDataTypeTraits::can_implicitly_convert_pointers(const TypeRef& from ,const TypeRef& to) {
+	if (from==to)
+		return true;
+
+	if (to.is_nullptr())
+		return false;
+
+	if (from.is_nullptr())
+		return true;
+
+	TypeRef from_inner_type = from.remove_pointer();
+	TypeRef to_inner_type = to.remove_pointer();
+
+	if (from_inner_type.is_const() && !to_inner_type.is_const())
+		return false;
+	
+	if (from_inner_type.is_volatile() && !to_inner_type.is_volatile())
+		return false;
+
+	from_inner_type = from_inner_type.remove_qualifiers();
+	to_inner_type = to_inner_type.remove_qualifiers();
+	
+	if (to_inner_type.is_void())
+		return true;
+	
+	if (from_inner_type == to_inner_type)
+		return true;
+
+	return false;
+}
+
 bool IRDataTypeTraits::can_implicitly_convert(IRBasicType from, IRBasicType to) {
 	if (from == to)
 		return true;
@@ -41,12 +72,12 @@ bool IRDataTypeTraits::can_implicitly_convert(IRBasicType from, IRBasicType to) 
 	}
 	case IRBasicType::UINT8:
 	{
-		if (to == IRBasicType::UINT16 || to == IRBasicType::UINT32 || to == IRBasicType::UINT64)
+		if (to == IRBasicType::UINT16 || to == IRBasicType::UINT32 || to == IRBasicType::UINT64 || to == IRBasicType::INT16 || to == IRBasicType::INT32 || to == IRBasicType::INT64 )
 			return true;
 		return false;
 	}
 	case IRBasicType::UINT16: {
-		if (to == IRBasicType::UINT32 || to == IRBasicType::UINT64)
+		if (to == IRBasicType::UINT32 || to == IRBasicType::UINT64 || to == IRBasicType::INT32 || to == IRBasicType::INT64)
 			return true;
 		return false;
 	}

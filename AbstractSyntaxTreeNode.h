@@ -33,8 +33,6 @@ public:
 	TreeNodeType get_type() const { return m_type; };
 
 	void add_child(const ReferencePtr<AbstractSyntaxTreeNode> &node) {
-		//if (!node)
-		//	std::runtime_error("Child is a nullptr");
 		if(node)
 			m_children.push_back(node);
 	}

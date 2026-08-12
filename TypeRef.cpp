@@ -274,6 +274,10 @@ bool TypeRef::is_pointer() const {
 	return m_data_type_node && (m_data_type_node->get_node_type() == IRDataTypeNodeType::POINTER);
 }
 
+bool TypeRef::is_nullptr() const {
+	return m_data_type_node && (m_data_type_node->get_node_type() == IRDataTypeNodeType::NULLPTR);
+}
+
 bool TypeRef::is_array() const {
 	return m_data_type_node && (m_data_type_node->get_node_type() == IRDataTypeNodeType::ARRAY);
 }
@@ -287,6 +291,39 @@ bool TypeRef::is_integer() const {
 			type == IRBasicType::UINT8 || type == IRBasicType::UINT16 ||
 			type == IRBasicType::UINT32 || type == IRBasicType::UINT64;
 	}
+	return false;
+}
+
+bool TypeRef::is_signed() const {
+	if (is_basic_data_type()) {
+		IRBasicType type = static_cast<IRBasicTypeNode*>(m_data_type_node)->m_ir_data_type;
+		return
+			type == IRBasicType::INT8  || type == IRBasicType::INT16 ||
+			type == IRBasicType::INT32 || type == IRBasicType::INT64 ||
+			type == IRBasicType::FLOAT || type == IRBasicType::DOUBLE;
+	}
+	return false;
+}
+
+bool TypeRef::is_small_integer() const {
+	if (is_basic_data_type()) {
+		IRBasicType type = static_cast<IRBasicTypeNode*>(m_data_type_node)->m_ir_data_type;
+		return
+			type == IRBasicType::INT8 || type == IRBasicType::INT16 ||
+			type == IRBasicType::UINT8 || type == IRBasicType::UINT16;
+	}
+
+	return false;
+}
+
+bool TypeRef::is_big_integer() const {
+	if (is_basic_data_type()) {
+		IRBasicType type = static_cast<IRBasicTypeNode*>(m_data_type_node)->m_ir_data_type;
+		return
+			type == IRBasicType::INT32 || type == IRBasicType::INT64 ||
+			type == IRBasicType::UINT32 || type == IRBasicType::INT64;
+	}
+
 	return false;
 }
 

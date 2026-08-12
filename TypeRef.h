@@ -29,6 +29,7 @@ public:
 
 	bool is_array() const;
 	// correct typo
+
 	bool is_qualifiers() const;
 	bool is_const() const;
 	bool is_volatile() const;
@@ -38,9 +39,13 @@ public:
 	bool is_error() const;
 	bool is_composite() const;
 	bool is_pointer() const;
+	bool is_nullptr() const;
 	bool is_reference() const;
 	bool is_integer() const;
 	bool is_numeric() const;
+	bool is_small_integer() const; //uint8 -> uint16, int8 -> int16
+	bool is_big_integer() const;
+	bool is_signed() const;
 	bool is_pointer_with_qualifiers() const;
 
 

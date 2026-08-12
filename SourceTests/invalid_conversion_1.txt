@@ -1,0 +1,9 @@
+int main(){
+	int a = 10;
+	int *val = &a;
+	int regular_value = val;
+
+	return 0;
+}
+#------------------
+4 IMPLICIT_CAST_NOT_ALLOWED

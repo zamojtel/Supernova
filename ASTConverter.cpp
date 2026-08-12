@@ -300,7 +300,7 @@ void ASTConverter::find_function_signatures(const ReferencePtr<AbstractSyntaxTre
 			}
 			// tutaj chyba coœ jest nie halo 
 			IRGlobalVariable* variable = m_ir_program->add_variable(variable_name, dtn->m_ir_data_type);
-
+			// wrocic tutaj
 			m_symbol_table.add_symbol(variable_name,{variable});
 
 		}
@@ -344,36 +344,103 @@ ConstantValue ASTConverter::try_implicite_conversion(IRBasicType type,const Cons
 	return cv.safe_convert(type);
 }
 
-void ASTConverter::implicit_conversion(const IROperand& left, IROperand& right, size_t line_number) {
-	IRBasicType left_bt = left.get_data_type().remove_reference().get_ir_basic_type();
+void ASTConverter::implicit_conversion(size_t line_number, const TypeRef& to,IROperand& right) {
+	TypeRef to_type = to.remove_reference();
+	if (to_type.is_pointer()) {
+		// const moze byc przed pointerem trzeba rozpatrzec ten przypadek 
+		if (!IRDataTypeTraits::can_implicitly_convert_pointers(right.get_data_type(), to)) {
+			std::string msg = std::format(
+				"cannot implicitly convert from type {} to type {}",
+				right.get_data_type().to_string(),
+				to.to_string()
+			);
+
+			m_ast_converter_listener->error({ ErrorType::IMPLICIT_CAST_NOT_ALLOWED,line_number,msg });
+		}
+
+		IROperand cast_type{ to };
+		right = m_coder.add_triple(line_number,IROperation::CAST,cast_type,right);
+		return;
+	}
+
+	// TODO write in a more concise way it should work for other types and pointers to them to structs etc.
+	if ((right.get_data_type().is_pointer() || right.get_data_type().is_composite()) && to.is_basic_data_type())
+	{
+		std::string msg = std::format(
+			"cannot implicitly convert from type {} to type {}",
+			right.get_data_type().to_string(),
+			to.to_string()
+		);
+
+		m_ast_converter_listener->error({ ErrorType::IMPLICIT_CAST_NOT_ALLOWED,line_number,msg });
+		return;
+	}
+
+	IRBasicType left_bt = to.remove_reference().get_ir_basic_type();
 	IRBasicType right_bt = right.get_data_type().remove_reference().get_ir_basic_type();
 
-	// segment responsible for implicit conversion 
 	if (left_bt != right_bt) {
-		// here's where we check what we're dealing with
-		if (IRDataTypeTraits::can_implicitly_convert(right_bt, left_bt)) {
-			//IROperand cast_type_node = get_op(variable.get_data_type());
-			IROperand cast_type_node{ left.get_data_type() };
-			IRTriple* cast = m_coder.add_triple(line_number, IROperation::CAST, cast_type_node, right);
+		if (IRDataTypeTraits::can_implicitly_convert(right_bt, to.get_ir_basic_type())) {
+			
+			IROperand cast_type{ to };
+			IRTriple* cast = m_coder.add_triple(line_number, IROperation::CAST, cast_type, right);
 			right = cast;
 		}
 		else if (right.m_operand_type == IROperandType::CONSTANT) {
 			IRConstant* ir_c = right.get_constant();
 			ConstantValue cv = ir_c->get_value();
-			if (left.get_data_type().get_ir_basic_type() != cv.get_basic_type()) {
-				ConstantValue new_cv = try_implicite_conversion(left.get_data_type().get_ir_basic_type(), cv);
+			if (to.get_ir_basic_type() != cv.get_basic_type()) {
+				ConstantValue new_cv = try_implicite_conversion(to.get_ir_basic_type(), cv);
 				IRConstant* ir_constant = m_current_fn->add_constant(new_cv);
 				right = ir_constant;
 			}
 		}
 		else {
-			//can't implicitly convert from type UINT8 to type INT32
-			std::string msg = std::format("can't implicitly convert from type {} to type {}", IRDataTypeTraits::get_name(right_bt), IRDataTypeTraits::get_name(left_bt));
-			m_ast_converter_listener->error({ ErrorType::IMPLICIT_CAST_NOT_ALLOWED, line_number, msg });
+			std::string msg = std::format("cannot implicitly convert from type {} to type {}",right.get_data_type().to_string(),to.to_string());
+			m_ast_converter_listener->error({ ErrorType::IMPLICIT_CAST_NOT_ALLOWED,line_number,msg });
 		}
 	}
 }
 
+void ASTConverter::cast_if_necessary(size_t line_number,IRBasicType to,IROperand& operand) {
+	if (to != operand.get_data_type().get_ir_basic_type()) {
+		IRTriple* casted_triple = m_coder.add_triple(line_number,IROperation::CAST,m_dtm->get_basic_type_node(to),operand);
+		operand = casted_triple;
+	}
+}
+
+bool ASTConverter::prepare_for_binary_operation_signed_types(size_t line_number, IRBasicType to, IROperand& left, IROperand& right) {
+	if (left.get_data_type().get_ir_basic_type() == to || right.get_data_type().get_ir_basic_type() == to) {
+		cast_if_necessary(line_number, to, left);
+		cast_if_necessary(line_number, to, right);
+		return true;
+	}
+
+	return false;
+}
+
+bool ASTConverter::prepare_for_binary_operation_integer_unsigned_types(size_t line_number, IRBasicType to, IROperand& left, IROperand& right) {
+	if (left.get_data_type().get_ir_basic_type() == to || right.get_data_type().get_ir_basic_type() == to) {
+		bool signed_operands = (left.get_data_type().is_signed() || right.get_data_type().is_signed());
+		if (signed_operands) {
+			if (to == IRBasicType::UINT64) {
+				m_ast_converter_listener->error({ ErrorType::INVALID_OPERAND_TYPE,line_number,"invalid operands"});
+				return false;
+			}
+			else if (to == IRBasicType::UINT32) {
+				cast_if_necessary(line_number,IRBasicType::INT64,left);
+				cast_if_necessary(line_number,IRBasicType::INT64,right);
+				return true;
+			}
+		}
+
+		cast_if_necessary(line_number, to, left);
+		cast_if_necessary(line_number, to, right);
+		return true;
+	}
+
+	return false;
+}
 
 void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode> &node) {
 	if(!node)
@@ -394,10 +461,8 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		IROperand variable = get_op(left_expr);
 		IROperand expr_op = get_op(right_expr);
 
-		IRBasicType variable_bt = variable.get_data_type().remove_reference().get_ir_basic_type();
-		IRBasicType expr_bt = expr_op.get_data_type().remove_reference().get_ir_basic_type();
-		implicit_conversion(variable,expr_op,current_node->get_line_number());
-		
+		implicit_conversion(current_node->get_line_number(),variable.get_data_type(),expr_op);
+
 		IRTriple* t = m_coder.add_triple(current_node->get_line_number(), IROperation::ASSIGN, variable, expr_op);
 		set_op(current_node, t);
 
@@ -415,8 +480,6 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		for (size_t i = 0; i < arguments->get_count(); i++)
 			arg_operands.push_back(get_op(arguments->get_child(i)));
 
-		// pick the function with the same arguments
-		// we have to get a pointer to a function 
 		IRFunction* fn_ptr = m_ir_program->get_function(fn_name, arg_operands);
 		if (fn_ptr != nullptr)
 			std::cout << "Function Found" << std::endl;
@@ -429,16 +492,57 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		break;
 	}
 	case TreeNodeType::BIN_OPERATION: {
-		// OK
 		ReferencePtr<BinaryOperatorNode> current_node = node.cast<BinaryOperatorNode>();
 		post_order_traverse(current_node->m_left);
 		post_order_traverse(current_node->m_right);
 
 		IROperand left = get_op(current_node->m_left);
 		IROperand right = get_op(current_node->m_right);
-		auto op = ast_op_to_ir_op(current_node->get_operation_type());
+		TypeRef left_numeric_type = left.get_data_type().remove_reference().remove_qualifiers();
+		TypeRef right_numeric_type = right.get_data_type().remove_reference().remove_qualifiers();
+		IROperation operation = ast_op_to_ir_op(current_node->get_operation_type());
 
-		IRTriple* t = m_coder.add_triple(current_node->get_line_number(), op, left, right);
+		bool is_shift = operation == IROperation::LEFT_SHIFT || operation == IROperation::RIGHT_SHIFT;
+		if (is_shift) {
+			if(!left_numeric_type.is_integer() || !right_numeric_type.is_integer() )
+				m_ast_converter_listener->error({ ErrorType::INVALID_OPERAND_TYPE,current_node->get_line_number(),"both operands must be integers" });
+			else {
+				if (left_numeric_type.is_small_integer())
+					cast_if_necessary(current_node->get_line_number(),IRBasicType::INT32,left);
+			
+				if (IRDataTypeTraits::can_implicitly_convert(right_numeric_type.get_ir_basic_type(), IRBasicType::INT32))
+					cast_if_necessary(current_node->get_line_number(), IRBasicType::INT32, right);
+				else {
+					m_ast_converter_listener->error({ ErrorType::IMPLICIT_CAST_NOT_ALLOWED,current_node->get_line_number(),"right operand cannot be implicitly converted to int32" });
+				}
+			}
+
+		}
+		else {
+			bool invalid_singed_uint64 =
+				(left_numeric_type.is_integer() && left_numeric_type.is_signed() && right_numeric_type.is_integer() && right_numeric_type.get_ir_basic_type() == IRBasicType::UINT64)
+				||
+				(right_numeric_type.is_integer() && right_numeric_type.is_signed() && left_numeric_type.is_integer() && left_numeric_type.get_ir_basic_type() == IRBasicType::UINT64);
+
+			if (invalid_singed_uint64)
+				m_ast_converter_listener->error({ ErrorType::INVALID_OPERAND_TYPE,current_node->get_line_number(),"cannot apply binary operator to signed integer and uint64"});
+			else {
+				bool result = 
+					prepare_for_binary_operation_signed_types(current_node->get_line_number(), IRBasicType::DOUBLE, left, right) ||
+					prepare_for_binary_operation_signed_types(current_node->get_line_number(), IRBasicType::FLOAT, left, right) ||
+					prepare_for_binary_operation_integer_unsigned_types(current_node->get_line_number(), IRBasicType::UINT64, left, right) ||
+					prepare_for_binary_operation_signed_types(current_node->get_line_number(), IRBasicType::INT64, left, right) ||
+					prepare_for_binary_operation_integer_unsigned_types(current_node->get_line_number(), IRBasicType::UINT32, left, right);
+
+				if (!result) {
+					cast_if_necessary(current_node->get_line_number(),IRBasicType::INT32,left);
+					cast_if_necessary(current_node->get_line_number(),IRBasicType::INT32,right);
+				}
+			}
+		}
+
+
+		IRTriple* t = m_coder.add_triple(current_node->get_line_number(),operation, left, right);
 		set_op(current_node, t);
 		break;
 	}
@@ -481,12 +585,10 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 				ReferencePtr<AbstractSyntaxTreeNode> expr_node = current_item->get_expr_node();
 				post_order_traverse(expr_node);
 
-
 				if (expr_node.get_ptr() != nullptr) {
-				
 					IROperand expr_op = get_op(expr_node);
 
-					implicit_conversion(variable, expr_op, current_node->get_line_number());
+					implicit_conversion(current_node->get_line_number(),variable->get_data_type(), expr_op);
 
 					// for handling reference 
 					if (variable->get_data_type().is_reference()) {
@@ -883,34 +985,18 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		ReferencePtr<ReturnNode> current_node = node.cast<ReturnNode>();
 		post_order_traverse(current_node->get_expr());
 		if (current_node->get_expr()) {
-			IROperand expr = get_op(current_node->get_expr());
-			AbstractSyntaxTreeNode* node_operand_1 = current_node->get_expr();
-			TreeNodeType type = node_operand_1->get_type();
+			IROperand return_value = get_op(current_node->get_expr());
+			IROperand expected_result_type = m_current_fn->get_return_type();
+			m_current_fn->get_return_type();
 
-			IRVariable* variable = nullptr;
-			IRTriple* triple = nullptr;
-			switch (type)
-			{
-				case TreeNodeType::IDENTIFIER: {
-					std::string name = static_cast<IdentifierNode*>(node_operand_1)->get_identifier();
-					variable = m_current_fn->get_variable(name);
-					if (variable == nullptr)
-						std::runtime_error("variable can't be nullptr");
+			// TODO change the order of arguments 
+			implicit_conversion(current_node->get_line_number(),m_current_fn->get_return_type(),return_value);
 
-					triple = m_coder.add_triple(current_node->get_line_number(), IROperation::RETURN, variable);
-					break;
-				}
-				default: {
-					IROperand return_triple = get_op(node_operand_1);
-					triple = m_coder.add_triple(current_node->get_line_number(), IROperation::RETURN, return_triple);
-					break;
-				}
-			}
+			IRTriple* triple = m_coder.add_triple(current_node->get_line_number(),IROperation::RETURN,return_value);
 			set_op(current_node, triple);
 		}
-		else {
+		else
 			m_coder.add_triple(current_node->get_line_number(), IROperation::RETURN, std::vector<IROperand>{});
-		}
 
 		break;
 	}
@@ -1272,8 +1358,28 @@ void ASTConverter::convert(ASTConverterListener* listener) {
 			}
 		}
 	}
+	
+	IRPrinter printer;
+	//std::cout << "Representation before removing triples " << std::endl;
+	//printer.print_ir_representation(*m_current_fn->get_ir_prgram());
+
+	//IROptimizer optimizer;
+	//for (auto& [key,fns] : map) {
+	//	for (auto&fn :fns) {
+	//		optimizer.run(fn);
+	//	}
+	//}
+
 
 	// TODO MOVE FROM HERE 
 	m_ir_program->calculate_memory_layout();
 
+	FunctionReturnChecker return_checker;
+	auto blks = return_checker.check_all_paths(m_global_fn);
+	for (IRBasicBlock* blk : blks) {
+		m_coder.set_basic_block(blk);
+		m_coder.add_triple(0,IROperation::RETURN);
+	}
+
+	printer.print_ir_representation(*m_ir_program);
 }

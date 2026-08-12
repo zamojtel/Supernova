@@ -94,6 +94,7 @@
 #include "ErrorTraits.h"
 
 #include "ParserHelper.h"
+#include "UselessControlFlowEliminator.h"
 
 #include "ASTConvIncludes.h"
 #include "Tester.h"

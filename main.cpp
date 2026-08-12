@@ -181,13 +181,6 @@ void func() {
 
 
 void check_asserts() {
-
-	// wczytanie source file 
-
-	// interpretacja 
-
-	// sprawdzenie interetacji 
-
 	std::string line;
 	std::ifstream myfile("auto_assert_1.txt");
 
@@ -294,12 +287,14 @@ void check_asserts() {
 	ir_printer.print_errors(error_collector);
 
 	std::vector<IROperand> fn_arguments{};
-	IRFunction* fn = ir_program.get_function("main", fn_arguments);
-	IRInterpreterForTests* ir_intereter_listener = new IRInterpreterForTests{};
-	Interpreter interpreter{ &ir_program,fn,fn_arguments };
-	interpreter.set_listener(ir_intereter_listener);
+	IRFunction* global_function = ir_program.get_function("_global_function",fn_arguments);
+	Interpreter interpreter{ &ir_program,global_function,fn_arguments };
+	interpreter.start(global_function);
 
-	interpreter.start();
+	IRFunction* main_fn = ir_program.get_function("main", fn_arguments);
+	IRInterpreterForTests* ir_intereter_listener = new IRInterpreterForTests{};
+	interpreter.set_listener(ir_intereter_listener);
+	interpreter.start(main_fn);
 
 	auto results = ir_intereter_listener->get_results();
 	assert(results[0] == true);
@@ -418,7 +413,7 @@ void check_prints(const std::string& file_name, const std::vector<std::string>& 
 	IRInterpreterForTests ir_interpreter_listener = IRInterpreterForTests{};
 	Interpreter interpreter{ &ir_program,fn,fn_arguments };
 	interpreter.set_listener(&ir_interpreter_listener);
-	interpreter.start();
+	interpreter.start(fn);
 
 	assert(ir_interpreter_listener.get_messages().size() == messages.size());
 	auto collected_msgs = ir_interpreter_listener.get_messages();
@@ -430,33 +425,56 @@ int main() {
 	std::string test_folder = "C:\\Users\\zamoj\\OneDrive\\Pulpit\\ProjectKompilator\\SourceTests";
 	std::string expected_outputs_folder = "C:\\Users\\zamoj\\OneDrive\\Pulpit\\ProjectKompilator\\SourceTests";
 
+	int* ptr = (nullptr_t)(0);
+
 	std::vector<std::string> test_names{
-		"implicit_type_widening",
-		"implicit_unsigned_widening",
-		"implicit_assignment_widening",
-		"implicit_float_to_double",
-		"implicit_reference_widening",
-		"add_function_call",
-		"many_blocks",
-		"inline_expanding_1",
-		"inline_function_1",
-		"inline_recursive_call_1",
-		"inline_reference_1",
-		"inline_one_return_1",
-		"inline_function_2",
-		"recursion_limit_1",
-		"unreachable_blk_1"
+		//"implicit_type_widening",
+		//"useless_statements_1",
+		//"implicit_unsigned_widening",
+		//"implicit_assignment_widening",
+		//"implicit_float_to_double",
+		//"implicit_reference_widening",
+		//"add_function_call",
+		//"many_blocks",
+		//"inline_expanding_1",
+		//"inline_function_1",
+		//"inline_recursive_call_1",
+		//"inline_reference_1",
+		//"inline_one_return_1",
+		//"inline_function_2",
+		//"recursion_limit_1",
+		//"unreachable_blk_1",
+		//"bitwise_operations_1",
+		//"constant_replacement_1",
+		//"post_incrementation_1",
+		//"post_incrementation_2",
+		//"constant_conversion_1",
+		//"pre_incrementation_1",
+		//"modulo_division",
+		//"return_promotion_1",
+		//"promotion_core_logic_1",
+		//"return_pointer_1",
+		//"pointer_const_to_non_const_1"
+		//"left_bitwise_shift_1"
+		//"left_bitwise_shift_with_cast_1"
+		//"right_bitwise_shift_1"
+		"logical_vs_arithmetical_shift_1"
 	};
 
 	std::vector<std::string> test_errors{
-		"implicit_error_1",
-		"implicit_cast_not_allowed_error_1",
-		//"implicit_unsigned_widening_1",
-		"implicit_narrowing_error",
-		"implicit_signed_to_unsigned_error",
-		"implicit_double_to_float_error",
-		"implicit_assignment_error",
-		"no_return_1",
+		//"implicit_error_1",
+		//"implicit_cast_not_allowed_error_1",
+		//"implicit_narrowing_error",
+		//"implicit_signed_to_unsigned_error",
+		//"implicit_double_to_float_error",
+		//"implicit_assignment_error",
+		//"no_return_1",
+		//"return_promotion_error"
+		//"pointer_const_to_non_const_2",
+		//"pointer_const_to_non_const_3"
+		//"invalid_conversion_1"
+		//"left_bitwise_shift_cast_error_1"
+		"right_bitwise_shift_cast_error_1"
 	};
 
 	std::cout<<"TypeName: "<<typeid(decltype(-2'147'483'648)).name();
@@ -466,6 +484,10 @@ int main() {
 
 	Tester compiler_tester(test_folder, expected_outputs_folder);
 	compiler_tester.run_all_tests(test_names,test_errors);
+
+	short a = 10;
+	short b = 10;
+	short c = a + b;
 
 	return 0;
 }

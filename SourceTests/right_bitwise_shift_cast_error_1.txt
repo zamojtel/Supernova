@@ -1,0 +1,8 @@
+int main(){
+	uint32 value = 10;
+	uint64 shift = 2;
+	value = value >> shift;
+	return 0;
+}
+#------------------
+4 IMPLICIT_CAST_NOT_ALLOWED

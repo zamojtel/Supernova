@@ -50,6 +50,7 @@ class IRMember;
 #include "IRPointerNode.h"
 #include "IRQualifiersNode.h"
 #include "IRReferenceNode.h"
+#include "IRNullptrNode.h"
 
 #include "IRBasicBlock.h"
 
@@ -72,6 +73,7 @@ class IRMember;
 #include "IRUseSite.h"
 
 #include "IROperationExecutor.h"
+#include "IROptimizer.h"
 
 #include "IRUnreachableBlockFinder.h"
 #include "FunctionReturnChecker.h"

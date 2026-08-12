@@ -167,7 +167,7 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
     IRProgram ir_program;
     ir_program.set_checker_listener(&error_collector);
     ASTConverter converter{ prog, &ir_program, ir_program.get_dtm_manager() };
-
+    
     class ASTConverterImpl : public ASTConverterListener {
     public:
         bool has_error = false;
@@ -186,6 +186,9 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
     ir_program.check_program();
     printer.print_ir_representation(ir_program);
 
+    if (ast_conv_impl.has_error) {
+        system("pause");
+    }
     
     IRInliner inliner;
     std::vector<IROperand> fn_arguments{};
@@ -220,7 +223,6 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
         std::cout << "not all inline function calls were expanded\n";
         return false;
     }
-
 
     if (is_error_test) {
         auto expected_errors = ast_conv_impl.get_errors();
@@ -259,8 +261,12 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
         TestInterpreterListener test_listener;
         Interpreter interpreter{ &ir_program,main_fn,fn_arguments };
         interpreter.set_listener(&test_listener);
-    
-        interpreter.start();
+
+        std::vector<IROperand> fn_arguments{};
+        IRFunction* global_function = ir_program.get_function("_global_function", fn_arguments);
+        interpreter.start(global_function);
+
+        interpreter.start(main_fn);
 
         auto& actual_outputs = test_listener.get_messages();
 

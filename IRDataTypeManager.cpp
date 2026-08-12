@@ -2,12 +2,17 @@
 IRDataTypeManager::IRDataTypeManager() {
 	size_t n = (size_t)IRBasicType::NUMBER_OF_TYPES;
 	m_error_type = new IRErrorTypeNode{};
+
 	for (size_t i = 0; i < n ; i++) {
 		IRBasicType b_t = (IRBasicType)i;
 		IRBasicTypeNode* new_basic_type_node = new IRBasicTypeNode{b_t};
 		m_basic_types[b_t] = new_basic_type_node;
 		m_all_data_types.push_back(new_basic_type_node);
 	}
+
+	// adding nullptr_type 
+	m_nullptr_node = new IRNullptrNode{};
+	m_all_data_types.push_back(m_nullptr_node);
 }
 
 TypeRef IRDataTypeManager::add_qualifiers(const TypeRef& type_node,uint8_t mask) {
@@ -111,4 +116,8 @@ TypeRef IRDataTypeManager::get_error() const {
 
 TypeRef IRDataTypeManager::get_void() const {
 	return m_basic_types.at(IRBasicType::VOID);
+}
+
+TypeRef IRDataTypeManager::get_nullptr() const {
+	return m_nullptr_node;
 }

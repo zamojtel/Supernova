@@ -1,0 +1,9 @@
+int main(){
+	int val = 10;
+	uint8 * ptr2;
+	ptr2 = &val;
+
+	return 0;
+}
+#------------------
+4 IMPLICIT_CAST_NOT_ALLOWED
