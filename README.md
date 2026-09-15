@@ -1,1 +1,1 @@
-# ProjectKompilator
+# Supernova
