@@ -375,6 +375,12 @@
     <ClCompile Include="IRStackFrame.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="OverloadMatch.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="OverloadResolver.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="SymbolTable.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -416,6 +422,7 @@
     <ClInclude Include="BlockNode.h" />
     <ClInclude Include="BooleanNotNode.h" />
     <ClInclude Include="BreakNode.h" />
+    <ClInclude Include="CandidateComparison.h" />
     <ClInclude Include="CastNode.h" />
     <ClInclude Include="CompositeNode.h" />
     <ClInclude Include="ContinueNode.h" />
@@ -540,6 +547,8 @@
     <ClInclude Include="MemberAccessNode.h" />
     <ClInclude Include="MemberDeclarationNode.h" />
     <ClInclude Include="OrNode.h" />
+    <ClInclude Include="OverloadMatch.h" />
+    <ClInclude Include="OverloadResolver.h" />
     <ClInclude Include="PointerNode.h" />
     <ClInclude Include="PrintNode.h" />
     <ClInclude Include="ProgNode.h" />
@@ -705,6 +714,17 @@
     </Text>
     <Text Include="SourceTests\bitwise_operations_1.txt" />
     <Text Include="SourceTests\logical_vs_arithmetical_shift_1.txt" />
+    <Text Include="SourceTests\overloading_1.txt" />
+    <Text Include="SourceTests\overloading_2.txt" />
+    <Text Include="SourceTests\overloading_3.txt" />
+    <Text Include="SourceTests\overloading_ambiguous_1.txt" />
+    <Text Include="SourceTests\overloading_multiple_arguments_1.txt" />
+    <Text Include="SourceTests\overloading_multiple_arguments_2.txt" />
+    <Text Include="SourceTests\overloading_no_match_1.txt" />
+    <Text Include="SourceTests\overloading_single_argument_1.txt" />
+    <Text Include="SourceTests\overloading_single_argument_2.txt" />
+    <Text Include="SourceTests\overloading_single_argument_error_1.txt" />
+    <Text Include="SourceTests\overloading_single_argument_error_2.txt" />
     <Text Include="SourceTests\right_bitwise_shift_cast_error_1.txt" />
     <Text Include="SourceTests\left_bitwise_shift_1.txt" />
     <Text Include="SourceTests\constant_conversion_1.txt" />

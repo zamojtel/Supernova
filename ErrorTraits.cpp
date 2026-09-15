@@ -3,24 +3,24 @@
 std::string ErrorTraits::get_name(ErrorType type) {
 	switch (type)
 	{
-	case ErrorType::SYNTAX_ERROR: {
+	case ErrorType::SYNTAX_ERROR:
 		return "SYNTAX_ERROR";
-	}
-	case ErrorType::IMPLICIT_CAST_NOT_ALLOWED: {
+	case ErrorType::IMPLICIT_CAST_NOT_ALLOWED:
 		return "IMPLICIT_CAST_NOT_ALLOWED";
-	}
-	case ErrorType::TYPE_NOT_DEFINED: {
+	case ErrorType::TYPE_NOT_DEFINED:
 		return "TYPE_NOT_DEFINED";
-	}
-	case ErrorType::UNKNOWN_ERROR: {
+	case ErrorType::UNKNOWN_ERROR:
 		return "UNKNOWN_ERROR";
-	}
 	case ErrorType::ERROR_COUNT:
 		return "ERROR_COUNT";
 	case ErrorType::NO_RETURN_ERROR:
 		return "NO_RETURN_ERROR";
 	case ErrorType::INVALID_OPERAND_TYPE:
 		return "INVALID_OPERAND_TYPE";
+	case ErrorType::NO_MATCHING_FUNCTION:
+		return "NO_MATCHING_FUNCTION";
+	case ErrorType::AMBIGUOUS_FUNCTION_CALL:
+		return "AMBIGUOUS_FUNCTION_CALL";
 	default:
 		throw std::runtime_error("type not found");
 		break;

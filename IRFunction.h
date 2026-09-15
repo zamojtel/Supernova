@@ -46,7 +46,9 @@ public:
 	const TypeRef& get_return_type() const;
 	void set_name(const std::string& name);
 	const std::string& get_name();
-	const std::vector<IRVariable*>& get_parameters();
+
+	//const std::vector<IRVariable*>& get_parameters();
+	const std::vector<IRVariable*>& get_parameters() const;
 	// SHOW
 	bool compare_arguments(const std::vector<IROperand> &arguments);
 	size_t get_index();

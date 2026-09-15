@@ -1,0 +1,13 @@
+void f1(uint8 a) { print(1); print(a); }
+void f1(int64 a) { print(2); print(a); }
+
+int main() {
+    f1(255);
+    f1(123_123);
+    return 0;
+}
+#------------------
+1
+255
+2
+123123

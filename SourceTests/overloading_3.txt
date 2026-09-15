@@ -1,0 +1,64 @@
+
+// zestaw, nr funkcji
+//1
+void f1(int8 a) { print(11); }
+void f1(int16 a) { print(12); }
+void f1(int32 a) { print(13); }
+
+//2
+void f2(uint8 a){ print(21); }
+void f2(int16 b){ print(22); }
+void f2(uint16 c){ print(23); }
+void f2(int32 d){ print(24); }
+
+//3
+// f(int16), f(int32), f(int64)
+void f3(int16 a){ print(31); }
+void f3(int32 b){ print(32); }
+void f3(int64 c){ print(33); }
+
+//4
+// f(uint16), f(int32), f(uint32), f(int64)
+void f4(uint16 a){ print(41); }
+void f4(int32 b){ print(42); }
+void f4(uint32 c){ print(43); }
+void f4(int64 d){ print(44); }
+
+// 5
+// f(int32), f(int64), f(float), f(double)
+void f5(int32 a){ print(51); }
+void f5(int64 b){ print(52); }
+void f5(float c){ print(53); }
+void f5(double d){ print(54); }
+
+
+//12 -> 23
+// f(int16), f(int32), f(int64)
+void f12(int16 a){ print(121); }
+void f12(int32 b){ print(122); }
+void f12(int64 c){ print(123); }
+
+// 13 
+// f(int32), f(int64)
+void f13(int32 a){ print(131); }
+void f13(int64 b){ print(132); }
+
+int main(){
+	int8 a = 123;
+	f1((int8)a);
+	f2((uint8)a);
+	f3((int16)a);
+	f4((uint16)a);
+	// seria 12:
+	f12(a);
+	// seria 13:
+	f13((int16)a);
+	return 0;
+}
+#------------------
+11
+21
+31
+41
+121
+131

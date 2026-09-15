@@ -1,0 +1,107 @@
+void f5(int32 a) { print(51); }
+void f5(int64 a) { print(52); }
+void f5(float a) { print(53); }
+void f5(double a) { print(54); }
+
+void f6(uint32 a) { print(61); }
+void f6(int64 a) { print(62); }
+void f6(uint64 a) { print(63); }
+void f6(float a) { print(64); }
+
+void f7(int64 a) { print(71); }
+void f7(float a) { print(72); }
+void f7(double a) { print(73); }
+
+void f8(uint64 a) { print(81); }
+void f8(float a) { print(82); }
+void f8(double a) { print(83); }
+
+void f9(float a) { print(91); }
+void f9(double a) { print(92); }
+
+void f10(int32 a) { print(101); }
+void f10(float a) { print(102); }
+void f10(double a) { print(103); }
+
+void f11(bool a) { print(111); }
+void f11(int32 a) { print(112); }
+
+void f14(int16 a) { print(141); }
+void f14(uint16 a) { print(142); }
+
+void f15(uint16 a) { print(151); }
+void f15(int32 a) { print(152); }
+
+void f17(uint32 a) { print(171); }
+void f17(int64 a) { print(172); }
+
+void f18(int64 a) { print(181); }
+void f18(uint64 a) { print(182); }
+
+void f19(uint64 a) { print(191); }
+void f19(float a) { print(192); }
+
+void f20(int64 a) { print(201); }
+void f20(double a) { print(202); }
+
+void f21(float a) { print(211); }
+void f21(double a) { print(212); }
+
+void f22(float a) { print(221); }
+void f22(double a) { print(222); }
+
+void f23(int64 a) { print(231); }
+void f23(float a) { print(232); }
+void f23(double a) { print(233); }
+
+void f46(int32 a) { print(461); }
+
+int main() {
+    int16 i16 = (int16)1;
+    int32 i32 = (int32)1;
+    int64 i64 = (int64)1;
+    uint8 u8 = (uint8)1;
+    uint16 u16 = (uint16)1;
+    uint32 u32 = (uint32)1;
+    uint64 u64 = (uint64)1;
+    float fv = 1.0f;
+    double dv = 1.0;
+    bool bv = true;
+
+    f5(i32);
+    f6(u32);
+    f7(i64);
+    f8(u64);
+    f9(fv);
+    f10(dv);
+    f11(bv);
+    f14(u8);
+    f15(u8);
+    f17(u16);
+    f18(u32);
+    f19(u16);
+    f20(u16);
+    f21(i32);
+    f22(i64);
+    f23(u64);
+    f46(i16);
+    return 0;
+}
+#------------------
+51
+61
+71
+81
+91
+103
+111
+141
+151
+171
+181
+191
+201
+211
+221
+232
+461

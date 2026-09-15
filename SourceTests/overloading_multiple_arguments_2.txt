@@ -1,0 +1,73 @@
+void f101(int16 a, int16 b) { print(1011); }
+void f101(int16 a, int32 b) { print(1012); }
+
+void f102(int32 a, int16 b) { print(1021); }
+void f102(int16 a, int16 b) { print(1022); }
+
+void f103(int32 a, int32 b) { print(1031); }
+void f103(uint32 a, uint32 b) { print(1032); }
+
+void f104(uint64 a, uint64 b) { print(1041); }
+void f104(int64 a, int64 b) { print(1042); }
+
+void f105(int64 a, int16 b) { print(1051); }
+void f105(uint32 a, int16 b) { print(1052); }
+
+void f106(uint32 a, int16 b) { print(1061); }
+void f106(int64 a, int16 b) { print(1062); }
+
+void f107(float a, int32 b) { print(1071); }
+void f107(uint64 a, int32 b) { print(1072); }
+
+void f108(uint64 a, int32 b) { print(1081); }
+void f108(float a, int32 b) { print(1082); }
+
+void f109(int16 a, int32 b) { print(1091); }
+void f109(int32 a, int16 b) { print(1092); }
+void f109(int16 a, int16 b) { print(1093); }
+
+void f110(int32 a, float b) { print(1101); }
+void f110(int64 a, double b) { print(1102); }
+void f110(int64 a, float b) { print(1103); }
+
+void arity(int32 a, int32 b) { print(1201); }
+void arity() { print(1202); }
+void arity(int64 a) { print(1203); }
+
+int main() {
+    int8 i8 = (int8)1;
+    int16 i16 = (int16)1;
+    int32 i32 = (int32)1;
+    int64 i64 = (int64)1;
+    uint16 u16 = (uint16)1;
+    uint32 u32 = (uint32)1;
+
+    f101(i8, i8);
+    f102(i8, i8);
+    f103(u16, u16);
+    f104(u32, u32);
+    f105(u16, i8);
+    f106(u16, i8);
+    f107(u32, i16);
+    f108(u32, i16);
+    f109(i8, i8);
+    f110(i64, i16);
+    arity();
+    arity(i8);
+    arity(i32, i32);
+    return 0;
+}
+#------------------
+1011
+1022
+1031
+1042
+1052
+1061
+1072
+1081
+1093
+1103
+1202
+1203
+1201

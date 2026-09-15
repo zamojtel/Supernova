@@ -1,0 +1,50 @@
+int fun(int a,int b){
+	return a*b;
+}
+
+double fun(double a,double b){
+	return a+b;
+}
+
+float fun(float a,int b){
+	return a-b;
+}
+
+int function(int x){
+	return 2*x;
+}
+
+float function(float y){
+	return 3*y;
+}
+
+
+int main(){
+	int a = 10;
+	int b = 20;
+	double c = 33.00;
+	double d = 44.00;
+	float e = 50.00f;
+
+	int result1 = fun(a,b);
+	double result2 = fun(c,d);
+	float result3 = fun(e,a);
+
+	print(result1);
+	print(result2);
+	print(result3);
+	int const x = 123;
+	float const y = 255.0f;
+	int result4 = function(x);
+	float result5 = function(y);
+	print(result4);
+	print(result5);
+
+	return 0;
+}
+#------------------
+200
+77
+40
+246
+765

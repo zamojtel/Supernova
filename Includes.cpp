@@ -12,5 +12,7 @@
 #include "ConstantValue.cpp"
 #include "Tester.cpp"
 #include "ErrorTraits.cpp"
+#include "OverloadMatch.cpp"
+#include "OverloadResolver.cpp"
 
 #endif INCLUDES_CPP

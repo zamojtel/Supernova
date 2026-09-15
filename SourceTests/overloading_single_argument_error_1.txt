@@ -1,0 +1,20 @@
+void f19(int32 a,int64 b) { }
+void f19(int64 a,int32 b) { }
+
+// 29
+void f29(int32 a,int32 b) { print(291); }
+void f29(float a,int64 b) { print(292); }
+
+int main(){
+	int32 a = 123;
+	f19(a,a);
+
+	int32 b = 32;
+	bool c = false;
+	f29(b,c);
+
+	return 0;
+}
+#------------------
+10 AMBIGUOUS_FUNCTION_CALL
+14 NO_MATCHING_FUNCTION

@@ -100,7 +100,7 @@ const std::vector<IRConstant*>& IRFunction::get_constants() const {
 	return m_constants;
 }
 
-const std::vector<IRVariable*>& IRFunction::get_parameters() {
+const std::vector<IRVariable*>& IRFunction::get_parameters() const {
 	return m_parameters;
 }
 

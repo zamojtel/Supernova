@@ -1,0 +1,39 @@
+void fun(int64 b){
+	print(1);
+}
+
+void fun(int a){
+	print(2);
+}
+
+void fun(double c){
+	print(3);
+}
+
+void fun(int16 d){
+	print(4);
+}
+
+void g(uint32 e){
+	print(5);
+}
+
+void g(int32 f){
+	print(6);
+}
+
+int main(){
+	fun((uint16) 123);
+	
+	int8 z = 126;
+	fun(z);
+
+	uint16 k = 123;
+	g(k);
+
+	return 0;
+}
+#------------------
+2
+4
+6

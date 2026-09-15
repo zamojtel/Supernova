@@ -14,6 +14,7 @@ public:
 	void set_checker_listener(IRCheckerListener* listener);
 	void check_program();
 	const std::unordered_map<std::string,std::vector<IRFunction*>>& get_functions() const;
+	const std::vector<IRFunction*>& get_functions_with_name(const std::string& name) const;
 	IRFunction* get_function(const std::string &name,const std::vector<IROperand> &arguments);
 	IRGlobalVariable* add_variable(const std::string& name,const TypeRef& type);
 	IRGlobalVariable* get_variable(const std::string& name);

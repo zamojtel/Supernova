@@ -35,6 +35,10 @@ const std::unordered_map<std::string, std::vector<IRFunction*>>& IRProgram::get_
 	return m_functions;
 }
 
+const std::vector<IRFunction*>& IRProgram::get_functions_with_name(const std::string& name) const {
+	return m_functions.at(name);
+}
+
 void IRProgram::calculate_memory_layout() {
 	m_required_for_global_variables = calculate_size_required_for_global_variables();
 	calculate_required_size_for_all_fns();

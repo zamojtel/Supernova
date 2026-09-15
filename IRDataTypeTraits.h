@@ -1,7 +1,5 @@
 
-
-
-//// integers 
+// integers 
 // INT8, // 0
 // INT16, // 1 
 // INT32, // 2 
@@ -10,10 +8,10 @@
 // UINT16, // 5
 // UINT32, // 6
 // UINT64, // 7
-//// floating point values 
+// floating point values 
 // FLOAT, // 8
 // DOUBLE, // 9
-//// boolean
+// boolean
 // BOOL, // 10
 // STRING // 11
 // ERROR, // 12
@@ -21,10 +19,11 @@
 
 // 0 it will hold the information about a single type of data
 struct IRDataTypeTraits {
-	// size in bytes 
 	int size;
+	static bool can_implicitly_convert(const TypeRef& from, const TypeRef& to);
 	static bool can_implicitly_convert_pointers(const TypeRef& from, const TypeRef& to);
-	static bool can_implicitly_convert(IRBasicType from, IRBasicType to);
+	static bool can_implicitly_convert_basic_types(IRBasicType from, IRBasicType to);
+	static bool can_implicitly_convert_argument(const IROperand& argument, const TypeRef& to);
 	static bool is_floating_point(IRBasicType type);
 	static bool is_integer(IRBasicType type);
 	static bool is_boolean(IRBasicType type);
@@ -33,6 +32,5 @@ struct IRDataTypeTraits {
 
 	static std::string get_name(const IRBasicType type);
 };
-
 
 extern std::array<const IRDataTypeTraits,(size_t)IRBasicType::NUMBER_OF_TYPES> ir_data_type_traits;

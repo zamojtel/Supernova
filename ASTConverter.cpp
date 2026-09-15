@@ -119,12 +119,10 @@ IROperand ASTConverter::get_op(const ReferencePtr<AbstractSyntaxTreeNode> &node)
 	case TreeNodeType::SIZE_OF:{
 		break;
 	}
-	case TreeNodeType::INC: {
+	case TreeNodeType::INC:
 		break;
-	}
-	case TreeNodeType::DEC: {
+	case TreeNodeType::DEC:
 		break;
-	}
 	default:
 		throw std::runtime_error("unkown tree node type");
 		break;
@@ -376,11 +374,11 @@ void ASTConverter::implicit_conversion(size_t line_number, const TypeRef& to,IRO
 		return;
 	}
 
-	IRBasicType left_bt = to.remove_reference().get_ir_basic_type();
-	IRBasicType right_bt = right.get_data_type().remove_reference().get_ir_basic_type();
+	IRBasicType left_bt = to.remove_reference().remove_qualifiers().get_ir_basic_type();
+	IRBasicType right_bt = right.get_data_type().remove_reference().remove_qualifiers().get_ir_basic_type();
 
 	if (left_bt != right_bt) {
-		if (IRDataTypeTraits::can_implicitly_convert(right_bt, to.get_ir_basic_type())) {
+		if (IRDataTypeTraits::can_implicitly_convert_basic_types(right_bt, to.get_ir_basic_type())) {
 			
 			IROperand cast_type{ to };
 			IRTriple* cast = m_coder.add_triple(line_number, IROperation::CAST, cast_type, right);
@@ -450,7 +448,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 	switch (type)
 	{
 	case TreeNodeType::ASSIGNMENT: {
-		// OK
+
 		ReferencePtr<AssignmentNode> current_node = node.cast<AssignmentNode>();
 		ReferencePtr<AbstractSyntaxTreeNode> left_expr = current_node->get_left_expr_node();
 		ReferencePtr<AbstractSyntaxTreeNode> right_expr = current_node->get_right_expr_node();
@@ -472,21 +470,33 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		ReferencePtr<FunctionCallNode> current_node = node.cast<FunctionCallNode>();
 		std::string fn_name = current_node->get_identifier_node()->get_identifier();
 		std::vector<IROperand> arg_operands;
-
-		auto arguments = current_node->get_arguments();
+		
+		const auto arguments = current_node->get_arguments();
 		for (size_t i = 0; i < arguments->get_count(); i++)
 			post_order_traverse(arguments->get_child(i));
 
 		for (size_t i = 0; i < arguments->get_count(); i++)
 			arg_operands.push_back(get_op(arguments->get_child(i)));
 
-		IRFunction* fn_ptr = m_ir_program->get_function(fn_name, arg_operands);
-		if (fn_ptr != nullptr)
-			std::cout << "Function Found" << std::endl;
+		OverloadResolver resolver{m_ir_program};
+		OverloadMatch result = resolver.run(current_node->get_line_number(),fn_name,arg_operands);
 
-		arg_operands.insert(arg_operands.begin(), fn_ptr);
+		if (!result.is_valid()) {
+			std::string msg = result.get_status() == MatchStatus::NO_MATCH ? "no matching function found" : "ambiguous call";
+			if (result.get_status()==MatchStatus::NO_MATCH)
+				m_ast_converter_listener->error({ ErrorType::NO_MATCHING_FUNCTION,current_node->get_line_number(),msg });
+			else
+				m_ast_converter_listener->error({ ErrorType::AMBIGUOUS_FUNCTION_CALL,current_node->get_line_number(),msg });
+			return;
+		}
+		
 
-		IRTriple* triple = m_coder.add_triple(current_node->get_line_number(), IROperation::FUNCTION_CALL, arg_operands); //1
+		std::vector<IRVariable*> parameters = result.get_function()->get_parameters();
+		for (size_t i = 0; i < arg_operands.size(); i++)
+			implicit_conversion(current_node->get_line_number(), parameters[i]->get_data_type(), arg_operands[i]);
+
+		arg_operands.insert(arg_operands.begin(), result.get_function());
+		IRTriple* triple = m_coder.add_triple(current_node->get_line_number(), IROperation::FUNCTION_CALL, arg_operands);
 
 		set_op(current_node,triple);
 		break;
@@ -504,19 +514,17 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 
 		bool is_shift = operation == IROperation::LEFT_SHIFT || operation == IROperation::RIGHT_SHIFT;
 		if (is_shift) {
-			if(!left_numeric_type.is_integer() || !right_numeric_type.is_integer() )
+			if(!left_numeric_type.is_integer() || !right_numeric_type.is_integer())
 				m_ast_converter_listener->error({ ErrorType::INVALID_OPERAND_TYPE,current_node->get_line_number(),"both operands must be integers" });
 			else {
 				if (left_numeric_type.is_small_integer())
 					cast_if_necessary(current_node->get_line_number(),IRBasicType::INT32,left);
 			
-				if (IRDataTypeTraits::can_implicitly_convert(right_numeric_type.get_ir_basic_type(), IRBasicType::INT32))
+				if (IRDataTypeTraits::can_implicitly_convert_basic_types(right_numeric_type.get_ir_basic_type(), IRBasicType::INT32))
 					cast_if_necessary(current_node->get_line_number(), IRBasicType::INT32, right);
-				else {
+				else
 					m_ast_converter_listener->error({ ErrorType::IMPLICIT_CAST_NOT_ALLOWED,current_node->get_line_number(),"right operand cannot be implicitly converted to int32" });
-				}
 			}
-
 		}
 		else {
 			bool invalid_singed_uint64 =
@@ -540,7 +548,6 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 				}
 			}
 		}
-
 
 		IRTriple* t = m_coder.add_triple(current_node->get_line_number(),operation, left, right);
 		set_op(current_node, t);
