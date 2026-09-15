@@ -1,0 +1,32 @@
+void n1(int32 a, int32 b) {}
+
+void n2(int32 a) {}
+
+void n3(int32 a) {}
+
+void n4(int16 a) {}
+void n4(uint16 a) {}
+
+void n5(int32 a) {}
+
+void n6(bool a) {}
+
+int main() {
+    int32 i32 = (int32)1;
+    bool bv = true;
+
+    n1(i32);
+    n2(i32, i32);
+    n3();
+    n4(i32);
+    n5(bv);
+    n6(i32);
+    return 0;
+}
+#------------------
+18 NO_MATCHING_FUNCTION
+19 NO_MATCHING_FUNCTION
+20 NO_MATCHING_FUNCTION
+21 NO_MATCHING_FUNCTION
+22 NO_MATCHING_FUNCTION
+23 NO_MATCHING_FUNCTION

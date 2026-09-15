@@ -1,0 +1,29 @@
+void a(float a, double b) {}
+void a(double a, float b) {}
+
+void b(int32 a, uint64 b) {}
+void b(uint32 a, int64 b) {}
+
+void c(int64 a, double b) {}
+void c(float a, int64 b) {}
+
+void d(int32 a, double b) {}
+void d(int64 a, float b) {}
+void d(float a, int32 b) {}
+
+int main() {
+    int32 i32 = (int32)1;
+    uint16 u16 = (uint16)1;
+    float fv = 1.0f;
+
+    a(fv, fv);
+    b(u16, u16);
+    c(i32, i32);
+    d(u16, u16);
+    return 0;
+}
+#------------------
+19 AMBIGUOUS_FUNCTION_CALL
+20 AMBIGUOUS_FUNCTION_CALL
+21 AMBIGUOUS_FUNCTION_CALL
+22 AMBIGUOUS_FUNCTION_CALL

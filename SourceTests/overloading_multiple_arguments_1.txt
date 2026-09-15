@@ -1,0 +1,19 @@
+
+// f(int16,int16), f(int32,int32) (int8,int8) f(int16,int16)
+void f6(int16 a ,int16 b){ print(61);}
+void f6(int32 a ,int32 b){ print(62);}
+
+// f(uint8,uint8), f(int32,int32) (int32,int32) (1,2)
+void f31(uint8 a,uint8 b) { print(311); }
+void f31(int32 a,int32 b) { print(312); }
+
+int main(){
+	int32 a = 123;
+	f6((int8)a,(int8)a);
+	f31(1,2);
+
+	return 0;
+}
+#------------------
+61
+312

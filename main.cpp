@@ -458,7 +458,14 @@ int main() {
 		//"left_bitwise_shift_1"
 		//"left_bitwise_shift_with_cast_1"
 		//"right_bitwise_shift_1"
-		"logical_vs_arithmetical_shift_1"
+		//"logical_vs_arithmetical_shift_1"
+		"overloading_1",
+		"overloading_2",
+		"overloading_3",
+		"overloading_single_argument_1",
+		"overloading_single_argument_2",
+		"overloading_multiple_arguments_1",
+		"overloading_multiple_arguments_2",
 	};
 
 	std::vector<std::string> test_errors{
@@ -474,8 +481,13 @@ int main() {
 		//"pointer_const_to_non_const_3"
 		//"invalid_conversion_1"
 		//"left_bitwise_shift_cast_error_1"
-		"right_bitwise_shift_cast_error_1"
+		//"right_bitwise_shift_cast_error_1"
+		"overloading_single_argument_error_1",
+		"overloading_ambiguous_1",
+		"overloading_no_match_1",
+		"overloading_single_argument_error_2"
 	};
+	//"overloading_multiple_argument_error_1",
 
 	std::cout<<"TypeName: "<<typeid(decltype(-2'147'483'648)).name();
 

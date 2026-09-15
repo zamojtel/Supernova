@@ -214,6 +214,9 @@
     <Filter Include="Source Files\IR\IROperationExecutor">
       <UniqueIdentifier>{ae39dd6b-cc66-41cd-a5bf-372f91aa6dce}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\OverloadResolver">
+      <UniqueIdentifier>{24770acd-c3dd-45b3-9aa7-95bf384e7bac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -410,6 +413,12 @@
     </ClCompile>
     <ClCompile Include="IRNullptrNode.cpp">
       <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="OverloadResolver.cpp">
+      <Filter>Source Files\OverloadResolver</Filter>
+    </ClCompile>
+    <ClCompile Include="OverloadMatch.cpp">
+      <Filter>Source Files\OverloadResolver</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -841,6 +850,15 @@
     </ClInclude>
     <ClInclude Include="IRNullptrNode.h">
       <Filter>Source Files\IR\IRDataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="OverloadResolver.h">
+      <Filter>Source Files\OverloadResolver</Filter>
+    </ClInclude>
+    <ClInclude Include="CandidateComparison.h">
+      <Filter>Source Files\OverloadResolver</Filter>
+    </ClInclude>
+    <ClInclude Include="OverloadMatch.h">
+      <Filter>Source Files\OverloadResolver</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1279,5 +1297,16 @@
     <Text Include="SourceTests\right_bitwise_shift_with_cast_1.txt" />
     <Text Include="SourceTests\right_bitwise_shift_cast_error_1.txt" />
     <Text Include="SourceTests\logical_vs_arithmetical_shift_1.txt" />
+    <Text Include="SourceTests\overloading_1.txt" />
+    <Text Include="SourceTests\overloading_2.txt" />
+    <Text Include="SourceTests\overloading_3.txt" />
+    <Text Include="SourceTests\overloading_multiple_arguments_1.txt" />
+    <Text Include="SourceTests\overloading_single_argument_error_1.txt" />
+    <Text Include="SourceTests\overloading_single_argument_1.txt" />
+    <Text Include="SourceTests\overloading_multiple_arguments_2.txt" />
+    <Text Include="SourceTests\overloading_ambiguous_1.txt" />
+    <Text Include="SourceTests\overloading_no_match_1.txt" />
+    <Text Include="SourceTests\overloading_single_argument_2.txt" />
+    <Text Include="SourceTests\overloading_single_argument_error_2.txt" />
   </ItemGroup>
 </Project>

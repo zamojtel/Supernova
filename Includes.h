@@ -95,6 +95,9 @@
 
 #include "ParserHelper.h"
 #include "UselessControlFlowEliminator.h"
+#include "CandidateComparison.h"
+#include "OverloadMatch.h"
+#include "OverloadResolver.h"
 
 #include "ASTConvIncludes.h"
 #include "Tester.h"
