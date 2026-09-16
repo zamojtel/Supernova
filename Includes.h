@@ -98,6 +98,11 @@
 #include "CandidateComparison.h"
 #include "OverloadMatch.h"
 #include "OverloadResolver.h"
+#include "StringLayout.h"
+#include "StringRef.h"
+#include "StringStorage.h"
+#include "StringLiteralPool.h"
+#include "StringTests/StringTests.h"
 
 #include "ASTConvIncludes.h"
 #include "Tester.h"

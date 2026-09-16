@@ -187,9 +187,6 @@
     <Filter Include="Source Files\Tests\MallocAndFree">
       <UniqueIdentifier>{bf869b98-c998-4904-9900-a263b6c19634}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\NewFilter1">
-      <UniqueIdentifier>{5bccde8d-819c-48de-a6f8-b567f5ec7085}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\IR\IRInliner">
       <UniqueIdentifier>{45d7ad53-4903-41ac-b95d-ef26c0e32b38}</UniqueIdentifier>
     </Filter>
@@ -216,6 +213,9 @@
     </Filter>
     <Filter Include="Source Files\OverloadResolver">
       <UniqueIdentifier>{24770acd-c3dd-45b3-9aa7-95bf384e7bac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Runtime">
+      <UniqueIdentifier>{9ba72e94-d2eb-4c26-902d-e711ea60d8fc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -419,6 +419,18 @@
     </ClCompile>
     <ClCompile Include="OverloadMatch.cpp">
       <Filter>Source Files\OverloadResolver</Filter>
+    </ClCompile>
+    <ClCompile Include="StringRef.cpp">
+      <Filter>Source Files\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="StringStorage.cpp">
+      <Filter>Source Files\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="StringLiteralPool.cpp">
+      <Filter>Source Files\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="StringTests\StringTests.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -859,6 +871,21 @@
     </ClInclude>
     <ClInclude Include="OverloadMatch.h">
       <Filter>Source Files\OverloadResolver</Filter>
+    </ClInclude>
+    <ClInclude Include="StringRef.h">
+      <Filter>Source Files\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="StringStorage.h">
+      <Filter>Source Files\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="StringLayout.h">
+      <Filter>Source Files\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="StringLiteralPool.h">
+      <Filter>Source Files\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="StringTests\StringTests.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

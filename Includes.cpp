@@ -14,5 +14,9 @@
 #include "ErrorTraits.cpp"
 #include "OverloadMatch.cpp"
 #include "OverloadResolver.cpp"
+#include "StringRef.cpp"
+#include "StringStorage.cpp"
+#include "StringLiteralPool.cpp"
+#include "StringTests/StringTests.cpp"
 
 #endif INCLUDES_CPP

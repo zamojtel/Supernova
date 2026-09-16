@@ -381,6 +381,18 @@
     <ClCompile Include="OverloadResolver.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="StringLiteralPool.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="StringRef.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="StringStorage.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="StringTests\StringTests.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="SymbolTable.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -560,6 +572,11 @@
     <ClInclude Include="SizeOfNode.h" />
     <ClInclude Include="IRStackFrame.h" />
     <ClInclude Include="SourceTests\constant_replacement_1.txt" />
+    <ClInclude Include="StringLayout.h" />
+    <ClInclude Include="StringLiteralPool.h" />
+    <ClInclude Include="StringRef.h" />
+    <ClInclude Include="StringStorage.h" />
+    <ClInclude Include="StringTests\StringTests.h" />
     <ClInclude Include="StructNode.h" />
     <ClInclude Include="SymbolTable.h" />
     <ClInclude Include="Tester.h" />

@@ -1,4 +1,4 @@
-
+﻿
 #include <iostream>
 #include <vector>
 #include <array>
@@ -496,10 +496,9 @@ int main() {
 
 	Tester compiler_tester(test_folder, expected_outputs_folder);
 	compiler_tester.run_all_tests(test_names,test_errors);
-
-	short a = 10;
-	short b = 10;
-	short c = a + b;
+	
+	test_string_storage();
+	test_string_pool();
 
 	return 0;
 }
