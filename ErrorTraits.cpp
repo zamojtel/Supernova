@@ -7,6 +7,8 @@ std::string ErrorTraits::get_name(ErrorType type) {
 		return "SYNTAX_ERROR";
 	case ErrorType::IMPLICIT_CAST_NOT_ALLOWED:
 		return "IMPLICIT_CAST_NOT_ALLOWED";
+	case ErrorType::EXPLICIT_CAST_NOT_ALLOWED:
+		return "EXPLICIT_CAST_NOT_ALLOWED";
 	case ErrorType::TYPE_NOT_DEFINED:
 		return "TYPE_NOT_DEFINED";
 	case ErrorType::UNKNOWN_ERROR:
@@ -21,9 +23,20 @@ std::string ErrorTraits::get_name(ErrorType type) {
 		return "NO_MATCHING_FUNCTION";
 	case ErrorType::AMBIGUOUS_FUNCTION_CALL:
 		return "AMBIGUOUS_FUNCTION_CALL";
+	case ErrorType::INTEGER_TYPE_REQUIRED:
+		return "INTEGER_TYPE_REQUIRED";
+	case ErrorType::BOOL_TYPE_REQUIRED:
+		return "BOOL_TYPE_REQUIRED";
+	case ErrorType::POINTER_TYPE_REQUIRED:
+		return "POINTER_TYPE_REQUIRED";
+	case ErrorType::TYPE_MISMATCH:
+		return "TYPE_MISMATCH";
+	case ErrorType::TYPE_SIZE_MISTMATCH:
+		return "TYPE_SIZE_MISTMATCH";
+	case ErrorType::INCOMPATIBLE_ARRAY_SIZES:
+		return "INCOMPATIBLE_ARRAY_SIZES";
 	default:
 		throw std::runtime_error("type not found");
-		break;
 	}
 }
 

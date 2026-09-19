@@ -14,5 +14,6 @@ enum class IRBasicType {
 	DOUBLE,
 	BOOL,
 	VOID,
+	STRING,
 	NUMBER_OF_TYPES
 };

@@ -2,7 +2,7 @@
 class ConstantValue {
 private:
 	std::optional<IRBasicType> m_data_type;
-	std::variant<uint8_t, uint16_t, uint32_t, uint64_t, int8_t, int16_t, int32_t, int64_t, float, double,bool> m_value;
+	std::variant<uint8_t, uint16_t, uint32_t, uint64_t, int8_t, int16_t, int32_t, int64_t, float, double,bool,StringRef> m_value;
 	uint64_t m_data;
 public:
 	ConstantValue() {}
@@ -78,6 +78,15 @@ public:
 			*reinterpret_cast<double*>(&m_data) = value;
 			break;
 		}
+		case IRBasicType::STRING: {
+			const uint8_t* ptr;
+			memcpy(&ptr, address, sizeof(ptr));
+
+			m_value = StringRef{ ptr };
+			m_data = 0;
+			memcpy(&m_data, &ptr, sizeof(ptr));
+			break;
+		}
 		case IRBasicType::BOOL:
 		{
 			bool value = *reinterpret_cast<const bool*>(address);
@@ -106,6 +115,10 @@ public:
 	ConstantValue(float v) :m_data_type{ IRBasicType::FLOAT }, m_value{ v } { *reinterpret_cast<float*>(&m_data) = v; }
 	ConstantValue(double v) :m_data_type{ IRBasicType::DOUBLE }, m_value{ v } { *reinterpret_cast<double*>(&m_data) = v; }
 	ConstantValue(bool v) :m_data_type{ IRBasicType::BOOL }, m_value{ v } { *reinterpret_cast<bool*>(&m_data) = v; }
+	ConstantValue(StringRef v) : m_data_type{ IRBasicType::STRING }, m_value{ v }, m_data{0} { 
+		const uint8_t* ptr = v.get_object_address();
+		memcpy(&m_data, &ptr, sizeof(ptr));
+	}
 
 	template <class T>
 	static ConstantValue from_optional(const std::optional<T> &v) 

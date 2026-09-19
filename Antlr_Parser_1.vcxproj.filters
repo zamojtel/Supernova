@@ -61,14 +61,8 @@
     <Filter Include="Source Files\IRToLLVMIR">
       <UniqueIdentifier>{76ce0fdc-17f9-4674-b9dc-add998d9de16}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Tests\NewFilter1">
-      <UniqueIdentifier>{bb0b3d4a-9664-43a0-8095-c7697bafad02}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Tests\Cast">
       <UniqueIdentifier>{fff703b6-ffbe-49b7-8c49-0f9d7a5e8f64}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Tests\NewFilter2">
-      <UniqueIdentifier>{2e025eb6-909b-4206-b44f-626e2a7778f5}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Tests\Function">
       <UniqueIdentifier>{ef6a96dd-096c-47bb-ac53-a5cec1f3e119}</UniqueIdentifier>
@@ -127,9 +121,6 @@
     <Filter Include="Source Files\Tests\ReferenceAccess">
       <UniqueIdentifier>{5dd78765-451a-4400-ba70-093925a623a0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Tests\NewFilter3">
-      <UniqueIdentifier>{3712588b-bff6-4d02-9a06-330ca47596bf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Tests\VectorOperations">
       <UniqueIdentifier>{873663c5-6781-4c4f-b9c1-fea21e4b3da6}</UniqueIdentifier>
     </Filter>
@@ -187,9 +178,6 @@
     <Filter Include="Source Files\Tests\MallocAndFree">
       <UniqueIdentifier>{bf869b98-c998-4904-9900-a263b6c19634}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\NewFilter1">
-      <UniqueIdentifier>{5bccde8d-819c-48de-a6f8-b567f5ec7085}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\IR\IRInliner">
       <UniqueIdentifier>{45d7ad53-4903-41ac-b95d-ef26c0e32b38}</UniqueIdentifier>
     </Filter>
@@ -216,6 +204,9 @@
     </Filter>
     <Filter Include="Source Files\OverloadResolver">
       <UniqueIdentifier>{24770acd-c3dd-45b3-9aa7-95bf384e7bac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Runtime">
+      <UniqueIdentifier>{9ba72e94-d2eb-4c26-902d-e711ea60d8fc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -419,6 +410,18 @@
     </ClCompile>
     <ClCompile Include="OverloadMatch.cpp">
       <Filter>Source Files\OverloadResolver</Filter>
+    </ClCompile>
+    <ClCompile Include="StringRef.cpp">
+      <Filter>Source Files\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="StringStorage.cpp">
+      <Filter>Source Files\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="StringLiteralPool.cpp">
+      <Filter>Source Files\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="StringTests\StringTests.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -859,6 +862,24 @@
     </ClInclude>
     <ClInclude Include="OverloadMatch.h">
       <Filter>Source Files\OverloadResolver</Filter>
+    </ClInclude>
+    <ClInclude Include="StringRef.h">
+      <Filter>Source Files\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="StringStorage.h">
+      <Filter>Source Files\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="StringLayout.h">
+      <Filter>Source Files\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="StringLiteralPool.h">
+      <Filter>Source Files\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="StringTests\StringTests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StringLiteralNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1308,5 +1329,9 @@
     <Text Include="SourceTests\overloading_no_match_1.txt" />
     <Text Include="SourceTests\overloading_single_argument_2.txt" />
     <Text Include="SourceTests\overloading_single_argument_error_2.txt" />
+    <Text Include="SourceTests\string_1.txt" />
+    <Text Include="SourceTests\string_2.txt" />
+    <Text Include="SourceTests\string_3.txt" />
+    <Text Include="SourceTests\string_4.txt" />
   </ItemGroup>
 </Project>

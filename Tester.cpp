@@ -41,8 +41,9 @@ std::vector<std::string> Tester::read_expected_lines(const fs::path& file_path) 
             std::string expected_value;
             while (std::getline(file,expected_value))
             {
-                if (expected_value.empty())
+                /*if (expected_value.empty())
                     continue;
+                */
 
                 lines.push_back(expected_value);
             }
@@ -186,10 +187,20 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
     ir_program.check_program();
     printer.print_ir_representation(ir_program);
 
-    if (ast_conv_impl.has_error) {
-        system("pause");
+    //if (ast_conv_impl.has_error) {
+    //    system("pause");
+    //}
+
+    //auto errors = error_collector.get_errors();
+    //if (errors.size() > 0) {
+    //    system("pause");
+    //}
+
+    printer.print_errors(error_collector);
+    if (!is_error_test && (ast_conv_impl.has_error || !error_collector.get_errors().empty())) {
+        return false;
     }
-    
+
     IRInliner inliner;
     std::vector<IROperand> fn_arguments{};
     IRFunction* main_fn = ir_program.get_function("main", fn_arguments);
@@ -226,10 +237,26 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
 
     if (is_error_test) {
         auto expected_errors = ast_conv_impl.get_errors();
-        if (expected_outputs.size() != expected_errors.size())
+        auto expected_errors_checker = error_collector.get_errors();
+        std::vector<IRError> actual_errors;
+
+        for (size_t i = 0; i < expected_errors.size();i++) {
+            actual_errors.emplace_back(
+                expected_errors[i].get_line_number(),
+                expected_errors[i].get_error_type(),
+                expected_errors[i].get_msg()
+            );
+        }
+
+        for (size_t j = 0; j < expected_errors_checker.size();j++)
+            actual_errors.push_back(*expected_errors_checker[j]);
+
+        std::stable_sort(actual_errors.begin(), actual_errors.end(), [](const IRError& e1, const IRError& e2) {  return e1.get_line_number() < e2.get_line_number(); });
+
+        if (expected_outputs.size() != actual_errors.size())
             return false;
 
-        for (int i = 0; i < expected_errors.size();i++) {
+        for (int i = 0; i < actual_errors.size();i++) {
             std::istringstream stream{expected_outputs[i]};
             int output_line_number;
             stream >> output_line_number;
@@ -237,12 +264,12 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
             stream >> output_error_type_str;
             ErrorType output_error_type = m_error_name_to_error_type.at(output_error_type_str);
 
-            int expeceted_line_number = expected_errors[i].get_line_number();
-            ErrorType expected_error_type = expected_errors[i].get_error_type();
+            int expeceted_line_number = actual_errors[i].get_line_number();
+            ErrorType expected_error_type = actual_errors[i].get_error_type();
             
             if (output_line_number != expeceted_line_number || output_error_type != expected_error_type) {
                 std::cout << "wrong result at the line :" << (i + 1) << "\n";
-                std::cout << "expected :" << expected_errors[i].get_msg() << "\n";
+                std::cout << "expected :" << actual_errors[i].get_message() << "\n";
                 std::cout << "at the line: " << expeceted_line_number << "\n";
 
                 std::cout << "received :" << output_error_type_str << "\n";

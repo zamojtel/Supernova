@@ -113,6 +113,7 @@ bool IRDataTypeTraits::can_implicitly_convert_basic_types(IRBasicType from, IRBa
 	case IRBasicType::DOUBLE:
 	case IRBasicType::BOOL:
 	case IRBasicType::VOID:
+	case IRBasicType::STRING:
 		return false;
 	case IRBasicType::NUMBER_OF_TYPES:
 		break;
@@ -120,6 +121,17 @@ bool IRDataTypeTraits::can_implicitly_convert_basic_types(IRBasicType from, IRBa
 		throw std::runtime_error("there's no such basic type");
 	}
 	return false;
+}
+
+bool IRDataTypeTraits::can_explicitly_convert(const IROperand& op,const TypeRef& to) {
+	const TypeRef& from_value = op.get_data_type().remove_reference().remove_qualifiers();
+	const TypeRef& to_value = to.remove_reference().remove_qualifiers();
+
+	// for now we forbid to cast string to anything else
+	if (from_value.is_string() || to_value.is_string())
+		return false;
+
+	return true;
 }
 
 bool IRDataTypeTraits::can_implicitly_convert_argument(const IROperand& argument, const TypeRef& to) {

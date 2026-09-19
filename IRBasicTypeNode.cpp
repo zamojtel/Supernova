@@ -24,11 +24,11 @@ IRBasicTypeNode::IRBasicTypeNode(IRBasicType t) :m_ir_data_type{t} {
 	}
 	case IRBasicType::DOUBLE:
 	case IRBasicType::INT64:
-	case IRBasicType::UINT64: {
+	case IRBasicType::UINT64:
+	case IRBasicType::STRING: {
 		size = 8;
 		break;
 	}
-	//case IRBasicType::ERROR:
 	case IRBasicType::VOID: {
 		size = 0;
 		break;

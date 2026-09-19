@@ -1,0 +1,12 @@
+int main(){
+	print("a"+"b");
+	int a = "abc";
+	string b = 213;
+	string c = (string)123;
+	return 0;
+}
+#------------------
+2 INVALID_OPERAND_TYPE
+3 IMPLICIT_CAST_NOT_ALLOWED
+4 IMPLICIT_CAST_NOT_ALLOWED
+5 EXPLICIT_CAST_NOT_ALLOWED

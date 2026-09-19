@@ -381,6 +381,18 @@
     <ClCompile Include="OverloadResolver.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="StringLiteralPool.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="StringRef.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="StringStorage.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="StringTests\StringTests.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="SymbolTable.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -560,6 +572,12 @@
     <ClInclude Include="SizeOfNode.h" />
     <ClInclude Include="IRStackFrame.h" />
     <ClInclude Include="SourceTests\constant_replacement_1.txt" />
+    <ClInclude Include="StringLayout.h" />
+    <ClInclude Include="StringLiteralNode.h" />
+    <ClInclude Include="StringLiteralPool.h" />
+    <ClInclude Include="StringRef.h" />
+    <ClInclude Include="StringStorage.h" />
+    <ClInclude Include="StringTests\StringTests.h" />
     <ClInclude Include="StructNode.h" />
     <ClInclude Include="SymbolTable.h" />
     <ClInclude Include="Tester.h" />
@@ -807,6 +825,10 @@
     <Text Include="SourceTests\return_promotion_error.txt" />
     <Text Include="SourceTests\right_bitwise_shift_1.txt" />
     <Text Include="SourceTests\right_bitwise_shift_with_cast_1.txt" />
+    <Text Include="SourceTests\string_1.txt" />
+    <Text Include="SourceTests\string_2.txt" />
+    <Text Include="SourceTests\string_3.txt" />
+    <Text Include="SourceTests\string_4.txt" />
     <Text Include="SourceTests\unreachable_blk_1.txt" />
     <Text Include="SourceTests\useless_statements_1.txt" />
     <Text Include="ss_1.txt" />

@@ -23,6 +23,7 @@ struct IRDataTypeTraits {
 	static bool can_implicitly_convert(const TypeRef& from, const TypeRef& to);
 	static bool can_implicitly_convert_pointers(const TypeRef& from, const TypeRef& to);
 	static bool can_implicitly_convert_basic_types(IRBasicType from, IRBasicType to);
+	static bool can_explicitly_convert(const IROperand& op, const TypeRef& to);
 	static bool can_implicitly_convert_argument(const IROperand& argument, const TypeRef& to);
 	static bool is_floating_point(IRBasicType type);
 	static bool is_integer(IRBasicType type);

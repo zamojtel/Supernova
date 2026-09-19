@@ -8,6 +8,13 @@
 
 #include "DataType.h"
 
+#include "StringLayout.h"
+#include "StringRef.h"
+#include "StringStorage.h"
+#include "StringLiteralPool.h"
+#include "StringTests/StringTests.h"
+
+#include "ErrorType.h"
 #include "IRIncludes.h"
 
 #include "AbstractSyntaxTreeNode.h"
@@ -81,6 +88,7 @@
 #include "UnaryMinusNode.h"
 #include "MallocNode.h"
 #include "FreeNode.h"
+#include "StringLiteralNode.h"
 
 #include "IRPrinter.h"
 #include "IRDataTypeTraits.h"
@@ -88,7 +96,6 @@
 #include "IRToLLVMIRIncludes.h"
 
 // Error
-#include "ErrorType.h"
 #include "Error.h"
 #include "ErrorList.h"
 #include "ErrorTraits.h"
@@ -98,6 +105,7 @@
 #include "CandidateComparison.h"
 #include "OverloadMatch.h"
 #include "OverloadResolver.h"
+
 
 #include "ASTConvIncludes.h"
 #include "Tester.h"

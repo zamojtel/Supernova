@@ -104,6 +104,9 @@ public:
   virtual void enterNumber(GrammarParser::NumberContext *ctx) = 0;
   virtual void exitNumber(GrammarParser::NumberContext *ctx) = 0;
 
+  virtual void enterString_literal(GrammarParser::String_literalContext *ctx) = 0;
+  virtual void exitString_literal(GrammarParser::String_literalContext *ctx) = 0;
+
   virtual void enterIdentifier(GrammarParser::IdentifierContext *ctx) = 0;
   virtual void exitIdentifier(GrammarParser::IdentifierContext *ctx) = 0;
 

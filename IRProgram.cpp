@@ -90,6 +90,10 @@ void IRProgram::calculate_size_required_for_fn(IRFunction* fn) {
 	fn->m_total_size_required = current_offset;
 }
 
+StringRef IRProgram::get_or_add_string_literal(const std::string& text) {
+	return m_string_literals.get_or_add(text);
+}
+
 size_t IRProgram::calculate_size_required_for_global_variables() {
 	size_t current_offset = 0;
 	for (size_t i = 0; i < m_global_variables.size();i++) {
@@ -100,7 +104,6 @@ size_t IRProgram::calculate_size_required_for_global_variables() {
 
 	return current_offset;
 }
-
 
 IRFunction* IRProgram::get_function(const std::string& name, const std::vector<IROperand>& arguments) {
 	for (const auto& [fn_name,functions]: m_functions ) {

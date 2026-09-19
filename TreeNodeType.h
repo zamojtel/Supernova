@@ -48,6 +48,7 @@ enum class TreeNodeType {
 	PRINT_TYPE,
 	MALLOC,
 	FREE,
+	STRING_LITERAL,
 	// Composite Types
 	//COMPOSITE
 	STRUCT,

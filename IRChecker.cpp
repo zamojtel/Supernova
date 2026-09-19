@@ -51,8 +51,7 @@ void IRChecker::check_triple(IRTriple* triple)
 		TypeRef right = op2->get_data_type().remove_reference().remove_all_extents().remove_qualifiers();
 
 		if (!left.is_integer() || !right.is_integer()) {
-			m_listener->add_error(triple->get_line(),"modulo operation requires integer operands");
-			
+			m_listener->add_error(triple->get_line(),ErrorType::INTEGER_TYPE_REQUIRED,"modulo operation requires integer operands");			
 			triple->m_data_type = m_dtm->get_error();
 			break;
 		}
@@ -61,9 +60,12 @@ void IRChecker::check_triple(IRTriple* triple)
 		break;
 	}
 	case IROperation::ASSIGN: {
-		
 		if (!check_operand_types(*op1, *op2)) {
-			m_listener->add_error(triple->get_line(), "can't assign value of different types");
+			m_listener->add_error(
+				triple->get_line(),
+				ErrorType::TYPE_MISMATCH,
+				"can't assign value of different types"
+			);
 		}
 
 		break;
@@ -76,7 +78,7 @@ void IRChecker::check_triple(IRTriple* triple)
 	case IROperation::JC: {
 		if (op1->get_data_type().is_basic_data_type()) {
 			if(!op1->get_data_type().is_boolean())
-				m_listener->add_error(triple->m_line_number,"expected bool type as a condition");
+				m_listener->add_error(triple->m_line_number,ErrorType::BOOL_TYPE_REQUIRED,"expected bool type as a condition");
 			break;
 		}
 	}
@@ -85,7 +87,11 @@ void IRChecker::check_triple(IRTriple* triple)
 		break;
 	}
 	case IROperation::CAST: {
-		// TODO ADD CHECKS
+		
+		if (!IRDataTypeTraits::can_explicitly_convert(*op2,op1->get_data_type())) {
+			m_listener->add_error(triple->m_line_number,ErrorType::EXPLICIT_CAST_NOT_ALLOWED,std::format("cannot explicitly convert from {} to {}",op2->get_data_type().to_string(),op1->get_data_type().to_string()));
+		}
+
 		triple->m_data_type = op1->get_data_type();
 		break;
 	}
@@ -94,7 +100,7 @@ void IRChecker::check_triple(IRTriple* triple)
 		TypeRef expr_type_ref = op2->get_data_type();
 
 		if (!check_data_type_size(type_ref, expr_type_ref)) {
-			m_listener->add_error(triple->m_line_number,"can't reinterpret cast to type of different size");
+			m_listener->add_error(triple->m_line_number,ErrorType::TYPE_SIZE_MISTMATCH,"can't reinterpret cast to type of different size");
 		}
 
 		triple->m_data_type = op1->get_data_type();
@@ -148,7 +154,7 @@ void IRChecker::check_triple(IRTriple* triple)
 		TypeRef data_type_index_ref = op2->get_data_type();
 
 		if (!data_type_index_ref.is_integer()) {
-			m_listener->add_error(triple->m_line_number,"index must be of integer type");
+			m_listener->add_error(triple->m_line_number,ErrorType::INTEGER_TYPE_REQUIRED,"index must be an integer");
 		}
 
 		TypeRef data_type_ref = op1->get_data_type();
@@ -157,13 +163,13 @@ void IRChecker::check_triple(IRTriple* triple)
 		else if (data_type_ref.is_pointer_with_qualifiers())
 			triple->m_data_type = op1->get_data_type().remove_pointer_with_qualifiers();
 		else
-			m_listener->add_error(triple->m_line_number, "expected pointer or array type");
+			m_listener->add_error(triple->m_line_number,ErrorType::INVALID_OPERAND_TYPE,"expected pointer or array type");
 		break;
 	}
 	case IROperation::ASSERT: {
 		TypeRef data_type = op1->get_data_type();
 		if (!data_type.is_boolean()) {
-			m_listener->add_error(triple->m_line_number, "expected boolean value");
+			m_listener->add_error(triple->m_line_number,ErrorType::BOOL_TYPE_REQUIRED,"expected boolean value");
 		}
 		
 		break;
@@ -206,14 +212,13 @@ void IRChecker::check_triple(IRTriple* triple)
 		size_t expr_false_arr_size = type3.is_array() ? static_cast<IRArrayNode*>(type3.get_data_type_node())->m_count : 1;
 		
 		if (condition_arr_size % expr_true_arr_size != 0 || condition_arr_size% expr_false_arr_size != 0 ) {
-			m_listener->add_error(triple->m_line_number, "can't execute broadcasting");
+			m_listener->add_error(triple->m_line_number,ErrorType::INCOMPATIBLE_ARRAY_SIZES, "cannot execute broadcasting");
 		}
 
 		TypeRef op2_element_type = type2.remove_all_extents();
 		TypeRef op3_element_type = type2.remove_all_extents();
-		if (op2_element_type!=op3_element_type) {
-			m_listener->add_error(triple->m_line_number, "can't execute select on different value types");
-		}
+		if (op2_element_type!=op3_element_type)
+			m_listener->add_error(triple->m_line_number,ErrorType::TYPE_MISMATCH, "cannot execute select on different value types");
 
 		TypeRef element_type = type2.remove_all_extents();
 		TypeRef result_type = m_dtm->add_array(element_type, condition_arr_size);
@@ -223,7 +228,7 @@ void IRChecker::check_triple(IRTriple* triple)
 	}
 	case IROperation::LEFT_SHIFT: {
 		if (!op2->get_data_type().is_integer()) {
-			m_listener->add_error(triple->m_line_number, "right operand must be integer");
+			m_listener->add_error(triple->m_line_number,ErrorType::INTEGER_TYPE_REQUIRED,"right operand must be integer");
 		}
 
 		triple->m_data_type = op1->get_data_type();
@@ -231,7 +236,7 @@ void IRChecker::check_triple(IRTriple* triple)
 	}
 	case IROperation::RIGHT_SHIFT: {
 		if (!op2->get_data_type().is_integer()) {
-			m_listener->add_error(triple->m_line_number, "right operand must be integer");
+			m_listener->add_error(triple->m_line_number,ErrorType::INTEGER_TYPE_REQUIRED,"right operand must be integer");
 		}
 
 		triple->m_data_type = op1->get_data_type();
@@ -240,15 +245,15 @@ void IRChecker::check_triple(IRTriple* triple)
 	case IROperation::UNARY_MINUS: {
 
 		if (!op1->get_data_type().is_numeric()) {
-			m_listener->add_error(triple->m_line_number, "operand must be a number");
+			m_listener->add_error(triple->m_line_number,ErrorType::INTEGER_TYPE_REQUIRED,"operand must be a number");
 		}
 
 		triple->m_data_type = op1->get_data_type();
 		break;
 	}
 	case IROperation::MALLOC: {
-		if (op1->get_data_type().is_integer()) {
-			m_listener->add_error(triple->m_line_number,"can't allocate non-integral number of bytes");
+		if (!op1->get_data_type().is_integer()) {
+			m_listener->add_error(triple->m_line_number,ErrorType::INTEGER_TYPE_REQUIRED,"allocation size must be an integer");
 		}
 
 		triple->m_data_type = op1->get_data_type();
@@ -257,7 +262,7 @@ void IRChecker::check_triple(IRTriple* triple)
 	case IROperation::FREE: {
 
 		if (!op1->get_data_type().remove_qualifiers().remove_reference().is_pointer()) {
-			m_listener->add_error(triple->m_line_number, "can't free non-pointer variables");
+			m_listener->add_error(triple->m_line_number,ErrorType::POINTER_TYPE_REQUIRED, "free requires a pointer operand");
 		}
 
 		triple->m_data_type = op1->get_data_type();
@@ -273,6 +278,7 @@ void IRChecker::check_triple(IRTriple* triple)
 		if (!left_type.is_integer() || !right_type.is_integer()) {
 			m_listener->add_error(
 				triple->m_line_number,
+				ErrorType::INTEGER_TYPE_REQUIRED,
 				"bitwise operation requires integer operands"
 			);
 
@@ -290,6 +296,7 @@ void IRChecker::check_triple(IRTriple* triple)
 		if (!operand_type.is_integer()) {
 			m_listener->add_error(
 				triple->m_line_number,
+				ErrorType::INTEGER_TYPE_REQUIRED,
 				"bitwise not requires integer operand"
 			);
 			
@@ -300,13 +307,11 @@ void IRChecker::check_triple(IRTriple* triple)
 		triple->m_data_type = op1->get_data_type();
 		break;
 	}
-
 	default:
 		throw std::runtime_error("unknow operation while checking triple");
 	}
 }
 
-// 
 bool IRChecker::check_data_type_size(const TypeRef& type1,const TypeRef& type2) const {
 	return true;
 }
@@ -356,12 +361,31 @@ TypeRef IRChecker::check_arithmetic_operation_possible(IRTriple *triple) const {
 	TypeRef r2 = triple->m_operands[1].get_data_type();
 	IROperation operation = triple->get_ir_operation();
 
+	if (r1.is_error() || r2.is_error())
+		return m_dtm->get_error();
+
+	// this is temporary 
+	auto t1 = r1.remove_reference().remove_qualifiers();
+	auto t2 = r2.remove_reference().remove_qualifiers();
+	if (t1.is_string() || t2.is_string()) {
+		m_listener->add_error(
+			triple->get_line(),
+			ErrorType::INVALID_OPERAND_TYPE,
+			"arithmetic operations on strings are not supported"
+		);
+
+		return m_dtm->get_error();
+	}
+
 	if (r1.is_pointer_with_qualifiers() && r2.is_pointer_with_qualifiers()) {
 		if (r1.remove_pointer_with_qualifiers() == r2.remove_pointer_with_qualifiers() && operation == IROperation::SUB)
 			return m_dtm->get_basic_type_node(IRBasicType::INT64);
 		else {
-			std::string msg{ "invalid operation on pointers" };
-			m_listener->add_error(triple->m_line_number,msg);
+			m_listener->add_error(
+				triple->m_line_number,
+				ErrorType::INVALID_OPERAND_TYPE,
+				"invalid operation on pointers"
+			);
 			IRDataTypeManager* dtm = m_ir_program->get_dtm_manager();
 			return dtm->get_error();
 		}
@@ -414,7 +438,6 @@ TypeRef IRChecker::check_arithmetic_operation_possible(IRTriple *triple) const {
 		else if (arr1_dimensions == arr2_dimensions) {
 			TypeRef array_content_ref1 = r1.remove_all_extents();
 			TypeRef array_content_ref2 = r2.remove_all_extents();
-
 			// DO PRZEMYSLENIA 
 			return r1.get_data_type_node();
 		}
@@ -432,6 +455,13 @@ TypeRef IRChecker::check_arithmetic_operation_possible(IRTriple *triple) const {
 	if (r1.is_numeric() && r2.is_numeric())
 		return r1.get_data_type_node();
 
+	m_listener->add_error(
+		triple->get_line(),
+		ErrorType::INVALID_OPERAND_TYPE,
+		"invalid operands for arithmetic operation"
+	);
+
+	return m_dtm->get_error();
 }
 
 void IRChecker::deduce_triple_data_type(IRTriple* triple) {
@@ -489,33 +519,6 @@ void IRChecker::deduce_triple_data_type(IRTriple* triple) {
 
 		TypeRef data_type_ref = check_arithmetic_operation_possible(triple);
 		triple->m_data_type = data_type_ref;
-		//if (op1->m_operand_type == IROperandType::DATA_TYPE && op2->m_operand_type == IROperandType::DATA_TYPE) {
-		//	TypeRef ref1 = op1->get_data_type();
-		//	TypeRef ref2 = op2->get_data_type();
-		//	if (ref1.is_array() && ref2.is_array()) {
-
-		//		if (ref1 == ref2) {
-		//			// without broadcasting 
-		//			triple->m_data_type = op1->get_data_type();
-		//		}
-		//		else {
-		//			//if () {
-
-		//			//}
-		//			// broadcast 
-		//			// wiêkszy rozmiar tablicy powinien zostac zwrócony 
-		//			size_t size_1 = static_cast<IRArrayNode*>(ref1.get_data_type_node())->m_size;
-		//			size_t size_2 = static_cast<IRArrayNode*>(ref2.get_data_type_node())->m_size;
-		//			if (size_1 > size_2)
-		//				triple->m_data_type = op1->get_data_type();
-		//			else
-		//				triple->m_data_type = op2->get_data_type();
-		//		}
-		//	}
-		//}
-
-		//if (op1->m_operand_type != IROperandType::BASIC_BLOCK && op1->m_operand_type != IROperandType::NO_OPERAND)
-		//	triple->m_data_type = op1->get_data_type();
 		return;
 	}
 	case IROperation::RETURN: {

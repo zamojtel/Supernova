@@ -106,6 +106,9 @@ public:
   virtual void enterNumber(GrammarParser::NumberContext * /*ctx*/) override { }
   virtual void exitNumber(GrammarParser::NumberContext * /*ctx*/) override { }
 
+  virtual void enterString_literal(GrammarParser::String_literalContext * /*ctx*/) override { }
+  virtual void exitString_literal(GrammarParser::String_literalContext * /*ctx*/) override { }
+
   virtual void enterIdentifier(GrammarParser::IdentifierContext * /*ctx*/) override { }
   virtual void exitIdentifier(GrammarParser::IdentifierContext * /*ctx*/) override { }
 
