@@ -215,6 +215,10 @@ std::string ConstantValue::to_string() const {
         return std::to_string(get_value<uint32_t>());
     case IRBasicType::UINT64:
         return std::to_string(get_value<uint64_t>());
+    case IRBasicType::STRING: {
+        const StringRef ref = get_value<StringRef>();
+        return std::string(reinterpret_cast<const char *>(ref.get_data()),ref.get_bytes_length());
+    }
     default:
         throw std::runtime_error("unknown type can't convert to string");
     }

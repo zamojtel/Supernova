@@ -42,6 +42,7 @@ public:
 	bool is_nullptr() const;
 	bool is_reference() const;
 	bool is_integer() const;
+	bool is_string() const;
 	bool is_numeric() const;
 	bool is_small_integer() const; //uint8 -> uint16, int8 -> int16
 	bool is_big_integer() const;

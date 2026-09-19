@@ -123,6 +123,9 @@ IROperand ASTConverter::get_op(const ReferencePtr<AbstractSyntaxTreeNode> &node)
 		break;
 	case TreeNodeType::DEC:
 		break;
+	case TreeNodeType::STRING_LITERAL: {
+		break;
+	}
 	default:
 		throw std::runtime_error("unkown tree node type");
 		break;
@@ -296,9 +299,9 @@ void ASTConverter::find_function_signatures(const ReferencePtr<AbstractSyntaxTre
 				std::string msg = std::format("symbol {} is already used.",variable_name);
 				m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR,current_node->get_line_number(),msg});
 			}
-			// tutaj chyba coœ jest nie halo 
+			// something may be off here
 			IRGlobalVariable* variable = m_ir_program->add_variable(variable_name, dtn->m_ir_data_type);
-			// wrocic tutaj
+			// check here
 			m_symbol_table.add_symbol(variable_name,{variable});
 
 		}
@@ -342,14 +345,38 @@ ConstantValue ASTConverter::try_implicite_conversion(IRBasicType type,const Cons
 	return cv.safe_convert(type);
 }
 
-void ASTConverter::implicit_conversion(size_t line_number, const TypeRef& to,IROperand& right) {
+void ASTConverter::implicit_conversion(size_t line_number, const TypeRef& to,IROperand& from) {
 	TypeRef to_type = to.remove_reference();
+
+	const TypeRef from_value = from.get_data_type().remove_reference().remove_qualifiers();
+	const TypeRef to_value = to.remove_reference().remove_qualifiers();
+
+	if (from_value.is_error() || to_value.is_error())
+		return;
+
+	// a string is not allow to be implicitly converted to anything else
+	if (from_value.is_string() != to_value.is_string()) {
+		m_ast_converter_listener->error(
+			{
+				ErrorType::IMPLICIT_CAST_NOT_ALLOWED,
+				line_number,
+				std::format(
+					"cannot implicitly convert from type {} to type {}",
+					from_value.to_string(),
+					to_value.to_string()
+				),
+
+			}
+		);
+		return;
+	}
+
 	if (to_type.is_pointer()) {
 		// const moze byc przed pointerem trzeba rozpatrzec ten przypadek 
-		if (!IRDataTypeTraits::can_implicitly_convert_pointers(right.get_data_type(), to)) {
+		if (!IRDataTypeTraits::can_implicitly_convert_pointers(from.get_data_type(), to)) {
 			std::string msg = std::format(
 				"cannot implicitly convert from type {} to type {}",
-				right.get_data_type().to_string(),
+				from.get_data_type().to_string(),
 				to.to_string()
 			);
 
@@ -357,16 +384,16 @@ void ASTConverter::implicit_conversion(size_t line_number, const TypeRef& to,IRO
 		}
 
 		IROperand cast_type{ to };
-		right = m_coder.add_triple(line_number,IROperation::CAST,cast_type,right);
+		from = m_coder.add_triple(line_number,IROperation::CAST,cast_type,from);
 		return;
 	}
 
 	// TODO write in a more concise way it should work for other types and pointers to them to structs etc.
-	if ((right.get_data_type().is_pointer() || right.get_data_type().is_composite()) && to.is_basic_data_type())
+	if ((from.get_data_type().is_pointer() || from.get_data_type().is_composite()) && to.is_basic_data_type())
 	{
 		std::string msg = std::format(
 			"cannot implicitly convert from type {} to type {}",
-			right.get_data_type().to_string(),
+			from.get_data_type().to_string(),
 			to.to_string()
 		);
 
@@ -375,26 +402,26 @@ void ASTConverter::implicit_conversion(size_t line_number, const TypeRef& to,IRO
 	}
 
 	IRBasicType left_bt = to.remove_reference().remove_qualifiers().get_ir_basic_type();
-	IRBasicType right_bt = right.get_data_type().remove_reference().remove_qualifiers().get_ir_basic_type();
+	IRBasicType from_bt = from.get_data_type().remove_reference().remove_qualifiers().get_ir_basic_type();
 
-	if (left_bt != right_bt) {
-		if (IRDataTypeTraits::can_implicitly_convert_basic_types(right_bt, to.get_ir_basic_type())) {
+	if (left_bt != from_bt) {
+		if (IRDataTypeTraits::can_implicitly_convert_basic_types(from_bt, to.get_ir_basic_type())) {
 			
 			IROperand cast_type{ to };
-			IRTriple* cast = m_coder.add_triple(line_number, IROperation::CAST, cast_type, right);
-			right = cast;
+			IRTriple* cast = m_coder.add_triple(line_number, IROperation::CAST, cast_type, from);
+			from = cast;
 		}
-		else if (right.m_operand_type == IROperandType::CONSTANT) {
-			IRConstant* ir_c = right.get_constant();
+		else if (from.m_operand_type == IROperandType::CONSTANT) {
+			IRConstant* ir_c = from.get_constant();
 			ConstantValue cv = ir_c->get_value();
 			if (to.get_ir_basic_type() != cv.get_basic_type()) {
 				ConstantValue new_cv = try_implicite_conversion(to.get_ir_basic_type(), cv);
 				IRConstant* ir_constant = m_current_fn->add_constant(new_cv);
-				right = ir_constant;
+				from = ir_constant;
 			}
 		}
 		else {
-			std::string msg = std::format("cannot implicitly convert from type {} to type {}",right.get_data_type().to_string(),to.to_string());
+			std::string msg = std::format("cannot implicitly convert from type {} to type {}",from.get_data_type().to_string(),to.to_string());
 			m_ast_converter_listener->error({ ErrorType::IMPLICIT_CAST_NOT_ALLOWED,line_number,msg });
 		}
 	}
@@ -413,7 +440,6 @@ bool ASTConverter::prepare_for_binary_operation_signed_types(size_t line_number,
 		cast_if_necessary(line_number, to, right);
 		return true;
 	}
-
 	return false;
 }
 
@@ -490,7 +516,6 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 			return;
 		}
 		
-
 		std::vector<IRVariable*> parameters = result.get_function()->get_parameters();
 		for (size_t i = 0; i < arg_operands.size(); i++)
 			implicit_conversion(current_node->get_line_number(), parameters[i]->get_data_type(), arg_operands[i]);
@@ -526,7 +551,9 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 					m_ast_converter_listener->error({ ErrorType::IMPLICIT_CAST_NOT_ALLOWED,current_node->get_line_number(),"right operand cannot be implicitly converted to int32" });
 			}
 		}
-		else {
+		else if(!left_numeric_type.is_string() && !right_numeric_type.is_string() &&
+				!left_numeric_type.is_error()  && !right_numeric_type.is_error()) 
+		{
 			bool invalid_singed_uint64 =
 				(left_numeric_type.is_integer() && left_numeric_type.is_signed() && right_numeric_type.is_integer() && right_numeric_type.get_ir_basic_type() == IRBasicType::UINT64)
 				||
@@ -564,7 +591,14 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		// OK
 		break;
 	}
-	//second_pass
+	case TreeNodeType::STRING_LITERAL: {
+		ReferencePtr<StringLiteralNode> current_node = node.cast<StringLiteralNode>();
+		std::string text = current_node->get_string_literal();
+		StringRef ref = m_ir_program->get_or_add_string_literal(text);
+		IRConstant* constant = m_current_fn->add_constant(ref);
+		set_op(current_node,constant);
+		break;
+	}
 	case TreeNodeType::DECLARATION: {
 		ReferencePtr<DeclarationNode> current_node = node.cast<DeclarationNode>();
 		ReferencePtr<ListNode<DeclarationListItemNode>> list = current_node->get_declarations();

@@ -1,0 +1,6 @@
+int main(){
+	string a = "abc";
+
+	return 0;
+}
+#------------------

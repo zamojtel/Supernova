@@ -10,3 +10,6 @@ size_t StringRef::get_bytes_length() const {
 const uint8_t* StringRef::get_data() const {
 	return m_data+StringLayout::m_header_size;
 }
+const uint8_t* StringRef::get_object_address() const {
+	return m_data;
+}

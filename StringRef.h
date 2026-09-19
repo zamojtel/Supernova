@@ -6,4 +6,5 @@ public:
 	StringRef(const uint8_t* ptr);
 	size_t get_bytes_length() const;
 	const uint8_t* get_data() const;
+	const uint8_t* get_object_address() const;
 };

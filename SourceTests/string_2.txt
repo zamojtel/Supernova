@@ -1,0 +1,17 @@
+int main(){
+	string a = "abc";
+	string b;
+	b=a;
+	string c = "wsad";
+	string empty = "";
+	print(a);
+	print(b);
+	print(empty);
+	print(c);
+	return 0;
+}
+#------------------
+abc
+abc
+
+wsad

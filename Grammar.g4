@@ -278,6 +278,7 @@ basicType:
 		|	'double' { $ctx -> m_node = new BasicTypeNode{IRBasicType::DOUBLE}; }
 		|	'bool' { $ctx->m_node = new BasicTypeNode{IRBasicType::BOOL}; }
 		|	'void' { $ctx->m_node = new BasicTypeNode{IRBasicType::VOID}; }
+		|	'string' { $ctx->m_node = new BasicTypeNode{IRBasicType::STRING}; }
 	;
 
 return: 
@@ -438,6 +439,7 @@ expr:
 	| 'free' '(' e=expr ')' {
 			$ctx->m_node = new FreeNode($e.ctx->m_node);
 		}
+	| string_literal{ $ctx->m_node = $string_literal.ctx->m_node; }
 	;
 
 select:
@@ -461,10 +463,15 @@ number:
 			}
 		;
 
+string_literal:
+			stringLiteral = STRING_LITERAL {
+				$ctx->m_node = m_parser_helper->parse_string_literal($stringLiteral->getText());
+			}
+		;
+
 identifier: ID{
 				$ctx -> m_node = new IdentifierNode{ $ID -> getText().data() };
 			};
-
 // LEXER
 // TOKENS
 LINE_COMMENT : '//' ~[\r\n]* -> skip ;
@@ -480,4 +487,4 @@ HEX : '0x'[0-9a-fA-F]([0-9a-fA-F]|'_'+[0-9a-fA-F])*([ulUL])?([ulUL])? ;
 CONTINUE : 'continue' ;
 BREAK : 'break' ;
 ID : [_a-zA-Z][_a-zA-Z0-9]* ;
-
+STRING_LITERAL : '"'( '\\' ["\\nrt0] | ~["\\\r\n] )*'"' ;

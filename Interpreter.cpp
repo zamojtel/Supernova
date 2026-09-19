@@ -271,6 +271,7 @@ void Interpreter::start(IRFunction* fn) {
 				type = type.remove_reference();
 
 				IRBasicType basic_type = type.get_ir_basic_type();
+				StringRef ref{ address };
 				ConstantValue value = ConstantValue{basic_type,address};
 				m_listener->print_called(value.to_string());
 			}

@@ -6,6 +6,7 @@ private:
 	std::unordered_map<std::string,std::vector<IRFunction*>> m_functions;
 	IRChecker m_checker;
 	IRDataTypeManager m_dtm;
+	StringLiteralPool m_string_literals;
 public:
 	size_t m_required_for_global_variables;
 	IRProgram();
@@ -25,4 +26,6 @@ public:
 	IRChecker* get_ir_checker();
 	void calculate_memory_layout();
 	size_t calculate_size_required_for_global_variables();
+	//StringRef get_or_add_string_literal(const std::string& text);
+	StringRef get_or_add_string_literal(const std::string& text);
 };

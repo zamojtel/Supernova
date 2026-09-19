@@ -573,6 +573,7 @@
     <ClInclude Include="IRStackFrame.h" />
     <ClInclude Include="SourceTests\constant_replacement_1.txt" />
     <ClInclude Include="StringLayout.h" />
+    <ClInclude Include="StringLiteralNode.h" />
     <ClInclude Include="StringLiteralPool.h" />
     <ClInclude Include="StringRef.h" />
     <ClInclude Include="StringStorage.h" />
@@ -824,6 +825,10 @@
     <Text Include="SourceTests\return_promotion_error.txt" />
     <Text Include="SourceTests\right_bitwise_shift_1.txt" />
     <Text Include="SourceTests\right_bitwise_shift_with_cast_1.txt" />
+    <Text Include="SourceTests\string_1.txt" />
+    <Text Include="SourceTests\string_2.txt" />
+    <Text Include="SourceTests\string_3.txt" />
+    <Text Include="SourceTests\string_4.txt" />
     <Text Include="SourceTests\unreachable_blk_1.txt" />
     <Text Include="SourceTests\useless_statements_1.txt" />
     <Text Include="ss_1.txt" />

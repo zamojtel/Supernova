@@ -29,6 +29,36 @@ public:
 		uint8_t m_suffix_bit_mask;
 	};
 
+	StringLiteralNode* parse_string_literal(std::string text) {
+		if (text.size() >= 2 && text.front() == '"' && text.back() == '"') {
+			text.erase(0,1);
+			text.pop_back();
+		}
+
+		std::string processed_string;
+		processed_string.reserve(text.size());
+
+		for (size_t i = 0; i < text.size(); ++i) {
+			if (text[i] == '\\' && i + 1 < text.size()) {
+				++i;
+				switch (text[i]) {
+				case 'n':  processed_string += '\n'; break;
+				case '"':  processed_string += '"';  break;
+				case '\\': processed_string += '\\'; break;
+				case '0':  processed_string += '\0'; break;
+				case 't':  processed_string += '\t'; break;
+				case 'r':  processed_string += '\r'; break;
+				default:   processed_string += text[i]; break;
+				}
+			}
+			else {
+				processed_string += text[i];
+			}
+		}
+
+		return new StringLiteralNode{ processed_string};
+	}
+
 	ConstantNode* parse_integer_literal(const std::string& str) {
 		std::string cleaned_str;
 

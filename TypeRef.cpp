@@ -170,6 +170,9 @@ std::string TypeRef::get_basic_type_string(IRBasicType type) const {
 	case IRBasicType::VOID: {
 		return "VOID ";
 	}
+	case IRBasicType::STRING: {
+		return "STRING";
+	}
 	default:
 		throw std::runtime_error("no such type");
 	}
@@ -290,6 +293,14 @@ bool TypeRef::is_integer() const {
 			type == IRBasicType::INT32 || type == IRBasicType::INT64 ||
 			type == IRBasicType::UINT8 || type == IRBasicType::UINT16 ||
 			type == IRBasicType::UINT32 || type == IRBasicType::UINT64;
+	}
+	return false;
+}
+
+bool TypeRef::is_string() const {
+	if (is_basic_data_type()) {
+		IRBasicType type = static_cast<IRBasicTypeNode*>(m_data_type_node)->m_ir_data_type;
+		return type == IRBasicType::STRING;
 	}
 	return false;
 }
