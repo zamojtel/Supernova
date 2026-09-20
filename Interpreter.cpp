@@ -261,8 +261,17 @@ void Interpreter::start(IRFunction* fn) {
 			}
 			else if (type.is_pointer()) {
 				IROperand op = current_triple->m_operands[0];
-				uint8_t* address = get_operand_address(op);
-				std::string msg = std::format("{:#x}", reinterpret_cast<uintptr_t>(address));
+				uint8_t* value_address = get_operand_address(op);
+				std::string msg;
+
+				if (type.is_string()) {
+					const char* pointer_value = nullptr;
+					memcpy(&pointer_value, value_address, sizeof(pointer_value));
+					msg = std::format("{}",pointer_value);
+				}
+				else
+					msg = std::format("{:#x}", reinterpret_cast<uintptr_t>(value_address));
+
 				m_listener->print_called(msg);
 			}
 			else {

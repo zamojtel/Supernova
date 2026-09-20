@@ -1,8 +1,8 @@
 int main(){
 	print("a"+"b");
 	int a = "abc";
-	string b = 213;
-	string c = (string)123;
+	char const * b = 213;
+	char const * c = (char const *)123;
 	return 0;
 }
 #------------------

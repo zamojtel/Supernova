@@ -9,7 +9,7 @@ void test_string_storage() {
 		std::cout << "String is empty\n";
 	else
 		std::cout << "wrong length of an empty string\n";
-
+	//string a = "asd";
 	const uint8_t abc[] = { 'a','b','c' };
 	const StringRef ref1 = storage.add_string(abc, sizeof(abc));
 
@@ -37,7 +37,9 @@ void test_string_storage() {
 
 	const uint8_t with_zero[] = { 'a',0,'b' };
 	const StringRef ref3 = storage.add_string(with_zero, sizeof(with_zero));
-	if (ref3.get_bytes_length() != sizeof(with_zero) || memcmp(ref3.get_data(), with_zero, sizeof(with_zero)) != 0)
+	size_t length_in_bytes = ref3.get_bytes_length();
+	size_t correct_length = 1;
+	if (length_in_bytes != correct_length || memcmp(ref3.get_data(), with_zero, sizeof(with_zero)) != 0)
 		throw std::runtime_error("Embedded zero test failed");
 
 	std::cout << "embedded zero test passed" << std::endl;

@@ -36,7 +36,7 @@ null
 'double'
 'bool'
 'void'
-'string'
+'char'
 'return'
 'sizeof'
 'assert'

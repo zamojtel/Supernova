@@ -7,6 +7,5 @@ public:
 	StringStorage(const StringStorage&) = delete;
 	StringStorage& operator=(const StringStorage&) = delete;
 	~StringStorage();
-
 	StringRef add_string(const uint8_t* ptr, size_t byte_size);
 };

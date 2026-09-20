@@ -1,5 +1,5 @@
 
-IRNullptrNode::IRNullptrNode() {
+IRNullptrNode::IRNullptrNode(IRDataTypeManager* dtm) : IRDataTypeNode{dtm} {
 	// constant size for pointer
 	set_size(8);
 }

@@ -5,7 +5,7 @@ private:
 	std::vector<IRMember*> m_field_list;
 	bool m_is_finished;
 public:
-	IRCompositeTypeNode(const std::string& name);
+	IRCompositeTypeNode(IRDataTypeManager* dtm, const std::string& name);
 	void add_field(const TypeRef& ref_type, const std::string& f_name);
 	std::string get_name() const;
 	size_t calculate_size() override;

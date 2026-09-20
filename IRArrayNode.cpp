@@ -1,5 +1,5 @@
 
-IRArrayNode::IRArrayNode(const TypeRef& ref, size_t s) : m_element_type{ ref }, m_count{s} {
+IRArrayNode::IRArrayNode(IRDataTypeManager* dtm, const TypeRef& ref, size_t s) : IRDataTypeNode{dtm}, m_element_type { ref }, m_count{ s } {
 	set_size(ref.get_size()*s);
 }
 

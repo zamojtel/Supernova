@@ -138,60 +138,64 @@ void IRPrinter::print_triple(IRTriple* triple) {
 }
 
 void IRPrinter::print_constant(IRConstant* c) const {
-	IRBasicType type = c->get_value().get_basic_type();
-
-	switch (type)
-	{
-	case IRBasicType::INT8:
-	{
-		std::cout << "CONSTANT " <<(int) c->get_value().get_value<int8_t>();
-		break;
+	if (c->get_data_type().is_basic_data_type()) {
+		IRBasicType type = c->get_value().get_basic_type();
+		switch (type)
+		{
+			case IRBasicType::INT8:
+			{
+				std::cout << "CONSTANT " <<(int) c->get_value().get_value<int8_t>();
+				break;
+			}
+			case IRBasicType::INT16: {
+				std::cout << "CONSTANT " << c->get_value().get_value<int16_t>();
+				break;
+			}
+			case IRBasicType::INT32: {
+				std::cout << "CONSTANT " << c->get_value().get_value<int32_t>();
+				break;
+			}
+			case IRBasicType::INT64: {
+				std::cout << "CONSTANT " << c->get_value().get_value<int64_t>();
+				break;
+			}
+			case IRBasicType::UINT8:
+			{
+				std::cout << "CONSTANT " <<(int) c->get_value().get_value<uint8_t>();
+				break;
+			}
+			case IRBasicType::UINT16: {
+				std::cout << "CONSTANT " << c->get_value().get_value<uint16_t>();
+				break;
+			}
+			case IRBasicType::UINT32: {
+				std::cout << "CONSTANT " << c->get_value().get_value<uint32_t>();
+				break;
+			}
+			case IRBasicType::UINT64: {
+				std::cout << "CONSTANT " << c->get_value().get_value<uint64_t>();
+				break;
+			}
+			case IRBasicType::FLOAT: {
+				std::cout << "CONSTANT " << c->get_value().get_value<float>();
+				break;
+			}
+			case IRBasicType::DOUBLE: {
+				std::cout << "CONSTANT " << c->get_value().get_value<double>();
+				break;
+			}
+			case IRBasicType::BOOL: {
+				bool value = c->get_value().get_value<bool>();
+				if (value)
+					std::cout << "CONSTANT True";
+				else
+					std::cout << "CONSTANT False";
+				break;
+			}
+		}
 	}
-	case IRBasicType::INT16: {
-		std::cout << "CONSTANT " << c->get_value().get_value<int16_t>();
-		break;
-	}
-	case IRBasicType::INT32: {
-		std::cout << "CONSTANT " << c->get_value().get_value<int32_t>();
-		break;
-	}
-	case IRBasicType::INT64: {
-		std::cout << "CONSTANT " << c->get_value().get_value<int64_t>();
-		break;
-	}
-	case IRBasicType::UINT8:
-	{
-		std::cout << "CONSTANT " <<(int) c->get_value().get_value<uint8_t>();
-		break;
-	}
-	case IRBasicType::UINT16: {
-		std::cout << "CONSTANT " << c->get_value().get_value<uint16_t>();
-		break;
-	}
-	case IRBasicType::UINT32: {
-		std::cout << "CONSTANT " << c->get_value().get_value<uint32_t>();
-		break;
-	}
-	case IRBasicType::UINT64: {
-		std::cout << "CONSTANT " << c->get_value().get_value<uint64_t>();
-		break;
-	}
-	case IRBasicType::FLOAT: {
-		std::cout << "CONSTANT " << c->get_value().get_value<float>();
-		break;
-	}
-	case IRBasicType::DOUBLE: {
-		std::cout << "CONSTANT " << c->get_value().get_value<double>();
-		break;
-	}
-	case IRBasicType::BOOL: {
-		bool value = c->get_value().get_value<bool>();
-		if (value)
-			std::cout << "CONSTANT True";
-		else
-			std::cout << "CONSTANT False";
-		break;
-	}
+	else if(c->get_data_type().is_string()) {
+		std::cout << "CONSTANT " << c->get_string_ref().get_data();
 	}
 }
 

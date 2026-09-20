@@ -170,6 +170,9 @@ std::string TypeRef::get_basic_type_string(IRBasicType type) const {
 	case IRBasicType::VOID: {
 		return "VOID ";
 	}
+	case IRBasicType::CHAR: {
+		return "CHAR";
+	}
 	case IRBasicType::STRING: {
 		return "STRING";
 	}
@@ -298,9 +301,9 @@ bool TypeRef::is_integer() const {
 }
 
 bool TypeRef::is_string() const {
-	if (is_basic_data_type()) {
-		IRBasicType type = static_cast<IRBasicTypeNode*>(m_data_type_node)->m_ir_data_type;
-		return type == IRBasicType::STRING;
+	if (m_data_type_node) {
+		IRDataTypeManager* dtm = m_data_type_node->get_dtm();
+		return *this == dtm->get_const_char_star();
 	}
 	return false;
 }

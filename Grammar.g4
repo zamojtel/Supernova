@@ -278,7 +278,7 @@ basicType:
 		|	'double' { $ctx -> m_node = new BasicTypeNode{IRBasicType::DOUBLE}; }
 		|	'bool' { $ctx->m_node = new BasicTypeNode{IRBasicType::BOOL}; }
 		|	'void' { $ctx->m_node = new BasicTypeNode{IRBasicType::VOID}; }
-		|	'string' { $ctx->m_node = new BasicTypeNode{IRBasicType::STRING}; }
+		|	'char' { $ctx->m_node = new BasicTypeNode{IRBasicType::CHAR}; }
 	;
 
 return: 
@@ -487,4 +487,4 @@ HEX : '0x'[0-9a-fA-F]([0-9a-fA-F]|'_'+[0-9a-fA-F])*([ulUL])?([ulUL])? ;
 CONTINUE : 'continue' ;
 BREAK : 'break' ;
 ID : [_a-zA-Z][_a-zA-Z0-9]* ;
-STRING_LITERAL : '"'( '\\' ["\\nrt0] | ~["\\\r\n] )*'"' ;
+STRING_LITERAL : '"'( '\\' ["\\nrt0] | ~["\\\r\n] )*'"' ; 

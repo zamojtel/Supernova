@@ -829,6 +829,8 @@
     <Text Include="SourceTests\string_2.txt" />
     <Text Include="SourceTests\string_3.txt" />
     <Text Include="SourceTests\string_4.txt" />
+    <Text Include="SourceTests\string_5.txt" />
+    <Text Include="SourceTests\string_6.txt" />
     <Text Include="SourceTests\unreachable_blk_1.txt" />
     <Text Include="SourceTests\useless_statements_1.txt" />
     <Text Include="ss_1.txt" />

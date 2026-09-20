@@ -354,6 +354,9 @@ void ASTConverter::implicit_conversion(size_t line_number, const TypeRef& to,IRO
 	if (from_value.is_error() || to_value.is_error())
 		return;
 
+	if (from_value == to_value)
+		return;
+
 	// a string is not allow to be implicitly converted to anything else
 	if (from_value.is_string() != to_value.is_string()) {
 		m_ast_converter_listener->error(
@@ -876,6 +879,8 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 
 					if (expr_node != nullptr) {
 						IROperand op_expr = get_op(expr_node);
+						implicit_conversion(item->get_line_number(), variable->get_data_type(),op_expr);
+
 						IRTriple* expr_triple = m_coder.add_triple(current_node->get_line_number(), IROperation::ASSIGN, variable, op_expr);
 					}
 				}
@@ -937,9 +942,15 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 
 				m_symbol_table.pop_layer();
 
+				IRUnreachableBlockFinder finder(m_current_fn);
+				const auto unreachable = finder.find_unreachable_blocks();
 				FunctionReturnChecker return_checker;
+
 				std::vector<IRBasicBlock*> blks_without_terminator_stmts = return_checker.check_all_paths(m_current_fn);
 				for (auto blk : blks_without_terminator_stmts) {
+					if (std::find(unreachable.begin(), unreachable.end(), blk) != unreachable.end())
+						continue;
+
 					std::string msg = std::format("block with no return stmt {}", blk->get_index());
 					m_ast_converter_listener->error({ ErrorType::NO_RETURN_ERROR, current_node->get_line_number(), msg });
 				}

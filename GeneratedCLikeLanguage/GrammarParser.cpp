@@ -65,7 +65,7 @@ void grammarParserInitialize() {
       "'struct'", "'union'", "'*'", "'['", "']'", "'const'", "'volatile'", 
       "'&'", "'int'", "'int8'", "'int16'", "'int32'", "'int64'", "'uint8'", 
       "'uint16'", "'uint32'", "'uint64'", "'float'", "'double'", "'bool'", 
-      "'void'", "'string'", "'return'", "'sizeof'", "'assert'", "'.'", "'->'", 
+      "'void'", "'char'", "'return'", "'sizeof'", "'assert'", "'.'", "'->'", 
       "'++'", "'--'", "'-'", "'~'", "'!'", "'/'", "'%'", "'+'", "'>>'", 
       "'<<'", "'>'", "'>='", "'<'", "'<='", "'=='", "'!='", "'^'", "'|'", 
       "'&&'", "'||'", "'reinterpret_cast'", "'malloc'", "'free'", "'select'", 
@@ -2515,7 +2515,7 @@ GrammarParser::BasicTypeContext* GrammarParser::basicType() {
         enterOuterAlt(_localctx, 14);
         setState(347);
         match(GrammarParser::T__36);
-         _localctx->m_node = new BasicTypeNode{IRBasicType::STRING}; 
+         _localctx->m_node = new BasicTypeNode{IRBasicType::CHAR}; 
         break;
       }
 

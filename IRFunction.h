@@ -27,6 +27,7 @@ public:
 	void add_parameter(const std::string& name, const TypeRef& type);
 	IRVariable* add_variable(const std::string& name,const TypeRef& type);
 	IRConstant* add_constant(const ConstantValue &cv);
+	IRConstant* add_constant(const StringRef& str_ref);
 	IRBasicBlock* add_basic_block();
 	IRBasicBlock* add_basic_block(const std::string& name);
 	IRBasicBlock* get_basic_blk(size_t index);

@@ -54,6 +54,20 @@ IRConstant* IRFunction::add_constant(const ConstantValue &c) {
 	return ir_constant;
 }
 
+IRConstant* IRFunction::add_constant(const StringRef &str_ref) {
+	// TODO sprawdzac czy juz nie ma tej samej stalej 
+	// zeby sie nie tarfialo 5 razy true, albo false
+	// tutaj poprawic 
+	IRDataTypeManager *dtm = m_ir_program->get_dtm_manager();
+	TypeRef type = dtm->get_basic_type_node(IRBasicType::CHAR);
+	type = dtm->add_qualifiers(type,IRQualifiersNode::CONST);
+	type = dtm->add_pointer(type);
+	IRConstant* ir_constant = new IRConstant{m_constants.size(),str_ref,type};
+	m_constants.push_back(ir_constant);
+
+	return ir_constant;
+}
+
 IRVariable* IRFunction::get_variable(const std::string& name) {
 	for (size_t i = 0; i < m_variables.size(); i++) {
 		if (m_variables[i]->get_variable_name() == name)

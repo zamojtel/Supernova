@@ -116,8 +116,8 @@ public:
 	ConstantValue(double v) :m_data_type{ IRBasicType::DOUBLE }, m_value{ v } { *reinterpret_cast<double*>(&m_data) = v; }
 	ConstantValue(bool v) :m_data_type{ IRBasicType::BOOL }, m_value{ v } { *reinterpret_cast<bool*>(&m_data) = v; }
 	ConstantValue(StringRef v) : m_data_type{ IRBasicType::STRING }, m_value{ v }, m_data{0} { 
-		const uint8_t* ptr = v.get_object_address();
-		memcpy(&m_data, &ptr, sizeof(ptr));
+		const uint8_t* ptr = v.get_pointer_address();
+		memcpy(&m_data, ptr, sizeof(ptr));
 	}
 
 	template <class T>

@@ -320,8 +320,8 @@ bool IRChecker::check_data_type_size(const TypeRef& type1,const TypeRef& type2) 
 bool IRChecker::check_operand_types(const IROperand& op1, const IROperand& op2) const {
 	std::string type1 = op1.get_data_type().to_string();
 	std::string type2 = op2.get_data_type().to_string();
-	TypeRef type_ref_op1 = op1.get_data_type();
-	TypeRef type_ref_op2 = op2.get_data_type();
+	TypeRef type_ref_op1 = op1.get_data_type().remove_reference();
+	TypeRef type_ref_op2 = op2.get_data_type().remove_reference();
 
 	if (type_ref_op1.is_error() || type_ref_op2.is_error())
 		return true;

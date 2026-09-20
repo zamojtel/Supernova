@@ -1,5 +1,5 @@
 
-IRDataTypeNode::IRDataTypeNode() :m_reference_count{ 0 } {}
+IRDataTypeNode::IRDataTypeNode(IRDataTypeManager* dtm) : m_reference_count{ 0 }, m_dtm{dtm} {}
 
 void IRDataTypeNode::set_size(size_t size_in_bytes) {
 	m_size = size_in_bytes;
@@ -24,6 +24,8 @@ std::optional<size_t> IRDataTypeNode::get_size(){
 size_t IRDataTypeNode::calculate_size() {
 	throw std::runtime_error("can't calculate size for ");
 }
+
+IRDataTypeManager* IRDataTypeNode::get_dtm() const { return m_dtm; }
 
 bool IRDataTypeNode::has_size() const {
 	return m_size.has_value();

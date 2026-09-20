@@ -1,8 +1,9 @@
 
 enum class IRBasicType {
+	CHAR,
 	// integers 
-	INT8, 
-	INT16, 
+	INT8,
+	INT16,
 	INT32, 
 	INT64, 
 	UINT8,
