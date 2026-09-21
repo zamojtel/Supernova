@@ -27,6 +27,8 @@ std::string ErrorTraits::get_name(ErrorType type) {
 		return "INTEGER_TYPE_REQUIRED";
 	case ErrorType::BOOL_TYPE_REQUIRED:
 		return "BOOL_TYPE_REQUIRED";
+	case ErrorType::NON_CONST_TYPE_REQUIRED:
+		return "NON_CONST_TYPE_REQUIRED";
 	case ErrorType::POINTER_TYPE_REQUIRED:
 		return "POINTER_TYPE_REQUIRED";
 	case ErrorType::TYPE_MISMATCH:

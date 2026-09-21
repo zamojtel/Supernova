@@ -1,0 +1,12 @@
+int main(){
+	int source;
+	int *other = &source;
+	*other = 123;
+	int value;
+	memcpy(&value,other,sizeof(int));
+
+	print(value);
+	return 0;
+}
+#------------------
+123

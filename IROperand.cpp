@@ -80,21 +80,16 @@ IRUsedObject* IROperand::get_used_object() const {
 TypeRef IROperand::get_data_type() const {
 	switch (m_operand_type)
 	{
-	case IROperandType::CONSTANT: {
+	case IROperandType::CONSTANT:
 		return get_constant()->get_data_type();
-	}
-	case IROperandType::TRIPLE: {
+	case IROperandType::TRIPLE:
 		return get_triple()->get_data_type();
-	}
-	case IROperandType::VARIABLE: {
+	case IROperandType::VARIABLE:
 		return get_variable()->get_data_type();
-	}
-	case IROperandType::DATA_TYPE: {
+	case IROperandType::DATA_TYPE:
 		return std::get<TypeRef>(m_value);
-	}
-	case IROperandType::MEMBER: {
+	case IROperandType::MEMBER:
 		return get_member()->get_data_type();
-	}
 	case IROperandType::NO_OPERAND: {
 		throw std::runtime_error("no operand no allowed");
 		break;

@@ -179,7 +179,7 @@ std::string ConstantValue::to_string() const {
     switch (get_basic_type())
     {
     case IRBasicType::BOOL: {
-        msg = std::format("{}",std::to_string(get_value<bool>()));
+        msg = std::format("{}", std::to_string(get_value<bool>()));
         return msg;
     }
     case IRBasicType::DOUBLE: {
@@ -188,7 +188,7 @@ std::string ConstantValue::to_string() const {
         if (std::floor(value) == value)
             return std::format("{:.0f}", value);
 
-        msg = std::format("{}",value);
+        msg = std::format("{}", value);
         return msg;
     }
     case IRBasicType::FLOAT: {
@@ -198,6 +198,11 @@ std::string ConstantValue::to_string() const {
 
         msg = std::format("{}", value);
         return msg;
+    }
+    case IRBasicType::CHAR:
+    {
+        //std::string s{ get_value<char>() };
+        return std::string(1, get_value<char>());
     }
     case IRBasicType::INT8:
         return std::to_string(get_value<int8_t>());

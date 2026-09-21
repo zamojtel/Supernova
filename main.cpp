@@ -453,7 +453,8 @@ int main() {
 		//"modulo_division",
 		//"return_promotion_1",
 		//"promotion_core_logic_1",
-		"return_pointer_1",
+		//"return_pointer_1",
+		//"character_1",
 		//"pointer_const_to_non_const_1",
 		//"left_bitwise_shift_1",
 		//"left_bitwise_shift_with_cast_1",
@@ -466,10 +467,13 @@ int main() {
 		//"overloading_single_argument_2",
 		//"overloading_multiple_arguments_1",
 		//"overloading_multiple_arguments_2",
-		//"string_1",
-		//"string_2",
-		//"string_5",
-		//"string_6"
+		"string_1",
+		"string_2",
+		"string_5",
+		"string_6",
+		"string_7",
+		"string_8",
+		//"memcpy_1"
 	};
 
 	std::vector<std::string> test_errors{
@@ -490,8 +494,8 @@ int main() {
 		//"overloading_ambiguous_1",
 		//"overloading_no_match_1",
 		//"overloading_single_argument_error_2"
-		//"string_3",
-		//"string_4"
+		"string_3",
+		"string_4"
 	};
 
 	std::cout<<"TypeName: "<<typeid(decltype(-2'147'483'648)).name();

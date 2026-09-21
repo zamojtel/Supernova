@@ -1,0 +1,17 @@
+void modify(char * s){
+	s[1] = 'd';
+}
+// konwersja tablic na wskazniki 
+int main(){
+	char [4] str;
+	memcpy(&str[0],"abc",4);
+	modify(&str[0]);
+	print(str[0]);
+	print(str[1]);
+	print(str[2]);
+	return 0;
+}
+#------------------
+a
+d
+c

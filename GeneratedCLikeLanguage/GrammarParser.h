@@ -22,9 +22,10 @@ public:
     T__44 = 45, T__45 = 46, T__46 = 47, T__47 = 48, T__48 = 49, T__49 = 50, 
     T__50 = 51, T__51 = 52, T__52 = 53, T__53 = 54, T__54 = 55, T__55 = 56, 
     T__56 = 57, T__57 = 58, T__58 = 59, T__59 = 60, T__60 = 61, T__61 = 62, 
-    T__62 = 63, T__63 = 64, T__64 = 65, T__65 = 66, LINE_COMMENT = 67, WS = 68, 
-    INT = 69, FLOAT = 70, DOUBLE = 71, BOOL = 72, BINARY = 73, OCTAL = 74, 
-    HEX = 75, CONTINUE = 76, BREAK = 77, ID = 78, STRING_LITERAL = 79
+    T__62 = 63, T__63 = 64, T__64 = 65, T__65 = 66, T__66 = 67, LINE_COMMENT = 68, 
+    WS = 69, INT = 70, FLOAT = 71, DOUBLE = 72, BOOL = 73, BINARY = 74, 
+    OCTAL = 75, HEX = 76, CONTINUE = 77, BREAK = 78, ID = 79, STRING_LITERAL = 80, 
+    CHAR_LITERAL = 81
   };
 
   enum {
@@ -36,7 +37,7 @@ public:
     RuleUnionDecl = 19, RuleFundamentalType = 20, RuleDataType = 21, RuleTypeModifier = 22, 
     RuleBasicType = 23, RuleReturn = 24, RuleSizeOf = 25, RuleAssertCondition = 26, 
     RuleExpr = 27, RuleSelect = 28, RuleNumber = 29, RuleString_literal = 30, 
-    RuleIdentifier = 31
+    RuleChar_literal = 31, RuleIdentifier = 32
   };
 
   explicit GrammarParser(antlr4::TokenStream *input);
@@ -90,6 +91,7 @@ public:
   class SelectContext;
   class NumberContext;
   class String_literalContext;
+  class Char_literalContext;
   class IdentifierContext; 
 
   class  WhileContext : public MyContextSuperClass {
@@ -326,6 +328,9 @@ public:
     GrammarParser::DoWhileContext *doWhileContext = nullptr;
     GrammarParser::BlockContext *blockContext = nullptr;
     GrammarParser::ExprContext *exprContext = nullptr;
+    GrammarParser::ExprContext *e1 = nullptr;
+    GrammarParser::ExprContext *e2 = nullptr;
+    GrammarParser::ExprContext *e3 = nullptr;
     StmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     DeclarationContext *declaration();
@@ -338,7 +343,8 @@ public:
     BlockContext *block();
     antlr4::tree::TerminalNode *BREAK();
     antlr4::tree::TerminalNode *CONTINUE();
-    ExprContext *expr();
+    std::vector<ExprContext *> expr();
+    ExprContext* expr(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -563,6 +569,7 @@ public:
     GrammarParser::AssertConditionContext *assertConditionContext = nullptr;
     GrammarParser::SelectContext *selectContext = nullptr;
     GrammarParser::String_literalContext *string_literalContext = nullptr;
+    GrammarParser::Char_literalContext *char_literalContext = nullptr;
     antlr4::Token *op = nullptr;
     GrammarParser::ExprContext *right = nullptr;
     GrammarParser::ExprContext *right_expr = nullptr;
@@ -579,6 +586,7 @@ public:
     AssertConditionContext *assertCondition();
     SelectContext *select();
     String_literalContext *string_literal();
+    Char_literalContext *char_literal();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -640,6 +648,20 @@ public:
   };
 
   String_literalContext* string_literal();
+
+  class  Char_literalContext : public MyContextSuperClass {
+  public:
+    antlr4::Token *charLiteral = nullptr;
+    Char_literalContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *CHAR_LITERAL();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  Char_literalContext* char_literal();
 
   class  IdentifierContext : public MyContextSuperClass {
   public:

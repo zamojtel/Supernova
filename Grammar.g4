@@ -172,6 +172,13 @@ stmt:
 		| 'print_type' '(' expr ')' ';' {
 				$ctx->m_node = new PrintTypeNode{$expr.ctx->m_node};
 			}
+		| 'memcpy' '(' e1 = expr',' e2 = expr ',' e3 = expr ')' ';' {
+				$ctx->m_node = new MemcpyNode{
+					$e1.ctx->m_node,
+					$e2.ctx->m_node,
+					$e3.ctx->m_node,
+				};
+			}
 		| expr ';'{
 				$ctx->m_node = $expr.ctx->m_node;
 		}
@@ -297,6 +304,7 @@ assertCondition:
 			$ctx->m_node = new AssertNode{$expr.ctx->m_node};
 		}
 	;
+
 
 expr:
 		'(' dataType ')' expr {
@@ -440,6 +448,7 @@ expr:
 			$ctx->m_node = new FreeNode($e.ctx->m_node);
 		}
 	| string_literal{ $ctx->m_node = $string_literal.ctx->m_node; }
+	| char_literal{ $ctx->m_node = $char_literal.ctx->m_node; }
 	;
 
 select:
@@ -469,6 +478,12 @@ string_literal:
 			}
 		;
 
+char_literal:
+			charLiteral = CHAR_LITERAL {
+				$ctx->m_node = m_parser_helper->parse_char_literal($charLiteral->getText());
+			}
+		;
+
 identifier: ID{
 				$ctx -> m_node = new IdentifierNode{ $ID -> getText().data() };
 			};
@@ -488,3 +503,4 @@ CONTINUE : 'continue' ;
 BREAK : 'break' ;
 ID : [_a-zA-Z][_a-zA-Z0-9]* ;
 STRING_LITERAL : '"'( '\\' ["\\nrt0] | ~["\\\r\n] )*'"' ; 
+CHAR_LITERAL : '\'' ( '\\' ['\\nrt0] | ~['\\\r\n] ) '\'' ;

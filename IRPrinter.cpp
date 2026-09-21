@@ -74,6 +74,8 @@ std::string IRPrinter::ir_operation_to_string(const IROperation op) const {
 		return "LEFT_SHIFT";
 	case IROperation::RIGHT_SHIFT:
 		return "RIGHT_SHIFT";
+	case IROperation::MEMCPY:
+		return "MEMCPY";
 	default:
 		throw std::runtime_error("can't find such ir operation");
 	}

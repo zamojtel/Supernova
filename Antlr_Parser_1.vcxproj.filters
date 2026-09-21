@@ -881,6 +881,12 @@
     <ClInclude Include="StringLiteralNode.h">
       <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
     </ClInclude>
+    <ClInclude Include="CharLiteralNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="MemcpyNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="commands.txt">
@@ -1335,5 +1341,9 @@
     <Text Include="SourceTests\string_4.txt" />
     <Text Include="SourceTests\string_5.txt" />
     <Text Include="SourceTests\string_6.txt" />
+    <Text Include="SourceTests\character_1.txt" />
+    <Text Include="SourceTests\string_7.txt" />
+    <Text Include="SourceTests\memcpy_1.txt" />
+    <Text Include="SourceTests\string_8.txt" />
   </ItemGroup>
 </Project>
