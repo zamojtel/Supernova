@@ -1,11 +1,9 @@
 
 int main(){
 	int a = (int)"abc";
-	string b = (string)123;
-	string c = (string)"abc";
+	char const * b = (char const *)123;
 	return 0;
 }
 #------------------
 3 EXPLICIT_CAST_NOT_ALLOWED
 4 EXPLICIT_CAST_NOT_ALLOWED
-5 EXPLICIT_CAST_NOT_ALLOWED

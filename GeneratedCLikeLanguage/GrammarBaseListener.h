@@ -109,6 +109,9 @@ public:
   virtual void enterString_literal(GrammarParser::String_literalContext * /*ctx*/) override { }
   virtual void exitString_literal(GrammarParser::String_literalContext * /*ctx*/) override { }
 
+  virtual void enterChar_literal(GrammarParser::Char_literalContext * /*ctx*/) override { }
+  virtual void exitChar_literal(GrammarParser::Char_literalContext * /*ctx*/) override { }
+
   virtual void enterIdentifier(GrammarParser::IdentifierContext * /*ctx*/) override { }
   virtual void exitIdentifier(GrammarParser::IdentifierContext * /*ctx*/) override { }
 

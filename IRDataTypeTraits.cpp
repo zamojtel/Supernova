@@ -22,6 +22,9 @@ bool IRDataTypeTraits::can_implicitly_convert(const TypeRef& from,const TypeRef&
 	if (from.is_pointer())
 		return can_implicitly_convert_pointers(from,to);
 
+	if (to.is_reference()) {
+
+	}
 	const TypeRef from_value = from.remove_qualifiers();
 	const TypeRef to_value = to.remove_qualifiers();
 
@@ -135,6 +138,15 @@ bool IRDataTypeTraits::can_explicitly_convert(const IROperand& op,const TypeRef&
 }
 
 bool IRDataTypeTraits::can_implicitly_convert_argument(const IROperand& argument, const TypeRef& to) {
+	if (to.is_reference()) {
+		if (argument.m_operand_type != IROperandType::VARIABLE)
+			return false;
+
+		const TypeRef argument_type = argument.get_data_type().remove_reference();
+		const TypeRef target_reference_type = to.remove_reference();
+		return argument_type == target_reference_type;
+	}
+
 	if (can_implicitly_convert(argument.get_data_type(),to))
 		return true;
 

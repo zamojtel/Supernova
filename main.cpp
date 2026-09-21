@@ -454,11 +454,12 @@ int main() {
 		//"return_promotion_1",
 		//"promotion_core_logic_1",
 		//"return_pointer_1",
-		//"pointer_const_to_non_const_1"
-		//"left_bitwise_shift_1"
-		//"left_bitwise_shift_with_cast_1"
-		//"right_bitwise_shift_1"
-		//"logical_vs_arithmetical_shift_1"
+		//"character_1",
+		//"pointer_const_to_non_const_1",
+		//"left_bitwise_shift_1",
+		//"left_bitwise_shift_with_cast_1",
+		//"right_bitwise_shift_1",
+		//"logical_vs_arithmetical_shift_1",
 		//"overloading_1",
 		//"overloading_2",
 		//"overloading_3",
@@ -466,8 +467,13 @@ int main() {
 		//"overloading_single_argument_2",
 		//"overloading_multiple_arguments_1",
 		//"overloading_multiple_arguments_2",
-		//"string_1",
-		//"string_2"
+		"string_1",
+		"string_2",
+		"string_5",
+		"string_6",
+		"string_7",
+		"string_8",
+		//"memcpy_1"
 	};
 
 	std::vector<std::string> test_errors{
@@ -488,7 +494,7 @@ int main() {
 		//"overloading_ambiguous_1",
 		//"overloading_no_match_1",
 		//"overloading_single_argument_error_2"
-		//"string_3",
+		"string_3",
 		"string_4"
 	};
 

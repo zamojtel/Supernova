@@ -107,6 +107,9 @@ public:
   virtual void enterString_literal(GrammarParser::String_literalContext *ctx) = 0;
   virtual void exitString_literal(GrammarParser::String_literalContext *ctx) = 0;
 
+  virtual void enterChar_literal(GrammarParser::Char_literalContext *ctx) = 0;
+  virtual void exitChar_literal(GrammarParser::Char_literalContext *ctx) = 0;
+
   virtual void enterIdentifier(GrammarParser::IdentifierContext *ctx) = 0;
   virtual void exitIdentifier(GrammarParser::IdentifierContext *ctx) = 0;
 

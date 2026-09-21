@@ -1,9 +1,8 @@
 int main(){
-	string a = "abc";
-	string b;
-	b=a;
-	string c = "wsad";
-	string empty = "";
+	char const *a = "abc";
+	char const * b = a;
+	char const * c = "wsad";
+	char const * empty = "";
 	print(a);
 	print(b);
 	print(empty);

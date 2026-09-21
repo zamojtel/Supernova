@@ -238,6 +238,21 @@ void Interpreter::start(IRFunction* fn) {
 
 			if (type.is_array()) {
 				IRArrayNode* arr_node = static_cast<IRArrayNode*>(type.get_data_type_node());
+				const TypeRef element_type = type.remove_array().remove_qualifiers();
+
+				if (element_type.is_basic_data_type() && element_type.get_ir_basic_type()==IRBasicType::CHAR) {
+					const char * data = reinterpret_cast<const char*>(get_operand_address(op));
+					size_t count = arr_node->m_count;
+					std::string msg;
+
+					for (size_t i = 0; i < count && data[i] != '\0';i++) {
+						msg.push_back(data[i]);
+					}
+
+					m_listener->print_called(msg);
+					break;
+				}
+
 				type = type.remove_all_extents();
 				size_t arr_size = arr_node->m_count;
 				
@@ -261,8 +276,17 @@ void Interpreter::start(IRFunction* fn) {
 			}
 			else if (type.is_pointer()) {
 				IROperand op = current_triple->m_operands[0];
-				uint8_t* address = get_operand_address(op);
-				std::string msg = std::format("{:#x}", reinterpret_cast<uintptr_t>(address));
+				uint8_t* value_address = get_operand_address(op);
+				std::string msg;
+
+				if (type.is_string()) {
+					const char* pointer_value = nullptr;
+					memcpy(&pointer_value, value_address, sizeof(pointer_value));
+					msg = std::format("{}",pointer_value);
+				}
+				else
+					msg = std::format("{:#x}", reinterpret_cast<uintptr_t>(value_address));
+
 				m_listener->print_called(msg);
 			}
 			else {
@@ -273,7 +297,34 @@ void Interpreter::start(IRFunction* fn) {
 				IRBasicType basic_type = type.get_ir_basic_type();
 				StringRef ref{ address };
 				ConstantValue value = ConstantValue{basic_type,address};
-				m_listener->print_called(value.to_string());
+				if(basic_type==IRBasicType::CHAR)
+					m_listener->print_called(value.to_string());
+				else
+					m_listener->print_called(value.to_string());
+			}
+
+			break;
+		}
+		case IROperation::MEMCPY: {
+			IROperand dest = current_triple->m_operands[0];
+			IROperand source = current_triple->m_operands[1];
+			IROperand count = current_triple->m_operands[2];
+
+			uint8_t* value = get_operand_address(count);
+			IRBasicType basic_type = count.get_data_type().get_ir_basic_type();
+			ConstantValue cv = ConstantValue{ basic_type,value };
+
+			std::optional<uint64_t> converted_value = cv.unsafe_convert_value_to<uint64_t>();
+			if (converted_value.has_value()) {
+				uint64_t c_value = converted_value.value();
+				uint8_t* dest_address = nullptr;
+				uint8_t* source_address = nullptr;
+				memcpy(&dest_address,get_operand_address(dest),sizeof(dest_address));
+				memcpy(&source_address,get_operand_address(source),sizeof(source_address));
+				memcpy(dest_address, source_address, c_value);
+			}
+			else {
+				throw std::runtime_error("could not read the value");
 			}
 
 			break;

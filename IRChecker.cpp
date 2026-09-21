@@ -307,6 +307,25 @@ void IRChecker::check_triple(IRTriple* triple)
 		triple->m_data_type = op1->get_data_type();
 		break;
 	}
+	case IROperation::MEMCPY: {
+		const TypeRef op1_dt = op1->get_data_type().remove_reference().remove_qualifiers();
+		const TypeRef op2_dt = op2->get_data_type().remove_reference().remove_qualifiers();
+		const TypeRef op3_dt = op3->get_data_type().remove_reference().remove_qualifiers();
+
+		if (!op1_dt.is_pointer())
+			m_listener->add_error(triple->m_line_number,ErrorType::POINTER_TYPE_REQUIRED,"first operand must be an address");
+		else if(op1_dt.is_const())
+			m_listener->add_error(triple->m_line_number, ErrorType::NON_CONST_TYPE_REQUIRED, "destination must point to a writable memory");
+
+		if (!op2_dt.is_pointer())
+			m_listener->add_error(triple->m_line_number,ErrorType::POINTER_TYPE_REQUIRED,"second operand must be an address");
+
+		if (!op3_dt.is_integer())
+			m_listener->add_error(triple->m_line_number, ErrorType::INTEGER_TYPE_REQUIRED, "allocation size must be a positive integer");
+		
+		triple->m_data_type = m_dtm->get_void();
+		break;
+	}
 	default:
 		throw std::runtime_error("unknow operation while checking triple");
 	}
@@ -320,8 +339,8 @@ bool IRChecker::check_data_type_size(const TypeRef& type1,const TypeRef& type2) 
 bool IRChecker::check_operand_types(const IROperand& op1, const IROperand& op2) const {
 	std::string type1 = op1.get_data_type().to_string();
 	std::string type2 = op2.get_data_type().to_string();
-	TypeRef type_ref_op1 = op1.get_data_type();
-	TypeRef type_ref_op2 = op2.get_data_type();
+	TypeRef type_ref_op1 = op1.get_data_type().remove_reference();
+	TypeRef type_ref_op2 = op2.get_data_type().remove_reference();
 
 	if (type_ref_op1.is_error() || type_ref_op2.is_error())
 		return true;

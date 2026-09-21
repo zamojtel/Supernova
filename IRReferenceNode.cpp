@@ -1,6 +1,5 @@
 
-IRReferenceNode::IRReferenceNode(const TypeRef& r) : m_element{ r } {
-	//set_size(r.get_size());
+IRReferenceNode::IRReferenceNode(IRDataTypeManager* dtm,const TypeRef& r) : IRDataTypeNode{dtm}, m_element { r } {
 	set_size(8);
 }
 

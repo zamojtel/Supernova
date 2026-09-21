@@ -123,9 +123,10 @@ IROperand ASTConverter::get_op(const ReferencePtr<AbstractSyntaxTreeNode> &node)
 		break;
 	case TreeNodeType::DEC:
 		break;
-	case TreeNodeType::STRING_LITERAL: {
+	case TreeNodeType::STRING_LITERAL:
 		break;
-	}
+	case TreeNodeType::CHAR:
+		break;
 	default:
 		throw std::runtime_error("unkown tree node type");
 		break;
@@ -352,6 +353,9 @@ void ASTConverter::implicit_conversion(size_t line_number, const TypeRef& to,IRO
 	const TypeRef to_value = to.remove_reference().remove_qualifiers();
 
 	if (from_value.is_error() || to_value.is_error())
+		return;
+
+	if (from_value == to_value)
 		return;
 
 	// a string is not allow to be implicitly converted to anything else
@@ -596,6 +600,14 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		std::string text = current_node->get_string_literal();
 		StringRef ref = m_ir_program->get_or_add_string_literal(text);
 		IRConstant* constant = m_current_fn->add_constant(ref);
+		set_op(current_node,constant);
+		break;
+	}
+	case TreeNodeType::CHAR: {
+		ReferencePtr<CharLiteralNode> current_node = node.cast<CharLiteralNode>();
+		char c = current_node->get_char_literal();
+		IRConstant* constant = m_current_fn->add_constant(c);
+		
 		set_op(current_node,constant);
 		break;
 	}
@@ -876,6 +888,8 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 
 					if (expr_node != nullptr) {
 						IROperand op_expr = get_op(expr_node);
+						implicit_conversion(item->get_line_number(), variable->get_data_type(),op_expr);
+
 						IRTriple* expr_triple = m_coder.add_triple(current_node->get_line_number(), IROperation::ASSIGN, variable, op_expr);
 					}
 				}
@@ -937,9 +951,15 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 
 				m_symbol_table.pop_layer();
 
+				IRUnreachableBlockFinder finder(m_current_fn);
+				const auto unreachable = finder.find_unreachable_blocks();
 				FunctionReturnChecker return_checker;
+
 				std::vector<IRBasicBlock*> blks_without_terminator_stmts = return_checker.check_all_paths(m_current_fn);
 				for (auto blk : blks_without_terminator_stmts) {
+					if (std::find(unreachable.begin(), unreachable.end(), blk) != unreachable.end())
+						continue;
+
 					std::string msg = std::format("block with no return stmt {}", blk->get_index());
 					m_ast_converter_listener->error({ ErrorType::NO_RETURN_ERROR, current_node->get_line_number(), msg });
 				}
@@ -1001,6 +1021,21 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		IROperand op = get_op(current_node->m_expr);
 
 		IRTriple *triple = m_coder.add_triple(current_node->get_line_number(),IROperation::ASSERT,op);
+		break;
+	}
+	case TreeNodeType::MEMCPY: {
+		ReferencePtr<MemcpyNode> current_node = node.cast<MemcpyNode>();
+		post_order_traverse(current_node->get_destination());
+		post_order_traverse(current_node->get_source());
+		post_order_traverse(current_node->get_count());
+		
+		IROperand destination = get_op(current_node->get_destination());
+		IROperand source = get_op(current_node->get_source());
+		IROperand count = get_op(current_node->get_count());
+
+		IRTriple* triple = m_coder.add_triple(current_node->get_line_number(), IROperation::MEMCPY, destination, source, count);
+
+		set_op(current_node,triple);
 		break;
 	}
 	case TreeNodeType::PRINT: {
@@ -1358,8 +1393,7 @@ void ASTConverter::convert_expression_to_bool(const ReferencePtr<AbstractSyntaxT
 	IRBasicBlock* after_expr = m_current_fn->add_basic_block();
 
 	std::string var_name = std::format("!tmp{}",m_temp_variable_count++);
-	//m_dtm->get_bool;
-	//IRVariable* temp_var = m_current_fn->add_variable(var_name,IRBasicType::BOOL);
+
 	IRVariable* temp_var = m_current_fn->add_variable(var_name,m_dtm->get_bool());
 	
 	IRConstant* true_constant = m_current_fn->add_constant(true);

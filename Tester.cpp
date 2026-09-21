@@ -67,11 +67,11 @@ void Tester::run_all_tests(const std::vector<std::string>& test_names,const std:
 
     size_t tests_passed = 0;
     size_t tests_failed = 0;
+    std::vector<std::string> failed_tests;
     for (const std::string &test_name : test_names) {
         fs::path test_path =  m_source_dir + "\\" + test_name + ".txt";
     
         std::cout << "Running test: " << test_path.filename().string() << "...\n";
-
         std::cout << "===========================\n";
         if (run_single_test(test_path, "",false)) {
             std::cout << "Passed\n";
@@ -79,6 +79,7 @@ void Tester::run_all_tests(const std::vector<std::string>& test_names,const std:
         }
         else {
             std::cout << "Failed\n";
+            failed_tests.push_back(test_name);
             tests_failed++;
         }
         std::cout << "===========================\n";
@@ -87,6 +88,10 @@ void Tester::run_all_tests(const std::vector<std::string>& test_names,const std:
     std::cout << "Wrap up: " << std::endl;
     std::cout << "Number of tests passed: " << tests_passed << std::endl;
     std::cout << "Number of tests failed: " << tests_failed << std::endl;
+    std::cout << "Printing failed tests" << std::endl;
+    for (const auto& t : failed_tests) {
+        std::cout << t << std::endl;
+    }
 
     size_t error_tests_passed = 0;
     size_t error_tests_failed = 0;

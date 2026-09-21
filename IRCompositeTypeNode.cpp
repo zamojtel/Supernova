@@ -3,7 +3,7 @@ void IRCompositeTypeNode::add_field(const TypeRef &ref_type,const std::string &f
 	m_field_list.push_back(new IRMember{ref_type,f_name});
 }
 
-IRCompositeTypeNode::IRCompositeTypeNode(const std::string& name) : m_name{ name }, m_is_finished{false} {}
+IRCompositeTypeNode::IRCompositeTypeNode(IRDataTypeManager* dtm, const std::string& name) : IRDataTypeNode{ dtm }, m_name{ name }, m_is_finished{ false } {}
 
 std::string IRCompositeTypeNode::get_name() const {
 	return m_name;

@@ -1,5 +1,5 @@
 
-IRPointerNode::IRPointerNode(const TypeRef& e) : m_element{e} {
+IRPointerNode::IRPointerNode(IRDataTypeManager* dtm, const TypeRef& e) : IRDataTypeNode{dtm}, m_element { e } {
 	// constant size for pointer
 	set_size(8);
 }

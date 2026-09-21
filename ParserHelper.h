@@ -1,7 +1,6 @@
 
 class ParserHelper {
 public:
-	
 	enum class IntegerLiteralBase {
 		BINARY,
 		OCTAL,
@@ -28,6 +27,30 @@ public:
 		unsigned long long m_value;
 		uint8_t m_suffix_bit_mask;
 	};
+
+	CharLiteralNode* parse_char_literal(std::string text) {
+		if (text.size() >= 2 && text.front() == '\'' && text.back() == '\'' ) {
+			text.erase(0, 1);
+			text.pop_back();
+		}
+
+		char c;
+		if (text[0] == '\\') {
+			switch (text[1]) {
+			case 'n':  c = '\n'; break;
+			case '"':  c = '"';  break;
+			case '\\': c = '\\'; break;
+			case '0':  c = '\0'; break;
+			case 't':  c = '\t'; break;
+			case 'r':  c = '\r'; break;
+			default:   c = text[1]; break;
+			}
+		}
+		else 
+			c = text[0];
+
+		return new CharLiteralNode{ c };
+	}
 
 	StringLiteralNode* parse_string_literal(std::string text) {
 		if (text.size() >= 2 && text.front() == '"' && text.back() == '"') {
@@ -58,6 +81,8 @@ public:
 
 		return new StringLiteralNode{ processed_string};
 	}
+
+
 
 	ConstantNode* parse_integer_literal(const std::string& str) {
 		std::string cleaned_str;

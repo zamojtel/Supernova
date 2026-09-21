@@ -1,10 +1,10 @@
 
-IRBasicTypeNode::IRBasicTypeNode(IRBasicType t) :m_ir_data_type{t} {
-	
+IRBasicTypeNode::IRBasicTypeNode(IRDataTypeManager* dtm,IRBasicType t) : IRDataTypeNode{dtm}, m_ir_data_type { t } {
 	size_t size = 0;
 	// size given in bytes
 	switch (t)
 	{
+	case IRBasicType::CHAR:
 	case IRBasicType::UINT8:
 	case IRBasicType::INT8:
 	case IRBasicType::BOOL: {

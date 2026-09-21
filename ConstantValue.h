@@ -2,7 +2,7 @@
 class ConstantValue {
 private:
 	std::optional<IRBasicType> m_data_type;
-	std::variant<uint8_t, uint16_t, uint32_t, uint64_t, int8_t, int16_t, int32_t, int64_t, float, double,bool,StringRef> m_value;
+	std::variant<char,uint8_t, uint16_t, uint32_t, uint64_t, int8_t, int16_t, int32_t, int64_t, float, double,bool,StringRef> m_value;
 	uint64_t m_data;
 public:
 	ConstantValue() {}
@@ -10,6 +10,12 @@ public:
 	ConstantValue(IRBasicType type, const void* address) : m_data_type{ type } {
 		switch (type)
 		{
+		case IRBasicType::CHAR: {
+			char value = *reinterpret_cast<const char*>(address);
+			m_value = value;
+			*reinterpret_cast<char*>(&m_data) = value;
+			break;
+		}
 		case IRBasicType::INT8: {
 			int8_t value = *reinterpret_cast<const int8_t*>(address);
 			m_value = value;
@@ -104,6 +110,7 @@ public:
 		}
 	}
 
+	ConstantValue(char v) :m_data_type{ IRBasicType::CHAR }, m_value{ v } { *reinterpret_cast<char*>(&m_data) = v; }
 	ConstantValue(uint8_t v) :m_data_type{ IRBasicType::UINT8 }, m_value{ v } { *reinterpret_cast<uint8_t*>(&m_data) = v; }
 	ConstantValue(uint16_t v) :m_data_type{ IRBasicType::UINT16 }, m_value{ v } { *reinterpret_cast<uint16_t*>(&m_data) = v; }
 	ConstantValue(uint32_t v) :m_data_type{ IRBasicType::UINT32 }, m_value{ v } { *reinterpret_cast<uint32_t*>(&m_data) = v; }
@@ -116,8 +123,8 @@ public:
 	ConstantValue(double v) :m_data_type{ IRBasicType::DOUBLE }, m_value{ v } { *reinterpret_cast<double*>(&m_data) = v; }
 	ConstantValue(bool v) :m_data_type{ IRBasicType::BOOL }, m_value{ v } { *reinterpret_cast<bool*>(&m_data) = v; }
 	ConstantValue(StringRef v) : m_data_type{ IRBasicType::STRING }, m_value{ v }, m_data{0} { 
-		const uint8_t* ptr = v.get_object_address();
-		memcpy(&m_data, &ptr, sizeof(ptr));
+		const uint8_t* ptr = v.get_pointer_address();
+		memcpy(&m_data, ptr, sizeof(ptr));
 	}
 
 	template <class T>
@@ -136,6 +143,8 @@ public:
 
 		switch (m_data_type.value())
 		{
+		case IRBasicType::CHAR:
+			return { safe_numeric_cast<To>(get_value<char>()) };
 		case IRBasicType::INT8:
 			return { safe_numeric_cast<To>(get_value<int8_t>()) };
 		case IRBasicType::INT16:
@@ -175,6 +184,8 @@ public:
 
 		switch (m_data_type.value())
 		{
+		case IRBasicType::CHAR:
+			return { static_cast<To>(get_value<char>()) };
 		case IRBasicType::INT8:
 			return { static_cast<To>(get_value<int8_t>()) };
 		case IRBasicType::INT16:
@@ -234,7 +245,6 @@ public:
 	// move to cpp 
 	std::string to_string() const;
 
-	//uint8_t* get_address() const;
 	uint8_t* get_address();
 };
 

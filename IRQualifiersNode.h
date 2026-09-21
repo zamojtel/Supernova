@@ -10,6 +10,6 @@ public:
 	// 1 CONST
 	// 2 VOLATILE
 	// 3 CONST VOLATILE
-	IRQualifiersNode(const TypeRef& e,uint8_t mask);
+	IRQualifiersNode(IRDataTypeManager* dtm, const TypeRef& e, uint8_t mask);
 	IRDataTypeNodeType get_node_type() const override;
 };

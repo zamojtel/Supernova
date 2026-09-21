@@ -9,7 +9,7 @@ int main(){
     double double_value = 2.5;
 
     print_type(byte_left + byte_right);
-    print(bye_left + byte_right);
+    print(byte_left + byte_right);
 
     print_type(signed_value + unsigned_value);
     print_type(unsigned_value + signed_value);

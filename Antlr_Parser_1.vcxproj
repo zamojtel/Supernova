@@ -436,6 +436,7 @@
     <ClInclude Include="BreakNode.h" />
     <ClInclude Include="CandidateComparison.h" />
     <ClInclude Include="CastNode.h" />
+    <ClInclude Include="CharLiteralNode.h" />
     <ClInclude Include="CompositeNode.h" />
     <ClInclude Include="ContinueNode.h" />
     <ClInclude Include="DataTypeNode.h" />
@@ -558,6 +559,7 @@
     <ClInclude Include="MallocNode.h" />
     <ClInclude Include="MemberAccessNode.h" />
     <ClInclude Include="MemberDeclarationNode.h" />
+    <ClInclude Include="MemcpyNode.h" />
     <ClInclude Include="OrNode.h" />
     <ClInclude Include="OverloadMatch.h" />
     <ClInclude Include="OverloadResolver.h" />
@@ -731,7 +733,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </Text>
     <Text Include="SourceTests\bitwise_operations_1.txt" />
+    <Text Include="SourceTests\character_1.txt" />
     <Text Include="SourceTests\logical_vs_arithmetical_shift_1.txt" />
+    <Text Include="SourceTests\memcpy_1.txt" />
     <Text Include="SourceTests\overloading_1.txt" />
     <Text Include="SourceTests\overloading_2.txt" />
     <Text Include="SourceTests\overloading_3.txt" />
@@ -829,6 +833,10 @@
     <Text Include="SourceTests\string_2.txt" />
     <Text Include="SourceTests\string_3.txt" />
     <Text Include="SourceTests\string_4.txt" />
+    <Text Include="SourceTests\string_5.txt" />
+    <Text Include="SourceTests\string_6.txt" />
+    <Text Include="SourceTests\string_7.txt" />
+    <Text Include="SourceTests\string_8.txt" />
     <Text Include="SourceTests\unreachable_blk_1.txt" />
     <Text Include="SourceTests\useless_statements_1.txt" />
     <Text Include="ss_1.txt" />

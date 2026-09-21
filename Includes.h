@@ -89,6 +89,8 @@
 #include "MallocNode.h"
 #include "FreeNode.h"
 #include "StringLiteralNode.h"
+#include "CharLiteralNode.h"
+#include "MemcpyNode.h"
 
 #include "IRPrinter.h"
 #include "IRDataTypeTraits.h"

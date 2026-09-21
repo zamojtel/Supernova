@@ -1,0 +1,32 @@
+﻿int main(){
+    char const * a = "abc";
+    char const * b = a;
+    char const * c;
+    c = a;
+
+    print(a);
+    print(b);
+    print(c);
+
+    a = "xyz";
+    print(a);
+    print(b);
+
+    print("");
+    print("a\0b");
+    print("a\"b\\c");
+    // emoji and characters that takes more than one byte
+    print("Aą🙂");
+
+    return 0;
+}
+#------------------
+abc
+abc
+abc
+xyz
+abc
+
+a
+a"b\c
+Aą🙂
