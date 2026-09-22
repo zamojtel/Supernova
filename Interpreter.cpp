@@ -323,9 +323,20 @@ void Interpreter::start(IRFunction* fn) {
 				memcpy(&source_address,get_operand_address(source),sizeof(source_address));
 				memcpy(dest_address, source_address, c_value);
 			}
-			else {
+			else
 				throw std::runtime_error("could not read the value");
-			}
+
+			break;
+		}
+		case IROperation::ARRAY_TO_POINTER: {
+			IROperand type = current_triple->m_operands[0];
+			IROperand array = current_triple->m_operands[1];
+			IRDataTypeManager *dtm = array.get_data_type().get_data_type_node()->get_dtm();
+			uint8_t* array_address = get_operand_address(array);
+
+			uint8_t* result_address = m_current_frame->m_memory_stack.data() + current_triple->get_local_mem_offset();
+			memcpy(result_address,&array_address,sizeof(array_address));
+			m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result_address;
 
 			break;
 		}

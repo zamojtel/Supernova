@@ -1,0 +1,18 @@
+void print_array(int *a,int size){
+	for(int i=0;i<size;i++){
+		print(a[i]);
+	}
+}
+// konwersja tablic na wskazniki 
+int main(){
+	int [3] array;
+	array[0] = 1;
+	array[1] = 2;
+	array[2] = 3;
+	print_array(array,3);
+	return 0;
+}
+#------------------
+1
+2
+3

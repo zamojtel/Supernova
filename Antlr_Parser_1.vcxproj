@@ -732,6 +732,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </Text>
+    <Text Include="SourceTests\array_to_pointer_1.txt" />
+    <Text Include="SourceTests\array_to_pointer_2.txt" />
     <Text Include="SourceTests\bitwise_operations_1.txt" />
     <Text Include="SourceTests\character_1.txt" />
     <Text Include="SourceTests\logical_vs_arithmetical_shift_1.txt" />

@@ -326,6 +326,11 @@ void IRChecker::check_triple(IRTriple* triple)
 		triple->m_data_type = m_dtm->get_void();
 		break;
 	}
+	case IROperation::ARRAY_TO_POINTER: {
+		// add coditions
+		triple->m_data_type = op1->get_data_type();
+		break;
+	}
 	default:
 		throw std::runtime_error("unknow operation while checking triple");
 	}
@@ -334,7 +339,6 @@ void IRChecker::check_triple(IRTriple* triple)
 bool IRChecker::check_data_type_size(const TypeRef& type1,const TypeRef& type2) const {
 	return true;
 }
-
 
 bool IRChecker::check_operand_types(const IROperand& op1, const IROperand& op2) const {
 	std::string type1 = op1.get_data_type().to_string();
@@ -364,6 +368,7 @@ size_t IRChecker::get_number_of_operands_for_operation(IROperation op) {
 	case IROperation::BITWISE_AND:
 	case IROperation::BITWISE_OR:
 	case IROperation::BITWISE_XOR:
+	case IROperation::ARRAY_TO_POINTER:
 		return 2;
 	case IROperation::BITWISE_NOT:
 	case IROperation::RETURN:

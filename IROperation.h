@@ -7,6 +7,7 @@ enum class IROperation {
 	MOD,
 	ASSIGN,
 	INIT_ASSIGN,
+	ARRAY_TO_POINTER,
 	CAST,
 	REINTERPRET_CAST,
 	RETURN,

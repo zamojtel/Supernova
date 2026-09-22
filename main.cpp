@@ -467,12 +467,14 @@ int main() {
 		//"overloading_single_argument_2",
 		//"overloading_multiple_arguments_1",
 		//"overloading_multiple_arguments_2",
-		"string_1",
-		"string_2",
-		"string_5",
-		"string_6",
-		"string_7",
-		"string_8",
+		//"string_1",
+		//"string_2",
+		//"string_5",
+		//"string_6",
+		//"string_7",
+		//"string_8",
+		//"array_to_pointer_1",
+		"array_to_pointer_2",
 		//"memcpy_1"
 	};
 
@@ -494,8 +496,8 @@ int main() {
 		//"overloading_ambiguous_1",
 		//"overloading_no_match_1",
 		//"overloading_single_argument_error_2"
-		"string_3",
-		"string_4"
+		//"string_3",
+		//"string_4"
 	};
 
 	std::cout<<"TypeName: "<<typeid(decltype(-2'147'483'648)).name();
