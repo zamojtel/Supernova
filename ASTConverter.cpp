@@ -358,6 +358,23 @@ void ASTConverter::implicit_conversion(size_t line_number, const TypeRef& to,IRO
 	if (from_value == to_value)
 		return;
 
+	if (from_value.is_array()) {
+		if (!IRDataTypeTraits::can_implicitly_convert_array_to_pointer(from.get_data_type(), to)) {
+			m_ast_converter_listener->error(
+				{
+					ErrorType::IMPLICIT_CAST_NOT_ALLOWED,
+					line_number,
+					std::format("cannot implicitly cast from {} to {}",from.get_data_type().to_string(),to.to_string())
+				}
+			);
+			return;
+		}
+
+		IRTriple * cast = m_coder.add_triple(line_number,IROperation::ARRAY_TO_POINTER,to,from);
+		from = cast;
+		return;
+	}
+
 	// a string is not allow to be implicitly converted to anything else
 	if (from_value.is_string() != to_value.is_string()) {
 		m_ast_converter_listener->error(
@@ -369,7 +386,6 @@ void ASTConverter::implicit_conversion(size_t line_number, const TypeRef& to,IRO
 					from_value.to_string(),
 					to_value.to_string()
 				),
-
 			}
 		);
 		return;

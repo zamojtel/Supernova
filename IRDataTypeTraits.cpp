@@ -19,12 +19,13 @@ std::array<const IRDataTypeTraits,(size_t)IRBasicType::NUMBER_OF_TYPES> ir_data_
 };
 
 bool IRDataTypeTraits::can_implicitly_convert(const TypeRef& from,const TypeRef& to) {
+	
+	if (from.remove_reference().remove_qualifiers().is_array())
+		return can_implicitly_convert_array_to_pointer(from, to);
+
 	if (from.is_pointer())
 		return can_implicitly_convert_pointers(from,to);
 
-	if (to.is_reference()) {
-
-	}
 	const TypeRef from_value = from.remove_qualifiers();
 	const TypeRef to_value = to.remove_qualifiers();
 
@@ -135,6 +136,26 @@ bool IRDataTypeTraits::can_explicitly_convert(const IROperand& op,const TypeRef&
 		return false;
 
 	return true;
+}
+
+bool IRDataTypeTraits::can_implicitly_convert_array_to_pointer(const TypeRef& from, const TypeRef& to) {
+	if (to.is_reference())
+		return false;
+
+	const TypeRef source = from.remove_reference().remove_qualifiers();
+	const TypeRef target = to.remove_qualifiers();
+
+	if (!source.is_array() || !target.is_pointer())
+		return false;
+
+	const TypeRef element_type = source.remove_array();
+
+	IRDataTypeManager *dtm = from.get_data_type_node()->get_dtm();
+
+	const TypeRef pointer_type = dtm->add_pointer(element_type);
+
+	return can_implicitly_convert_pointers(pointer_type,target);
+
 }
 
 bool IRDataTypeTraits::can_implicitly_convert_argument(const IROperand& argument, const TypeRef& to) {
