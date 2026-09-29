@@ -1,5 +1,5 @@
 
-Tester::Tester(const std::string& s_d,const std::string& e_d) :m_source_dir{ s_d }, m_expected_dir{ e_d } {
+Tester::Tester(const std::string& s_d, const std::string& e_d,TestMode m) :m_source_dir{ s_d }, m_expected_dir{ e_d }, m_mode{m} {
     for (int i = 0; i < (int)ErrorType::ERROR_COUNT;i++) {
         ErrorType e_type = ErrorType{i};
         m_error_name_to_error_type[ErrorTraits::get_name(e_type)] = e_type;
@@ -41,10 +41,6 @@ std::vector<std::string> Tester::read_expected_lines(const fs::path& file_path) 
             std::string expected_value;
             while (std::getline(file,expected_value))
             {
-                /*if (expected_value.empty())
-                    continue;
-                */
-
                 lines.push_back(expected_value);
             }
             break;
@@ -88,11 +84,12 @@ void Tester::run_all_tests(const std::vector<std::string>& test_names,const std:
     std::cout << "Wrap up: " << std::endl;
     std::cout << "Number of tests passed: " << tests_passed << std::endl;
     std::cout << "Number of tests failed: " << tests_failed << std::endl;
-    std::cout << "Printing failed tests" << std::endl;
-    for (const auto& t : failed_tests) {
-        std::cout << t << std::endl;
+    if (tests_failed>0) {
+        std::cout << "Printing failed tests" << std::endl;
+        for (const auto& t : failed_tests) {
+            std::cout << t << std::endl;
+        }
     }
-
     size_t error_tests_passed = 0;
     size_t error_tests_failed = 0;
     std::cout << "\n\n\n";
@@ -118,6 +115,7 @@ void Tester::run_all_tests(const std::vector<std::string>& test_names,const std:
     std::cout << "Number of error tests passed: " << error_tests_passed << std::endl;
     std::cout << "Number of error tests failed: " << error_tests_failed << std::endl;
 }
+
 
 bool Tester::run_single_test(const fs::path& source_file, const fs::path& expected_path,bool is_error_test) {
     IRPrinter printer;
@@ -192,15 +190,6 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
     ir_program.check_program();
     printer.print_ir_representation(ir_program);
 
-    //if (ast_conv_impl.has_error) {
-    //    system("pause");
-    //}
-
-    //auto errors = error_collector.get_errors();
-    //if (errors.size() > 0) {
-    //    system("pause");
-    //}
-
     printer.print_errors(error_collector);
     if (!is_error_test && (ast_conv_impl.has_error || !error_collector.get_errors().empty())) {
         return false;
@@ -240,81 +229,152 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
         return false;
     }
 
-    if (is_error_test) {
-        auto expected_errors = ast_conv_impl.get_errors();
-        auto expected_errors_checker = error_collector.get_errors();
-        std::vector<IRError> actual_errors;
+    if (!is_error_test && m_mode == TestMode::JIT_RETURN) {
+        IRToLLVMIRConverter ir_to_llvm_converter(&ir_program);
+        auto llvm_module = ir_to_llvm_converter.convert();
+        auto jit_result = llvm::orc::LLJITBuilder().create();
 
-        for (size_t i = 0; i < expected_errors.size();i++) {
-            actual_errors.emplace_back(
-                expected_errors[i].get_line_number(),
-                expected_errors[i].get_error_type(),
-                expected_errors[i].get_msg()
-            );
+        if (!jit_result) {
+            llvm::errs() << llvm::toString(jit_result.takeError()) << '\n';
+            return false;
         }
 
-        for (size_t j = 0; j < expected_errors_checker.size();j++)
-            actual_errors.push_back(*expected_errors_checker[j]);
+        std::unique_ptr<llvm::orc::LLJIT> jit = std::move(*jit_result);
+        bool invalid_module = llvm_module.withModuleDo(
+            [&](llvm::Module& module) {
+                module.setDataLayout(jit->getDataLayout());
+                module.setTargetTriple(jit->getTargetTriple().str());
+                return llvm::verifyModule(module, &llvm::errs());
+            }
+        );
 
-        std::stable_sort(actual_errors.begin(), actual_errors.end(), [](const IRError& e1, const IRError& e2) {  return e1.get_line_number() < e2.get_line_number(); });
-
-        if (expected_outputs.size() != actual_errors.size())
+        if (invalid_module)
             return false;
 
-        for (int i = 0; i < actual_errors.size();i++) {
-            std::istringstream stream{expected_outputs[i]};
-            int output_line_number;
-            stream >> output_line_number;
-            std::string output_error_type_str;
-            stream >> output_error_type_str;
-            ErrorType output_error_type = m_error_name_to_error_type.at(output_error_type_str);
+        if (auto error = jit->addIRModule(std::move(llvm_module))) {
+            llvm::errs() << llvm::toString(std::move(error)) << '\n';
+            return false;
+        }
+        auto global_fn = jit->lookup("_global_function");
+        if (!global_fn) {
+            llvm::errs() << llvm::toString(global_fn.takeError()) << '\n';
+            return false;
+        }
 
-            int expeceted_line_number = actual_errors[i].get_line_number();
-            ErrorType expected_error_type = actual_errors[i].get_error_type();
-            
-            if (output_line_number != expeceted_line_number || output_error_type != expected_error_type) {
-                std::cout << "wrong result at the line :" << (i + 1) << "\n";
-                std::cout << "expected :" << actual_errors[i].get_message() << "\n";
-                std::cout << "at the line: " << expeceted_line_number << "\n";
+        using GlobalFunction = void (*)();
 
-                std::cout << "received :" << output_error_type_str << "\n";
-                std::cout << "at the line: " << output_line_number << "\n";
+        GlobalFunction compiled_global_fn = global_fn->toPtr<GlobalFunction>();
+        compiled_global_fn();
 
-                system("pause");
+        auto main = jit->lookup("main");
 
-                return false;
+        if (!main) {
+            llvm::errs() << llvm::toString(main.takeError()) << '\n';
+            return false;
+        }
 
-            }
+        using MainFunction = int (*)();
+
+        MainFunction compiled_main = main->toPtr<MainFunction>();
+
+        if (expected_outputs.size() != 1) {
+            std::cout << "JIT test requires one expected return value" << std::endl;
+            return false;
+        }
+
+        std::istringstream expected_stream{ expected_outputs.front() };
+        int expected_return{};
+        std::string extra;
+
+        if (!(expected_stream >> expected_return) || (expected_stream >> extra)) {
+            std::cout << "Expected return value must be a single int\n";
+            return false;
+        }
+
+        int result = compiled_main();
+        if (result != expected_return) {
+            std::cout << source_file.filename().string()
+                << "\n expected : " << expected_return
+                << "\n received :" << result << "\n";
+            return false;
         }
 
         return true;
     }
     else {
-        TestInterpreterListener test_listener;
-        Interpreter interpreter{ &ir_program,main_fn,fn_arguments };
-        interpreter.set_listener(&test_listener);
+        if (is_error_test) {
+            auto expected_errors = ast_conv_impl.get_errors();
+            auto expected_errors_checker = error_collector.get_errors();
+            std::vector<IRError> actual_errors;
 
-        std::vector<IROperand> fn_arguments{};
-        IRFunction* global_function = ir_program.get_function("_global_function", fn_arguments);
-        interpreter.start(global_function);
+            for (size_t i = 0; i < expected_errors.size();i++) {
+                actual_errors.emplace_back(
+                    expected_errors[i].get_line_number(),
+                    expected_errors[i].get_error_type(),
+                    expected_errors[i].get_msg()
+                );
+            }
 
-        interpreter.start(main_fn);
+            for (size_t j = 0; j < expected_errors_checker.size();j++)
+                actual_errors.push_back(*expected_errors_checker[j]);
 
-        auto& actual_outputs = test_listener.get_messages();
+            std::stable_sort(actual_errors.begin(), actual_errors.end(), [](const IRError& e1, const IRError& e2) {  return e1.get_line_number() < e2.get_line_number(); });
 
-        if (actual_outputs.size() != expected_outputs.size()) {
-            std::cout << "differenet number of results, expected: " << expected_outputs.size() << "\n ";
-            std::cout << "Got: " << actual_outputs.size() << "\n";
-            return false;
-        }
-
-        for (size_t i = 0; i < expected_outputs.size(); i++) {
-            if (actual_outputs[i] != expected_outputs[i]) {
-                std::cout << "wrong result at the line :" << (i + 1) << "\n";
-                std::cout << "expected :" << expected_outputs[i] << "\n";
-                std::cout << "received :" << actual_outputs[i] << "\n";
-                system("pause");
+            if (expected_outputs.size() != actual_errors.size())
                 return false;
+
+            for (int i = 0; i < actual_errors.size();i++) {
+                std::istringstream stream{expected_outputs[i]};
+                int output_line_number;
+                stream >> output_line_number;
+                std::string output_error_type_str;
+                stream >> output_error_type_str;
+                ErrorType output_error_type = m_error_name_to_error_type.at(output_error_type_str);
+
+                int expeceted_line_number = actual_errors[i].get_line_number();
+                ErrorType expected_error_type = actual_errors[i].get_error_type();
+
+                if (output_line_number != expeceted_line_number || output_error_type != expected_error_type) {
+                    std::cout << "wrong result at the line :" << (i + 1) << "\n";
+                    std::cout << "expected :" << actual_errors[i].get_message() << "\n";
+                    std::cout << "at the line: " << expeceted_line_number << "\n";
+                    std::cout << "received :" << output_error_type_str << "\n";
+                    std::cout << "at the line: " << output_line_number << "\n";
+
+                    system("pause");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        else {
+            TestInterpreterListener test_listener;
+            Interpreter interpreter{ &ir_program,main_fn,fn_arguments };
+            interpreter.set_listener(&test_listener);
+
+            std::vector<IROperand> fn_arguments{};
+            IRFunction* global_function = ir_program.get_function("_global_function", fn_arguments);
+            interpreter.start(global_function);
+
+            interpreter.start(main_fn);
+
+            auto& actual_outputs = test_listener.get_messages();
+
+            if (actual_outputs.size() != expected_outputs.size()) {
+                std::cout << "differenet number of results, expected: " << expected_outputs.size() << "\n ";
+                std::cout << "Got: " << actual_outputs.size() << "\n";
+                return false;
+            }
+
+            for (size_t i = 0; i < expected_outputs.size(); i++) {
+                if (actual_outputs[i] != expected_outputs[i]) {
+                    std::cout << "wrong result at the line :" << (i + 1) << "\n";
+                    std::cout << "expected :" << expected_outputs[i] << "\n";
+                    std::cout << "received :" << actual_outputs[i] << "\n";
+                    system("pause");
+                    return false;
+                }
             }
         }
     }

@@ -131,7 +131,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\zamoj\C++Projects\antlr4\runtime\Cpp\runtime\bin\vs-2022\x64\Debug Static;D:\vcpkg\buildtrees\llvm\x64-windows-dbg\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\zamoj\C++Projects\antlr4\runtime\Cpp\runtime\bin\vs-2022\x64\Debug Static;D:\vcpkg\buildtrees\llvm\x64-windows-dbg\lib;D:\vcpkg\installed\x64-windows\debug\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -831,6 +831,11 @@
     <Text Include="SourceTests\return_promotion_error.txt" />
     <Text Include="SourceTests\right_bitwise_shift_1.txt" />
     <Text Include="SourceTests\right_bitwise_shift_with_cast_1.txt" />
+    <Text Include="SourceTests\simple_jit_2.txt" />
+    <Text Include="SourceTests\simple_jit_3.txt" />
+    <Text Include="SourceTests\simple_jit_4.txt" />
+    <Text Include="SourceTests\simple_jit_5.txt" />
+    <Text Include="SourceTests\simple_jit_6.txt" />
     <Text Include="SourceTests\string_1.txt" />
     <Text Include="SourceTests\string_2.txt" />
     <Text Include="SourceTests\string_3.txt" />

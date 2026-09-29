@@ -1345,5 +1345,12 @@
     <Text Include="SourceTests\string_7.txt" />
     <Text Include="SourceTests\memcpy_1.txt" />
     <Text Include="SourceTests\string_8.txt" />
+    <Text Include="SourceTests\array_to_pointer_1.txt" />
+    <Text Include="SourceTests\array_to_pointer_2.txt" />
+    <Text Include="SourceTests\simple_jit_2.txt" />
+    <Text Include="SourceTests\simple_jit_3.txt" />
+    <Text Include="SourceTests\simple_jit_4.txt" />
+    <Text Include="SourceTests\simple_jit_5.txt" />
+    <Text Include="SourceTests\simple_jit_6.txt" />
   </ItemGroup>
 </Project>
