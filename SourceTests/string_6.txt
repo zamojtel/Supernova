@@ -15,7 +15,7 @@
     print("");
     print("a\0b");
     print("a\"b\\c");
-    // emoji and characters that takes more than one byte
+    // emoji and characters that take more than one byte
     print("Aą🙂");
 
     return 0;
