@@ -35,15 +35,21 @@ public:
 	std::vector<std::string>& get_messages() { return m_printed_messages; }
 };
 
+enum class TestMode {
+	INTERPRETER_OUTPUT,
+	JIT_RETURN,
+};
+
 namespace fs = std::filesystem;
 class Tester {
 private:
+	TestMode m_mode;
 	std::string m_source_dir;
 	std::string m_expected_dir;
 	std::map<std::string, ErrorType> m_error_name_to_error_type;
 public:
 	std::vector<std::string> read_expected_lines(const fs::path& file_path);
-	Tester(const std::string& source_dir,const std::string& expected_dir);
+	Tester(const std::string& s_d, const std::string& e_d,TestMode m);
 	bool run_single_test(const fs::path& source_file, const fs::path& expected_path,bool flag);
 	void run_all_tests(const std::vector<std::string>& test_names, const std::vector<std::string>& test_error_names);
 	std::string read_entire_file(const fs::path& file_path);

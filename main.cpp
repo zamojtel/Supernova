@@ -15,6 +15,7 @@
 #include <filesystem>
 #include <sstream>
 #include <algorithm>
+#include <memory>
 #define ANTLR4CPP_STATIC
 #pragma comment(lib,"antlr4-runtime.lib")
 #undef ERROR
@@ -29,6 +30,11 @@
 #include "llvm/IR/Type.h"
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/IR/Verifier.h"
+// for jit
+#include <llvm/ExecutionEngine/Orc/ThreadSafeModule.h>
+#include <llvm/ExecutionEngine/Orc/LLJIT.h>
+#include <llvm/Support/TargetSelect.h>
+#include <llvm/Support/Error.h>
 
 #include "Includes.h"
 
@@ -116,11 +122,11 @@
 #pragma comment(lib, "winspool.lib")
 #pragma comment(lib, "oleaut32.lib")
 #pragma comment(lib, "comdlg32.lib")
+#pragma comment(lib, "zstd.lib")
+#pragma comment(lib, "zlibd.lib")
 
 class MyContextSuperClass : public antlr4::ParserRuleContext {
 public:
-	//int value;
-	//AbstractSyntaxTreeNode* m_node;
 	ReferencePtr<AbstractSyntaxTreeNode> m_node;
 	MyContextSuperClass() = default;
 	MyContextSuperClass(ParserRuleContext* parent, size_t invoking_state) : ParserRuleContext{ parent,invoking_state } {}
@@ -425,8 +431,13 @@ int main() {
 	std::string test_folder = "C:\\Users\\zamoj\\OneDrive\\Pulpit\\ProjectKompilator\\SourceTests";
 	std::string expected_outputs_folder = "C:\\Users\\zamoj\\OneDrive\\Pulpit\\ProjectKompilator\\SourceTests";
 
-	int* ptr = (nullptr_t)(0);
+	if (llvm::InitializeNativeTarget() ||
+		llvm::InitializeNativeTargetAsmPrinter()) {
+		std::cerr << "Failed to initialize LLVM native target\n";
+		return 1;
+	}
 
+	int* ptr = (nullptr_t)(0);
 	std::vector<std::string> test_names{
 		//"implicit_type_widening",
 		//"useless_statements_1",
@@ -474,8 +485,14 @@ int main() {
 		//"string_7",
 		//"string_8",
 		//"array_to_pointer_1",
-		"array_to_pointer_2",
-		//"memcpy_1"
+		//"array_to_pointer_2",
+		//"memcpy_1",
+		"simple_jit_1",
+		"simple_jit_2",
+		"simple_jit_3",
+		"simple_jit_4",
+		"simple_jit_5",
+		"simple_jit_6"
 	};
 
 	std::vector<std::string> test_errors{
@@ -498,18 +515,18 @@ int main() {
 		//"overloading_single_argument_error_2"
 		//"string_3",
 		//"string_4"
+		//"string_9"
 	};
 
 	std::cout<<"TypeName: "<<typeid(decltype(-2'147'483'648)).name();
 
 	std::cout<<"\nTypeName: "<<typeid(decltype(-2'147'483'649)).name();
 	std::cout<<"\nTypeName: "<<typeid(decltype(-0x80000001)).name();
-
-	Tester compiler_tester(test_folder, expected_outputs_folder);
+	Tester compiler_tester(test_folder, expected_outputs_folder,TestMode::JIT_RETURN);
 	compiler_tester.run_all_tests(test_names,test_errors);
 	
-	test_string_storage();
-	test_string_pool();
+	//test_string_storage();
+	//test_string_pool();
 
 	return 0;
 }

@@ -1,6 +1,7 @@
 
 int main(){
 	char const * a = "abc";
+	//	const char *
 	print(a);
 	return 0;
 }

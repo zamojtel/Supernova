@@ -4,7 +4,8 @@ void modify(char * s){
 // konwersja tablic na wskazniki 
 int main(){
 	char [4] str;
-	memcpy(&str[0],"abc",4);
+	// memcpy(&str[0],"abc",4);
+	memcpy(str,"abc",4);
 	modify(str);
 	print(str);
 	return 0;

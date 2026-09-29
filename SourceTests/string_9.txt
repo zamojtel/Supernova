@@ -1,0 +1,9 @@
+int main(){
+	char const c = 'a';
+	char const * s = "yha";
+	s[0] = 'a';
+	s[1] = c;
+	return 0;
+}
+#------------------
+4 EXPLICIT_CAST_NOT_ALLOWED
