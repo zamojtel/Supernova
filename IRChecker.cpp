@@ -138,8 +138,9 @@ void IRChecker::check_triple(IRTriple* triple)
 
 		break;
 	}
+	case IROperation::EXTERNAL_FUNCTION_CALL:
 	case IROperation::FUNCTION_CALL:{
-		triple->m_data_type = op1->get_function()->get_return_type();
+		triple->m_data_type = op1->get_base_function()->get_return_type();
 		break;
 	}
 	case IROperation::JMP:

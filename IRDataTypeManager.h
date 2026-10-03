@@ -56,6 +56,8 @@ public:
 	std::vector<IRDataTypeNode*>& get_all_data_types();
 
 	TypeRef get_bool() const;
+	TypeRef get_float() const;
+	TypeRef get_double() const;
 	TypeRef get_int() const;
 	TypeRef get_error() const;
 	TypeRef get_void() const;

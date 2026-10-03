@@ -115,6 +115,14 @@ TypeRef IRDataTypeManager::get_bool() const {
 	return m_basic_types.at(IRBasicType::BOOL);
 }
 
+TypeRef IRDataTypeManager::get_float() const {
+	return m_basic_types.at(IRBasicType::FLOAT);
+}
+
+TypeRef IRDataTypeManager::get_double() const {
+	return m_basic_types.at(IRBasicType::DOUBLE);
+}
+
 TypeRef IRDataTypeManager::get_int() const {
 	return m_basic_types.at(IRBasicType::INT32);
 }

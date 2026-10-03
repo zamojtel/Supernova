@@ -16,6 +16,7 @@
 #include <sstream>
 #include <algorithm>
 #include <memory>
+#include <cmath>
 #define ANTLR4CPP_STATIC
 #pragma comment(lib,"antlr4-runtime.lib")
 #undef ERROR
@@ -292,12 +293,12 @@ void check_asserts() {
 	IRPrinter ir_printer;
 	ir_printer.print_errors(error_collector);
 
+	IRFunction* global_function = ir_program.get_function("_global_function", {});
 	std::vector<IROperand> fn_arguments{};
-	IRFunction* global_function = ir_program.get_function("_global_function",fn_arguments);
 	Interpreter interpreter{ &ir_program,global_function,fn_arguments };
 	interpreter.start(global_function);
 
-	IRFunction* main_fn = ir_program.get_function("main", fn_arguments);
+	IRFunction* main_fn = ir_program.get_function("main", {});
 	IRInterpreterForTests* ir_intereter_listener = new IRInterpreterForTests{};
 	interpreter.set_listener(ir_intereter_listener);
 	interpreter.start(main_fn);
@@ -413,10 +414,11 @@ void check_prints(const std::string& file_name, const std::vector<std::string>& 
 	IRPrinter ir_printer;
 	ir_printer.print_errors(error_collector);
 
-	std::vector<IROperand> fn_arguments{};
-	IRFunction* fn = ir_program.get_function("main", fn_arguments);
+	//IRFunction* fn = ir_program.get_function("main", fn_arguments);
+	IRFunction* fn = ir_program.get_function("main", {});
 
 	IRInterpreterForTests ir_interpreter_listener = IRInterpreterForTests{};
+	std::vector<IROperand> fn_arguments{};
 	Interpreter interpreter{ &ir_program,fn,fn_arguments };
 	interpreter.set_listener(&ir_interpreter_listener);
 	interpreter.start(fn);
@@ -492,7 +494,11 @@ int main() {
 		"simple_jit_3",
 		"simple_jit_4",
 		"simple_jit_5",
-		"simple_jit_6"
+		"simple_jit_6",
+		"external_function_call_1",
+		"external_function_call_2",
+		"external_function_call_3",
+		"mixed_function_call_1"
 	};
 
 	std::vector<std::string> test_errors{

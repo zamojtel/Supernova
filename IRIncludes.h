@@ -61,6 +61,7 @@ class IRMember;
 #include "IRChecker.h"
 #include "IRErrorCollector.h"
 
+#include "IRBaseFunction.h"
 #include "IRFunction.h"
 #include "IRProgram.h"
 

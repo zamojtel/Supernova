@@ -536,12 +536,17 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 			return;
 		}
 		
-		std::vector<IRVariable*> parameters = result.get_function()->get_parameters();
+
+		std::vector<TypeRef> parameter_types = result.get_function()->get_parameter_types();
 		for (size_t i = 0; i < arg_operands.size(); i++)
-			implicit_conversion(current_node->get_line_number(), parameters[i]->get_data_type(), arg_operands[i]);
+			implicit_conversion(current_node->get_line_number(), parameter_types[i], arg_operands[i]);
 
 		arg_operands.insert(arg_operands.begin(), result.get_function());
-		IRTriple* triple = m_coder.add_triple(current_node->get_line_number(), IROperation::FUNCTION_CALL, arg_operands);
+		IRTriple* triple = nullptr;
+		if (result.get_function()->m_kind == IRBaseFunction::Kind::INTERNAL)
+			triple = m_coder.add_triple(current_node->get_line_number(), IROperation::FUNCTION_CALL, arg_operands);
+		else
+			triple = m_coder.add_triple(current_node->get_line_number(), IROperation::EXTERNAL_FUNCTION_CALL, arg_operands);
 
 		set_op(current_node,triple);
 		break;

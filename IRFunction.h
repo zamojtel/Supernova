@@ -1,28 +1,25 @@
 
-class IRFunction : public IRUsedObject {
+class IRFunction : public IRBaseFunction {
 private:
 	friend class IRBasicBlock;
 	friend class IRProgram;
 	friend class IRChecker;
 	friend class IRCoder;
-	bool m_is_inline{false};
-	std::string m_identifier;
+	bool m_is_inline{ false };
 	IRProgram* m_ir_program = nullptr;
 	// inside of the function we remember how many triples we have
 	size_t m_triple_count;
 	size_t m_index;
-
 	std::vector<IRBasicBlock*> m_basic_blocks;
 	std::vector<IRConstant*> m_constants;
 	std::vector<IRVariable*> m_variables;
 	std::vector<IRVariable*> m_parameters;
 	TypeRef m_return_type;
-	size_t m_total_size_required{0};
+	size_t m_total_size_required{ 0 };
 public:
-	IRFunction(size_t index) :m_triple_count{ 0 }, m_index{index} { m_basic_blocks.push_back(new IRBasicBlock{ this, m_basic_blocks.size() }); }
-	IRFunction(size_t index, const std::string& name, bool is_in, const TypeRef& r_t, IRProgram* p) : m_triple_count{ 0 }, m_index{ index }, m_identifier{ name }, m_is_inline{is_in}, m_return_type { r_t }, m_ir_program{ p } { m_basic_blocks.push_back(new IRBasicBlock{ this, m_basic_blocks.size() }); }
-
-	IROperandType get_operand_type() const;
+	IRFunction(size_t index,const std::string& name,const TypeRef& r_t);
+	IRFunction(size_t index, const std::string& name, bool is_inline, const TypeRef& r_t, IRProgram* p);
+	IROperandType get_operand_type() const override;
 	IROperand get_operand() override;
 	void add_parameter(const std::string& name, const TypeRef& type);
 	IRVariable* add_variable(const std::string& name,const TypeRef& type);
@@ -35,27 +32,22 @@ public:
 	const IRVariable* get_variable(size_t index) const;
 	const std::vector<IRVariable*>& get_variables() const;
 	IRVariable* get_variable(const std::string& name);
-
 	const IRConstant* get_constant(size_t index) const;
 	const std::vector<IRConstant*>& get_constants() const;
 	bool has_variable(const std::string& name) const;
-
-	//void check_function();
 	void set_checker_listener(IRCheckerListener* listener);
 	size_t get_triple_count();
 	void reindex_triples();
 	const TypeRef& get_return_type() const;
 	void set_name(const std::string& name);
 	const std::string& get_name();
-
-	//const std::vector<IRVariable*>& get_parameters();
 	const std::vector<IRVariable*>& get_parameters() const;
-	// SHOW
-	bool compare_arguments(const std::vector<IROperand> &arguments);
+	//bool compare_arguments(const std::vector<IROperand> &arguments);
 	size_t get_index();
 	size_t get_required_size();
 	const std::string& get_identifier() const;
 	IRProgram* get_ir_prgram();
 	bool is_inline() const;
 	void remove_blk(IRBasicBlock* blk);
+	std::vector<TypeRef> get_paramater_type();
 };

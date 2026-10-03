@@ -7,11 +7,11 @@ enum class MatchStatus {
 class OverloadMatch {
 private:
 	MatchStatus m_status;
-	IRFunction* m_fn;
+	IRBaseFunction* m_fn;
 public:
 	OverloadMatch();
-	OverloadMatch(MatchStatus s, IRFunction* fn);
+	OverloadMatch(MatchStatus s, IRBaseFunction* fn);
 	bool is_valid();
-	IRFunction* get_function();
+	IRBaseFunction* get_function();
 	MatchStatus get_status();
 };

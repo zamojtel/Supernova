@@ -1,13 +1,15 @@
 
 class IRTriple;
 class IRBasicBlock;
+class IRBaseFunction;
 class IRFunction;
+class IRExternalFunction;
 
 class IROperand {
 private:
 public:
 	IROperandType m_operand_type;
-	std::variant<IRBasicBlock*,IRConstant*, IRVariable*, IRTriple*,IRFunction*,IRMember*,TypeRef> m_value;
+	std::variant<IRBasicBlock*,IRConstant*, IRVariable*, IRTriple*,IRFunction*,IRExternalFunction*,IRMember*,TypeRef> m_value;
 
 	IROperand();
 	IROperand(IRBasicBlock* b);
@@ -15,6 +17,7 @@ public:
 	IROperand(IRVariable* n);
 	IROperand(IRTriple* t);
 	IROperand(IRFunction* t);
+	IROperand(IRExternalFunction* t);
 	IROperand(IRMember* m);
 	IROperand(IRUsedObject* obj);
 	IROperand(const TypeRef& type);
@@ -24,6 +27,8 @@ public:
 	IRVariable* get_variable() const;
 	IRTriple* get_triple() const;
 	IRFunction* get_function() const;
+	IRExternalFunction* get_external_function() const;
+	IRBaseFunction* get_base_function() const;
 	IRMember* get_member() const;
 	TypeRef get_data_type() const;
 	IRUsedObject* get_used_object() const;

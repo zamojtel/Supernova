@@ -197,7 +197,7 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
 
     IRInliner inliner;
     std::vector<IROperand> fn_arguments{};
-    IRFunction* main_fn = ir_program.get_function("main", fn_arguments);
+    IRFunction* main_fn = ir_program.get_function("main", {});
 
     if (!main_fn) {
         std::cout << "there's no main function in the source file";
@@ -211,10 +211,15 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
             if (triple->get_ir_operation() != IROperation::FUNCTION_CALL)
                 continue;
 
+            if (triple->m_operands[0].m_operand_type == IROperandType::EXTERNAL_FUNCTION)
+                continue;
+            
+
             IRFunction* callee = triple->m_operands[0].get_function();
 
             if (callee != main_fn && callee->is_inline())
                 expected_inline_expansions++;
+
         }
     }
 
@@ -255,7 +260,8 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
             llvm::errs() << llvm::toString(std::move(error)) << '\n';
             return false;
         }
-        auto global_fn = jit->lookup("_global_function");
+
+        auto global_fn = jit->lookup(FunctionNames::get_internal_name(FunctionNames::m_global_fn));
         if (!global_fn) {
             llvm::errs() << llvm::toString(global_fn.takeError()) << '\n';
             return false;
@@ -266,7 +272,7 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
         GlobalFunction compiled_global_fn = global_fn->toPtr<GlobalFunction>();
         compiled_global_fn();
 
-        auto main = jit->lookup("main");
+        auto main = jit->lookup(FunctionNames::get_internal_name(FunctionNames::m_main_fn));
 
         if (!main) {
             llvm::errs() << llvm::toString(main.takeError()) << '\n';
@@ -353,8 +359,9 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
             Interpreter interpreter{ &ir_program,main_fn,fn_arguments };
             interpreter.set_listener(&test_listener);
 
-            std::vector<IROperand> fn_arguments{};
-            IRFunction* global_function = ir_program.get_function("_global_function", fn_arguments);
+            //std::vector<IROperand> fn_arguments{};
+            //IRFunction* global_function = ir_program.get_function("_global_function", fn_arguments);
+            IRFunction* global_function = ir_program.get_function("_global_function", {});
             interpreter.start(global_function);
 
             interpreter.start(main_fn);
