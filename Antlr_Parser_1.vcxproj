@@ -191,6 +191,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="IRBaseFunction.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IRExternalFunction.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="FunctionReturnChecker.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -445,6 +451,9 @@
     <ClInclude Include="DereferenceNode.h" />
     <ClInclude Include="DoWhileNode.h" />
     <ClInclude Include="ErrorTraits.h" />
+    <ClInclude Include="FunctionNames.h" />
+    <ClInclude Include="IRBaseFunction.h" />
+    <ClInclude Include="IRExternalFunction.h" />
     <ClInclude Include="ForNode.h" />
     <ClInclude Include="FreeNode.h" />
     <ClInclude Include="FunctionReturnChecker.h" />
@@ -736,8 +745,12 @@
     <Text Include="SourceTests\array_to_pointer_2.txt" />
     <Text Include="SourceTests\bitwise_operations_1.txt" />
     <Text Include="SourceTests\character_1.txt" />
+    <Text Include="SourceTests\external_function_call_1.txt" />
+    <Text Include="SourceTests\external_function_call_2.txt" />
+    <Text Include="SourceTests\external_function_call_3.txt" />
     <Text Include="SourceTests\logical_vs_arithmetical_shift_1.txt" />
     <Text Include="SourceTests\memcpy_1.txt" />
+    <Text Include="SourceTests\mixed_function_call_1.txt" />
     <Text Include="SourceTests\overloading_1.txt" />
     <Text Include="SourceTests\overloading_2.txt" />
     <Text Include="SourceTests\overloading_3.txt" />

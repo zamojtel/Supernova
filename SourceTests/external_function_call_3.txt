@@ -1,0 +1,10 @@
+
+int function(){
+	return 123;
+}
+
+int main(){
+	return function(0); // we expect external function call
+}
+#------------------
+1

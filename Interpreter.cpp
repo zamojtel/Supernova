@@ -172,7 +172,6 @@ void Interpreter::start(IRFunction* fn) {
 			break;
 		}
 		case IROperation::RETURN: {
-			//IRFunction* out_fun = m_current_function;
 			IRStackFrame* frame = &m_frames.back();
 			TypeRef type;
 
@@ -278,7 +277,7 @@ void Interpreter::start(IRFunction* fn) {
 				IROperand op = current_triple->m_operands[0];
 				uint8_t* value_address = get_operand_address(op);
 				std::string msg;
-
+				//std::sin;
 				if (type.is_string()) {
 					const char* pointer_value = nullptr;
 					memcpy(&pointer_value, value_address, sizeof(pointer_value));
@@ -351,6 +350,7 @@ void Interpreter::start(IRFunction* fn) {
 		// funkcja jest Ÿle wywo³ywana 
 		case IROperation::FUNCTION_CALL: {
 			std::vector<IROperand> arguments = current_triple->get_function_call_arguments();
+			// remove 
 			std::vector<ConstantValue> values_passed_to_func;
 			
 			IROperand function_op = current_triple->m_operands[0];
@@ -389,6 +389,23 @@ void Interpreter::start(IRFunction* fn) {
 			current_blk_triple_index = 0;
 			
 			continue;
+		}
+		case IROperation::EXTERNAL_FUNCTION_CALL: {
+			std::vector<IROperand> arguments = current_triple->get_function_call_arguments();
+			std::vector<void*> addresses_passed_to_function;
+			IROperand external_function_op = current_triple->m_operands[0];
+
+			IRExternalFunction* external_function = external_function_op.get_external_function();
+			for (size_t i = 0; i < arguments.size(); i++) {
+				uint8_t* argument_address = get_operand_address(arguments[i]);
+				addresses_passed_to_function.push_back(argument_address);
+			}
+
+			uint8_t* result_address = m_current_frame->m_memory_stack.data() + current_triple->get_local_mem_offset();
+			external_function->m_caller(addresses_passed_to_function.data(), (void*)result_address);
+			m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result_address;
+
+			break;
 		}
 		case IROperation::ARRAY_ACCESS: {
 			IROperand op1 = current_triple->m_operands[0];

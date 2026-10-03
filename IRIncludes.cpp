@@ -34,6 +34,7 @@
 #include "IRStruct.cpp"
 #include "IRUnion.cpp"
 
+#include "IRBaseFunction.cpp"
 #include "IRFunction.cpp"
 #include "IRProgram.cpp"
 #include "IRDataTypeTraits.cpp"

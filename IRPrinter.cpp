@@ -38,6 +38,8 @@ std::string IRPrinter::ir_operation_to_string(const IROperation op) const {
 		return "REINTERPRET_CAST";
 	case IROperation::FUNCTION_CALL:
 		return "FUNCTION_CALL";
+	case IROperation::EXTERNAL_FUNCTION_CALL:
+		return "EXTERNAL_FUNCTION_CALL";
 	case IROperation::COPY:
 		return "COPY";
 	case IROperation::INC:

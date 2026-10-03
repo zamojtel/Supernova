@@ -5,6 +5,7 @@
 #include "OperationType.h"
 
 #include "ReferencePtr.h"
+#include "FunctionNames.h"
 
 #include "DataType.h"
 
@@ -107,7 +108,7 @@
 #include "CandidateComparison.h"
 #include "OverloadMatch.h"
 #include "OverloadResolver.h"
-
+#include "IRExternalFunction.h"
 
 #include "ASTConvIncludes.h"
 #include "Tester.h"

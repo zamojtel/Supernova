@@ -4,6 +4,7 @@
 #define INCLUDES_CPP
 
 #include "ASTCOnvIncludes.cpp"
+
 #include "IRIncludes.cpp"
 
 #include "IRToLLVMIRConverter.cpp"
@@ -17,6 +18,7 @@
 #include "StringRef.cpp"
 #include "StringStorage.cpp"
 #include "StringLiteralPool.cpp"
+#include "IRExternalFunction.cpp"
 #include "StringTests/StringTests.cpp"
 
 #endif INCLUDES_CPP

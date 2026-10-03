@@ -1,0 +1,9 @@
+int main(){
+	int x = 0;
+	int result = function(x);
+	print_int(result);
+	
+	return result;
+}
+#------------------
+1

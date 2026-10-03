@@ -208,6 +208,12 @@
     <Filter Include="Source Files\Runtime">
       <UniqueIdentifier>{9ba72e94-d2eb-4c26-902d-e711ea60d8fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\IR\IRFunctions">
+      <UniqueIdentifier>{0b828a56-371d-4d6e-8625-64b7e1c3ab16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FunctionNames">
+      <UniqueIdentifier>{e2a42d5f-3a84-435a-beea-3aa53296b2c1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -251,9 +257,6 @@
     </ClCompile>
     <ClCompile Include="ASTConvIncludes.cpp">
       <Filter>Source Files\Converter</Filter>
-    </ClCompile>
-    <ClCompile Include="IRFunction.cpp">
-      <Filter>Source Files\IR</Filter>
     </ClCompile>
     <ClCompile Include="IRIncludes.cpp">
       <Filter>Source Files\IR</Filter>
@@ -423,6 +426,15 @@
     <ClCompile Include="StringTests\StringTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IRFunction.cpp">
+      <Filter>Source Files\IR\IRFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="IRBaseFunction.cpp">
+      <Filter>Source Files\IR\IRFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="IRExternalFunction.cpp">
+      <Filter>Source Files\IR\IRFunctions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Expr.g4">
@@ -547,9 +559,6 @@
     </ClInclude>
     <ClInclude Include="ASTConvIncludes.h">
       <Filter>Source Files\Converter</Filter>
-    </ClInclude>
-    <ClInclude Include="IRFunction.h">
-      <Filter>Source Files\IR</Filter>
     </ClInclude>
     <ClInclude Include="AbstractSyntaxTreeNode.h">
       <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
@@ -886,6 +895,18 @@
     </ClInclude>
     <ClInclude Include="MemcpyNode.h">
       <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IRFunction.h">
+      <Filter>Source Files\IR\IRFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="IRExternalFunction.h">
+      <Filter>Source Files\IR\IRFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="IRBaseFunction.h">
+      <Filter>Source Files\IR\IRFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="FunctionNames.h">
+      <Filter>Source Files\FunctionNames</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1352,5 +1373,9 @@
     <Text Include="SourceTests\simple_jit_4.txt" />
     <Text Include="SourceTests\simple_jit_5.txt" />
     <Text Include="SourceTests\simple_jit_6.txt" />
+    <Text Include="SourceTests\external_function_call_1.txt" />
+    <Text Include="SourceTests\external_function_call_2.txt" />
+    <Text Include="SourceTests\external_function_call_3.txt" />
+    <Text Include="SourceTests\mixed_function_call_1.txt" />
   </ItemGroup>
 </Project>

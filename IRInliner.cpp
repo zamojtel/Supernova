@@ -16,9 +16,10 @@ IROperand IRInliner::get_remapped_operand(const IROperand& op, InlineContext& ct
 	if (ctx.m_operands.count(op)>0)
 		return ctx.m_operands.at(op);
 	else if (
-		op.m_operand_type == IROperandType::CONSTANT  ||
-		op.m_operand_type == IROperandType::FUNCTION  ||
-		op.m_operand_type == IROperandType::DATA_TYPE ||
+		op.m_operand_type == IROperandType::CONSTANT		  ||
+		op.m_operand_type == IROperandType::FUNCTION		  ||
+		op.m_operand_type == IROperandType::EXTERNAL_FUNCTION ||
+		op.m_operand_type == IROperandType::DATA_TYPE		  ||
 		op.m_operand_type == IROperandType::MEMBER
 		) {
 		return op;

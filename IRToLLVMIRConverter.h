@@ -8,6 +8,7 @@ private:
 	std::vector<llvm::BasicBlock*> m_llvm_basic_blocks;
 	std::vector<llvm::Function*> m_llvm_functions;
 	IRProgram *m_ir_program;
+	const std::string m_prefix_for_function;
 
 	std::vector<llvm::Constant*> m_llvm_constants;
 	std::vector<llvm::GlobalVariable*> m_global_variables;

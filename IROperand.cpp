@@ -9,6 +9,8 @@ IROperand::IROperand(IRTriple* t) :m_operand_type{ IROperandType::TRIPLE }, m_va
 
 IROperand::IROperand(IRFunction* t) : m_operand_type{ IROperandType::FUNCTION }, m_value{ t } {}
 
+IROperand::IROperand(IRExternalFunction* t) : m_operand_type{ IROperandType::EXTERNAL_FUNCTION }, m_value{t} {}
+
 IROperand::IROperand(IRMember* m) :m_operand_type{ IROperandType::MEMBER }, m_value{ m } {}
 
 IROperand::IROperand(IRUsedObject* obj) {
@@ -32,6 +34,17 @@ IRVariable* IROperand::get_variable() const { return std::get<IRVariable*>(m_val
 IRTriple* IROperand::get_triple() const { return std::get<IRTriple*>(m_value); }
 
 IRFunction* IROperand::get_function() const { return std::get<IRFunction*>(m_value); }
+
+IRExternalFunction* IROperand::get_external_function() const { return std::get<IRExternalFunction*>(m_value); }
+
+IRBaseFunction* IROperand::get_base_function() const { 
+	if (m_operand_type == IROperandType::FUNCTION)
+		return get_function();
+	else if(m_operand_type == IROperandType::EXTERNAL_FUNCTION)
+		return get_external_function();
+
+	throw std::runtime_error("operand is not a function");
+}
 
 IRMember* IROperand::get_member() const { return std::get<IRMember*>(m_value); };
 
@@ -62,6 +75,8 @@ IRUsedObject* IROperand::get_used_object() const {
 		return get_triple();
 	case FUNCTION:
 		return get_function();
+	case EXTERNAL_FUNCTION:
+		return get_external_function();
 	case BASIC_BLOCK:
 		return get_basic_block();
 	case MEMBER:

@@ -1,4 +1,15 @@
 
+IRFunction::IRFunction(size_t index,const std::string& name,const TypeRef& r_t) 
+	: IRBaseFunction("", {},r_t,IRBaseFunction::Kind::INTERNAL), m_triple_count{ 0 }, m_index{ index } 
+{ 
+	m_basic_blocks.push_back(new IRBasicBlock{ this, m_basic_blocks.size() });
+}
+
+IRFunction::IRFunction(size_t index, const std::string& name, bool is_inline, const TypeRef& r_t, IRProgram* p) 
+	: IRBaseFunction(name, {},r_t,IRBaseFunction::Kind::INTERNAL), m_triple_count{ 0 }, m_index{ index }, m_is_inline{ is_inline }, m_return_type{ r_t }, m_ir_program{ p } 
+{ 
+	m_basic_blocks.push_back(new IRBasicBlock{ this, m_basic_blocks.size() });
+}
 
 void IRFunction::set_name(const std::string &name) {
 	m_identifier = name;
@@ -21,6 +32,7 @@ void IRFunction::add_parameter(const std::string &name, const TypeRef& type) {
 	IRVariable* parameter = new IRLocalVariable{name,type,m_parameters.size()};
 	// its present in both vectors
 	m_parameters.push_back(parameter);
+	m_parameter_types.push_back(parameter->get_data_type());
 	m_variables.push_back(parameter);
 }
 
@@ -155,19 +167,33 @@ const TypeRef& IRFunction::get_return_type() const {
 size_t IRFunction::get_index() {
 	return m_index;
 }
+//
+//bool IRFunction::compare_arguments(const std::vector<IROperand>& arguments) {
+//	// for now it will ignore operands other than variables 
+//	if (m_parameters.size() != arguments.size())
+//		return false;
+//
+//	for (size_t i = 0; i < arguments.size();i++) {
+//		if (m_parameters[i]->get_data_type().remove_reference() != arguments[i].get_data_type().remove_reference())
+//			return false;
+//	}
+//
+//	return true;
+//}
 
-bool IRFunction::compare_arguments(const std::vector<IROperand>& arguments) {
-	// for now it will ignore operands other than variables 
-	if (m_parameters.size() != arguments.size())
-		return false;
-
-	for (size_t i = 0; i < arguments.size();i++) {
-		if (m_parameters[i]->get_data_type().remove_reference() != arguments[i].get_data_type().remove_reference())
-			return false;
-	}
-
-	return true;
-}
+//bool IRFunction::compare_arguments(const std::vector<TypeRef>& argument_types) {
+//	// for now it will ignore operands other than variables 
+//	auto parameter_types = get_parameter_types();
+//	if (parameter_types.size() != argument_types.size())
+//		return false;
+//
+//	for (size_t i = 0; i < argument_types.size();i++) {
+//		if (parameter_types[i].remove_reference() != argument_types[i].remove_reference())
+//			return false;
+//	}
+//
+//	return true;
+//}
 
 const std::string& IRFunction::get_identifier() const {
 	return m_identifier;
@@ -178,3 +204,11 @@ size_t IRFunction::get_required_size() {
 }
 
 IRProgram* IRFunction::get_ir_prgram() { return m_ir_program; }
+
+std::vector<TypeRef> IRFunction::get_paramater_type() { 
+	std::vector<TypeRef> paramater_types;
+	for (auto& p : m_parameters)
+		paramater_types.push_back(p->get_data_type());
+
+	return paramater_types;
+}

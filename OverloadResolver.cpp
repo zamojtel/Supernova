@@ -1,14 +1,16 @@
 
 OverloadResolver::OverloadResolver(IRProgram* p) :m_ir_program{ p } { }
 
-std::vector<IRFunction*> OverloadResolver::find_matching_functions(size_t line_number, const std::string& fn_name, const std::vector<IROperand>& arguments) {
-	std::vector<IRFunction*> fns_with_name = m_ir_program->get_functions_with_name(fn_name);
+std::vector<IRBaseFunction*> OverloadResolver::find_matching_functions(size_t line_number, const std::string& fn_name, const std::vector<IROperand>& arguments) {
+	std::vector<IRBaseFunction*> fns_with_name = m_ir_program->get_functions_with_name(fn_name);
 	std::vector<bool> matching_fns_after_implicit_casting(fns_with_name.size(), true);
 	std::vector<bool> exact_matching_fn(fns_with_name.size(), true);
 
 	for (size_t j = 0; j < fns_with_name.size();j++) {
-		IRFunction* fn = fns_with_name[j];
-		if (fn->get_parameters().size()!=arguments.size()) {
+		IRBaseFunction* fn = fns_with_name[j];
+		std::vector<TypeRef> parameter_types = fn->get_parameter_types();
+
+		if (parameter_types.size()!=arguments.size()) {
 			matching_fns_after_implicit_casting[j] = false;
 			exact_matching_fn[j] = false;
 		}
@@ -19,20 +21,22 @@ std::vector<IRFunction*> OverloadResolver::find_matching_functions(size_t line_n
 		for (size_t j = 0; j < fns_with_name.size(); j++) {
 			if (!matching_fns_after_implicit_casting[j])
 				continue;
+			
 			if (
 				exact_matching_fn[j] &&
-				fns_with_name[j]->get_parameters()[i]->get_data_type() != arguments[i].get_data_type() &&
-				fns_with_name[j]->get_parameters()[i]->get_data_type().remove_qualifiers() != arguments[i].get_data_type().remove_qualifiers()
+				fns_with_name[j]->get_parameter_types()[i] != arguments[i].get_data_type() &&
+				fns_with_name[j]->get_parameter_types()[i].remove_qualifiers() != arguments[i].get_data_type().remove_qualifiers()
 				) {
 				exact_matching_fn[j] = false;
 			}
 			
-			if (!IRDataTypeTraits::can_implicitly_convert_argument(arguments[i], fns_with_name[j]->get_parameters()[i]->get_data_type())) {
+			if (!IRDataTypeTraits::can_implicitly_convert_argument(arguments[i], fns_with_name[j]->get_parameter_types()[i])) {
 				exact_matching_fn[j] = false;
 				matching_fns_after_implicit_casting[j] = false;
 			}
 		}
 	}
+
 	// somewhere here is a mistake 
 	int exactly_matching_fn_index = -1;
 	for (size_t i = 0; i < exact_matching_fn.size(); i++) {
@@ -56,7 +60,7 @@ std::vector<IRFunction*> OverloadResolver::find_matching_functions(size_t line_n
 	else if (matching_fns_after_implicit_casting.size() == 0)
 		return {};
 	else {
-		std::vector<IRFunction*> matching_functions;
+		std::vector<IRBaseFunction*> matching_functions;
 		for (size_t i = 0; i < matching_fns_after_implicit_casting.size(); i++) {
 			if (matching_fns_after_implicit_casting[i])
 				matching_functions.push_back(fns_with_name[i]);
@@ -67,15 +71,15 @@ std::vector<IRFunction*> OverloadResolver::find_matching_functions(size_t line_n
 }
 
 // for modules we consider that there might be more than one exact match  
-bool OverloadResolver::is_better(const IRFunction *fn_1,const IRFunction* fn_2,const std::vector<IROperand>& arguments) {
-	const std::vector<IRVariable*>& parameters_fn_1 = fn_1->get_parameters();
-	const std::vector<IRVariable*>& parameters_fn_2 = fn_2->get_parameters();
+bool OverloadResolver::is_better(const IRBaseFunction *fn_1,const IRBaseFunction* fn_2,const std::vector<IROperand>& arguments) {
+	const std::vector<TypeRef>& parameters_fn_1 = fn_1->get_parameter_types();
+	const std::vector<TypeRef>& parameters_fn_2 = fn_2->get_parameter_types();
 	
 	bool better_at_one_position = false;
 	for (size_t i = 0; i < arguments.size();i++) {
 		IROperand arg = arguments[i];
-		TypeRef T_1 = parameters_fn_1[i]->get_data_type();
-		TypeRef T_2 = parameters_fn_2[i]->get_data_type();
+		TypeRef T_1 = parameters_fn_1[i];
+		TypeRef T_2 = parameters_fn_2[i];
 
 		if (T_1 == arg.get_data_type()) {
 			if (T_2!=arg.get_data_type())
@@ -114,7 +118,7 @@ bool OverloadResolver::is_better(const IRFunction *fn_1,const IRFunction* fn_2,c
 }
 
 OverloadMatch OverloadResolver::run(size_t line_number,const std::string& fn_name, const std::vector<IROperand>& arguments) {
-	std::vector<IRFunction*> matching_fns = find_matching_functions(line_number,fn_name,arguments);
+	std::vector<IRBaseFunction*> matching_fns = find_matching_functions(line_number,fn_name,arguments);
 	if (matching_fns.size()==0)
 		return OverloadMatch{MatchStatus::NO_MATCH,nullptr};
 
