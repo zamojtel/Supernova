@@ -26,4 +26,5 @@ public:
 	void convert_arithmetic_operation(llvm::Instruction::BinaryOps op_code, IRTriple* triple);
 	llvm::Type* get_llvm_type(IRBasicType type) const;
 	llvm::Type* get_llvm_type(const TypeRef& type) const;
+	llvm::CallInst* get_function_call_instance(IRTriple* triple, void* fn_address);
 };

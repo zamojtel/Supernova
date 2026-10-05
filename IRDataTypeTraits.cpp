@@ -130,6 +130,12 @@ bool IRDataTypeTraits::can_implicitly_convert_basic_types(IRBasicType from, IRBa
 bool IRDataTypeTraits::can_explicitly_convert(const IROperand& op,const TypeRef& to) {
 	const TypeRef& from_value = op.get_data_type().remove_reference().remove_qualifiers();
 	const TypeRef& to_value = to.remove_reference().remove_qualifiers();
+	
+	if (from_value.is_pointer() &&
+		to_value.is_pointer() &&
+		can_implicitly_convert_pointers(from_value, to_value)) {
+		return true;
+	}
 
 	// for now we forbid to cast string to anything else
 	if (from_value.is_string() || to_value.is_string())
@@ -155,7 +161,6 @@ bool IRDataTypeTraits::can_implicitly_convert_array_to_pointer(const TypeRef& fr
 	const TypeRef pointer_type = dtm->add_pointer(element_type);
 
 	return can_implicitly_convert_pointers(pointer_type,target);
-
 }
 
 bool IRDataTypeTraits::can_implicitly_convert_argument(const IROperand& argument, const TypeRef& to) {

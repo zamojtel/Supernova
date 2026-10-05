@@ -59,7 +59,11 @@ public:
 	TypeRef get_float() const;
 	TypeRef get_double() const;
 	TypeRef get_int() const;
+	TypeRef get_uint32() const;
+	TypeRef get_uint64() const;
 	TypeRef get_error() const;
 	TypeRef get_void() const;
+	TypeRef get_void_star() ; 
+	TypeRef get_void_const_star();
 	TypeRef get_nullptr() const;
 };

@@ -4,12 +4,9 @@ extern "C" __declspec(dllexport) int function(int x) {
 	return x + 1;
 }
 
-extern "C" __declspec(dllexport) void print_float(float val) {
-	std::cout << val << std::endl;
-}
-
-extern "C" __declspec(dllexport) void print_int(int val) {
-	std::cout << val << std::endl;
+template <class T>
+void print(T value) {
+	std::cout << value << std::endl;
 }
 
 IRProgram::IRProgram(): m_checker{ this } {
@@ -22,23 +19,46 @@ IRProgram::IRProgram(): m_checker{ this } {
 		}
 	);
 
-	std::vector<TypeRef> paramaters_print_float{ m_dtm.get_float()};
-	name = "print_float";
-	add_external_function(name, new IRExternalFunction{ name, print_float,m_dtm.get_void(), paramaters_print_float,
-		[](void** args,void* result_address) {
-				print_float(*reinterpret_cast<float*>(args[0]));
-			} 
+	add_external_function("malloc", new IRExternalFunction{
+		"malloc",
+		std::malloc,
+		m_dtm.get_void_star(),
+		{m_dtm.get_uint64()},
+		[](void** args, void* result_address) {
+			*reinterpret_cast<void**>(result_address) = std::malloc(
+				*reinterpret_cast<uint64_t*>(args[0])
+			);
 		}
-	);
+	});
 
-	std::vector<TypeRef> paramaters_print_int{ m_dtm.get_int()};
-	name = "print_int";
-	add_external_function(name, new IRExternalFunction{ name, print_int,m_dtm.get_void(), paramaters_print_int,
-		[](void** args,void* result_address) {
-				print_int(*reinterpret_cast<int*>(args[0]));
-			} 
+	add_external_function("memcpy", new IRExternalFunction{
+		"memcpy",
+		std::memcpy,
+		m_dtm.get_void_star(),
+		{
+			m_dtm.get_void_star(),
+			m_dtm.get_void_const_star(),
+			m_dtm.get_uint64()
+		},
+		[](void** args, void* result_address) {
+			*reinterpret_cast<void**>(result_address) = std::memcpy(
+				*reinterpret_cast<void**>(args[0]),
+				*reinterpret_cast<const void**>(args[1]),
+				*reinterpret_cast<uint64_t*>(args[2])
+			);
 		}
-	);
+	});
+
+	add_external_function("free", new IRExternalFunction{
+		"free",
+		std::free,
+		m_dtm.get_void(),
+		{m_dtm.get_void_star()},
+		[](void** args, void* result_address) {
+			std::free(*reinterpret_cast<void**>(args[0]));
+		}
+	});
+
 }
 
 IRDataTypeManager* IRProgram::get_dtm_manager() { return &m_dtm; }
