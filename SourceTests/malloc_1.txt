@@ -1,6 +1,6 @@
 
 int main(){
-	int *x = (int*)malloc(3*sizeof(int));
+	int *x = (int*)malloc(3u*sizeof(int));
 	
 	x[0] = 10;
 	x[1] = 20;

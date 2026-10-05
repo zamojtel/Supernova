@@ -441,54 +441,58 @@ int main() {
 
 	int* ptr = (nullptr_t)(0);
 	std::vector<std::string> test_names{
-		//"implicit_type_widening",
-		//"useless_statements_1",
-		//"implicit_unsigned_widening",
-		//"implicit_assignment_widening",
-		//"implicit_float_to_double",
-		//"implicit_reference_widening",
-		//"add_function_call",
-		//"many_blocks",
-		//"inline_expanding_1",
-		//"inline_function_1",
-		//"inline_recursive_call_1",
-		//"inline_reference_1",
-		//"inline_one_return_1",
-		//"inline_function_2",
-		//"recursion_limit_1",
-		//"unreachable_blk_1",
-		//"bitwise_operations_1",
-		//"constant_replacement_1",
-		//"post_incrementation_1",
-		//"post_incrementation_2",
-		//"constant_conversion_1",
-		//"pre_incrementation_1",
-		//"modulo_division",
-		//"return_promotion_1",
-		//"promotion_core_logic_1",
-		//"return_pointer_1",
-		//"character_1",
-		//"pointer_const_to_non_const_1",
-		//"left_bitwise_shift_1",
-		//"left_bitwise_shift_with_cast_1",
-		//"right_bitwise_shift_1",
-		//"logical_vs_arithmetical_shift_1",
-		//"overloading_1",
-		//"overloading_2",
-		//"overloading_3",
-		//"overloading_single_argument_1",
-		//"overloading_single_argument_2",
-		//"overloading_multiple_arguments_1",
-		//"overloading_multiple_arguments_2",
-		//"string_1",
-		//"string_2",
-		//"string_5",
-		//"string_6",
-		//"string_7",
-		//"string_8",
-		//"array_to_pointer_1",
-		//"array_to_pointer_2",
-		//"memcpy_1",
+		"implicit_type_widening",
+		"useless_statements_1",
+		"implicit_unsigned_widening",
+		"implicit_assignment_widening",
+		"implicit_float_to_double",
+		"implicit_reference_widening",
+		"add_function_call",
+		"many_blocks",
+		"inline_expanding_1",
+		"inline_function_1",
+		"inline_recursive_call_1",
+		"inline_reference_1",
+		"inline_one_return_1",
+		"inline_function_2",
+		"recursion_limit_1",
+		"unreachable_blk_1",
+		"bitwise_operations_1",
+		"constant_replacement_1",
+		"post_incrementation_1",
+		"post_incrementation_2",
+		"constant_conversion_1",
+		"pre_incrementation_1",
+		"modulo_division",
+		"return_promotion_1",
+		"promotion_core_logic_1",
+		"return_pointer_1",
+		"character_1",
+		"pointer_const_to_non_const_1",
+		"left_bitwise_shift_1",
+		"left_bitwise_shift_with_cast_1",
+		"right_bitwise_shift_1",
+		"logical_vs_arithmetical_shift_1",
+		"overloading_1",
+		"overloading_2",
+		"overloading_3",
+		"overloading_single_argument_1",
+		"overloading_single_argument_2",
+		"overloading_multiple_arguments_1",
+		"overloading_multiple_arguments_2",
+		"string_1",
+		"string_2",
+		"string_5",
+		"string_6",
+		"string_7",
+		"string_8",
+		"array_to_pointer_1",
+		"array_to_pointer_2",
+		"memcpy_1",
+		"malloc_1"
+	};
+
+	std::vector<std::string> jit_test{
 		"simple_jit_1",
 		"simple_jit_2",
 		"simple_jit_3",
@@ -524,12 +528,22 @@ int main() {
 		//"string_9"
 	};
 
-	std::cout<<"TypeName: "<<typeid(decltype(-2'147'483'648)).name();
+	std::cout << "Interpreter Tests: " << std::endl;
+	Tester interpreter_tester(
+		test_folder,
+		expected_outputs_folder,
+		TestMode::INTERPRETER_OUTPUT
+	);
 
-	std::cout<<"\nTypeName: "<<typeid(decltype(-2'147'483'649)).name();
-	std::cout<<"\nTypeName: "<<typeid(decltype(-0x80000001)).name();
-	Tester compiler_tester(test_folder, expected_outputs_folder,TestMode::JIT_RETURN);
-	compiler_tester.run_all_tests(test_names,test_errors);
+	std::cout << "JIT Tests: " << std::endl;
+	Tester jit_tester(
+		test_folder,
+		expected_outputs_folder,
+		TestMode::JIT_RETURN
+	);
+
+	interpreter_tester.run_all_tests(test_names,test_errors);
+	jit_tester.run_all_tests(jit_test, {});
 	
 	//test_string_storage();
 	//test_string_pool();

@@ -22,10 +22,9 @@ public:
     T__44 = 45, T__45 = 46, T__46 = 47, T__47 = 48, T__48 = 49, T__49 = 50, 
     T__50 = 51, T__51 = 52, T__52 = 53, T__53 = 54, T__54 = 55, T__55 = 56, 
     T__56 = 57, T__57 = 58, T__58 = 59, T__59 = 60, T__60 = 61, T__61 = 62, 
-    T__62 = 63, T__63 = 64, T__64 = 65, T__65 = 66, T__66 = 67, LINE_COMMENT = 68, 
-    WS = 69, INT = 70, FLOAT = 71, DOUBLE = 72, BOOL = 73, BINARY = 74, 
-    OCTAL = 75, HEX = 76, CONTINUE = 77, BREAK = 78, ID = 79, STRING_LITERAL = 80, 
-    CHAR_LITERAL = 81
+    T__62 = 63, T__63 = 64, LINE_COMMENT = 65, WS = 66, INT = 67, FLOAT = 68, 
+    DOUBLE = 69, BOOL = 70, BINARY = 71, OCTAL = 72, HEX = 73, CONTINUE = 74, 
+    BREAK = 75, ID = 76, STRING_LITERAL = 77, CHAR_LITERAL = 78
   };
 
   explicit GrammarLexer(antlr4::CharStream *input);

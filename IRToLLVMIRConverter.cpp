@@ -370,16 +370,20 @@ void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
 					false
 				);
 
-				llvm::Function* llvm_callee = m_module->getFunction(base_function->get_name());
-				if (!llvm_callee) {
-					llvm_callee = llvm::Function::Create(
-						function_type,
-						llvm::Function::ExternalLinkage,
-						base_function->get_name(),
-						*m_module
-					);
+				IRExternalFunction* external_fn = triple->m_operands[0].get_external_function();
 
-				}
+				if (!external_fn->m_fn_ptr)
+					throw std::runtime_error("External function address is null");
+
+				llvm::ConstantInt* address = llvm::ConstantInt::get(
+					llvm::Type::getInt64Ty(*m_context),
+					reinterpret_cast<std::uintptr_t>(external_fn->m_fn_ptr)
+				);
+
+				auto* llvm_callee = llvm::ConstantExpr::getIntToPtr(
+					address,
+					llvm::PointerType::get(*m_context, 0)
+				);
 
 				std::vector<llvm::Value*> args;
 				for (size_t i = 1; i < triple->m_operands.size(); i++) {
@@ -398,40 +402,46 @@ void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
 				break;
 			}
 			case IROperation::PRINT: {
-				IRBaseFunction* base_function = m_ir_program->get_external_function("print_float", {m_ir_program->get_dtm_manager()->get_float()});
-				llvm::Type* return_type = get_llvm_type(base_function->get_return_type());
-				std::vector<llvm::Type*> parameter_types;
-				for (const TypeRef& parameter_type : base_function->get_parameter_types())
-					parameter_types.push_back(get_llvm_type(parameter_type));
+				const TypeRef type = triple->m_operands[0].get_data_type().remove_reference().remove_qualifiers();
 
-				llvm::FunctionType* function_type = llvm::FunctionType::get(
-					return_type,
-					parameter_types,
-					false
-				);
-
-				llvm::Function* llvm_callee = m_module->getFunction(base_function->get_name());
-				if (!llvm_callee) {
-					llvm_callee = llvm::Function::Create(
-						function_type,
-						llvm::Function::ExternalLinkage,
-						base_function->get_name(),
-						*m_module
-					);
+				if (type.is_basic_data_type()) {
+					switch (type.get_ir_basic_type())
+					{
+					case IRBasicType::INT8: {
+						m_triple_values[triple->m_global_index] = get_function_call_instance(triple, print<int8_t>);
+						break;
+					}
+					case IRBasicType::INT16: {
+						m_triple_values[triple->m_global_index] = get_function_call_instance(triple, print<int16_t>);
+						break;
+					}
+					case IRBasicType::INT32:
+					{
+						m_triple_values[triple->m_global_index] = get_function_call_instance(triple, print<int>);
+						break;
+					}
+					case IRBasicType::INT64: {
+						m_triple_values[triple->m_global_index] = get_function_call_instance(triple, print<int64_t>);
+						break;
+					}
+					case IRBasicType::FLOAT: {
+						m_triple_values[triple->m_global_index] = get_function_call_instance(triple, print<float>);
+						break;
+					}
+					case IRBasicType::DOUBLE: {
+						m_triple_values[triple->m_global_index] = get_function_call_instance(triple, print<double>);
+						break;
+					}
+					default:
+						break;
+					}
 				}
 
-				std::vector<llvm::Value*> args;
-				IROperand op = triple->m_operands[0];
-				llvm::Value* arg = get_operand_value(op);
-				args.push_back(arg);
+				break;
+			}
+			case IROperation::GE: {
 
-				llvm::CallInst* call_inst = m_builder->CreateCall(
-					function_type,
-					llvm_callee,
-					args
-				);
 
-				m_triple_values[triple->m_global_index] = call_inst;
 				break;
 			}
 			default:
@@ -440,6 +450,44 @@ void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
 			}
 		}
 	}
+}
+
+llvm::CallInst* IRToLLVMIRConverter::get_function_call_instance(IRTriple* triple, void* fn_address) {
+	llvm::ConstantInt* address = llvm::ConstantInt::get(
+		llvm::Type::getInt64Ty(*m_context),
+		reinterpret_cast<std::uintptr_t>(fn_address)
+	);
+
+	if (!address)
+		throw std::runtime_error("address not found");
+
+	auto* llvm_callee = llvm::ConstantExpr::getIntToPtr(
+		address,
+		llvm::PointerType::get(*m_context, 0)
+	);
+
+	std::vector<llvm::Value*> args;
+	IROperand op = triple->m_operands[0];
+	llvm::Value* arg = get_operand_value(op);
+	args.push_back(arg);
+
+	llvm::Type* return_type = get_llvm_type(m_ir_program->get_dtm_manager()->get_void());
+	std::vector<llvm::Type*> parameter_types;
+	parameter_types.push_back(get_llvm_type(triple->m_operands[0].get_data_type()));
+
+	llvm::FunctionType* function_type = llvm::FunctionType::get(
+		return_type,
+		parameter_types,
+		false
+	);
+
+	llvm::CallInst* call_inst = m_builder->CreateCall(
+		function_type,
+		llvm_callee,
+		args
+	);
+
+	return call_inst;
 }
 
 //void IRToLLVMIRConverter::convert_function(IRFunction * current_fn) {

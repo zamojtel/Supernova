@@ -375,6 +375,24 @@ void ASTConverter::implicit_conversion(size_t line_number, const TypeRef& to,IRO
 		return;
 	}
 
+	if (to_type.is_pointer()) {
+		// const moze byc przed pointerem trzeba rozpatrzec ten przypadek 
+		if (!IRDataTypeTraits::can_implicitly_convert_pointers(from.get_data_type(), to)) {
+			std::string msg = std::format(
+				"cannot implicitly convert from type {} to type {}",
+				from.get_data_type().to_string(),
+				to.to_string()
+			);
+
+			m_ast_converter_listener->error({ ErrorType::IMPLICIT_CAST_NOT_ALLOWED,line_number,msg });
+			return;
+		}
+
+		IROperand cast_type{ to };
+		from = m_coder.add_triple(line_number,IROperation::CAST,cast_type,from);
+		return;
+	}
+
 	// a string is not allow to be implicitly converted to anything else
 	if (from_value.is_string() != to_value.is_string()) {
 		m_ast_converter_listener->error(
@@ -391,22 +409,6 @@ void ASTConverter::implicit_conversion(size_t line_number, const TypeRef& to,IRO
 		return;
 	}
 
-	if (to_type.is_pointer()) {
-		// const moze byc przed pointerem trzeba rozpatrzec ten przypadek 
-		if (!IRDataTypeTraits::can_implicitly_convert_pointers(from.get_data_type(), to)) {
-			std::string msg = std::format(
-				"cannot implicitly convert from type {} to type {}",
-				from.get_data_type().to_string(),
-				to.to_string()
-			);
-
-			m_ast_converter_listener->error({ ErrorType::IMPLICIT_CAST_NOT_ALLOWED,line_number,msg });
-		}
-
-		IROperand cast_type{ to };
-		from = m_coder.add_triple(line_number,IROperation::CAST,cast_type,from);
-		return;
-	}
 
 	// TODO write in a more concise way it should work for other types and pointers to them to structs etc.
 	if ((from.get_data_type().is_pointer() || from.get_data_type().is_composite()) && to.is_basic_data_type())

@@ -127,12 +127,31 @@ TypeRef IRDataTypeManager::get_int() const {
 	return m_basic_types.at(IRBasicType::INT32);
 }
 
+TypeRef IRDataTypeManager::get_uint32() const {
+	return m_basic_types.at(IRBasicType::UINT32);
+}
+
+TypeRef IRDataTypeManager::get_uint64() const {
+	return m_basic_types.at(IRBasicType::UINT64);
+}
+
 TypeRef IRDataTypeManager::get_error() const {
 	return m_error_type;
 }
 
 TypeRef IRDataTypeManager::get_void() const {
 	return m_basic_types.at(IRBasicType::VOID);
+}
+
+TypeRef IRDataTypeManager::get_void_star() {
+	const TypeRef void_type = get_void();
+	return add_pointer(void_type);
+}
+
+TypeRef IRDataTypeManager::get_void_const_star() {
+	const TypeRef void_type = get_void();
+	const TypeRef void_const_type = add_qualifiers(void_type, IRQualifiersNode::CONST);
+	return add_pointer(void_const_type);
 }
 
 TypeRef IRDataTypeManager::get_nullptr() const {

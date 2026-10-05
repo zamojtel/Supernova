@@ -172,13 +172,13 @@ stmt:
 		| 'print_type' '(' expr ')' ';' {
 				$ctx->m_node = new PrintTypeNode{$expr.ctx->m_node};
 			}
-		| 'memcpy' '(' e1 = expr',' e2 = expr ',' e3 = expr ')' ';' {
-				$ctx->m_node = new MemcpyNode{
-					$e1.ctx->m_node,
-					$e2.ctx->m_node,
-					$e3.ctx->m_node,
-				};
-			}
+		// | 'memcpy' '(' e1 = expr',' e2 = expr ',' e3 = expr ')' ';' {
+		//		$ctx->m_node = new MemcpyNode{
+		//			$e1.ctx->m_node,
+		//			$e2.ctx->m_node,
+		//			$e3.ctx->m_node,
+		//		};
+		//	}
 		| expr ';'{
 				$ctx->m_node = $expr.ctx->m_node;
 		}
@@ -441,12 +441,12 @@ expr:
 	|	select {
 			$ctx->m_node = $select.ctx->m_node;
 		}
-	| 'malloc' '(' e=expr ')' {
-			$ctx->m_node = new MallocNode($e.ctx->m_node);
-		}
-	| 'free' '(' e=expr ')' {
-			$ctx->m_node = new FreeNode($e.ctx->m_node);
-		}
+	//| 'malloc' '(' e=expr ')' {
+	//		$ctx->m_node = new MallocNode($e.ctx->m_node);
+	//	}
+	//| 'free' '(' e=expr ')' {
+	//		$ctx->m_node = new FreeNode($e.ctx->m_node);
+	//	}
 	| string_literal{ $ctx->m_node = $string_literal.ctx->m_node; }
 	| char_literal{ $ctx->m_node = $char_literal.ctx->m_node; }
 	;
