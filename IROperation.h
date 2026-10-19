@@ -35,11 +35,12 @@ enum class IROperation {
 	JC, // jump if condition
 	JMP, // unconditional jump
 	// ARRAY ACCESS
-	ADREESS_OF,
+	ADDRESS_OF,
 	DEREFERENCE,
+	WRITE_TO_POINTER,
 	ARRAY_ACCESS,
 	MEMBER_ACCESS,
-	MEMCPY,
+	//MEMCPY,
 	ASSERT,
 	PRINT,
 	PRINT_TYPE,

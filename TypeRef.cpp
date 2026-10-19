@@ -276,6 +276,14 @@ bool TypeRef::is_composite() const {
 	return m_data_type_node && (m_data_type_node->get_node_type() == IRDataTypeNodeType::STRUCT || m_data_type_node->get_node_type() == IRDataTypeNodeType::UNION);
 }
 
+bool TypeRef::is_struct() const {
+	return m_data_type_node && (m_data_type_node->get_node_type() == IRDataTypeNodeType::STRUCT);
+}
+
+bool TypeRef::is_union() const {
+	return m_data_type_node && (m_data_type_node->get_node_type() == IRDataTypeNodeType::UNION);
+}
+
 bool TypeRef::is_pointer() const {
 	return m_data_type_node && (m_data_type_node->get_node_type() == IRDataTypeNodeType::POINTER);
 }
@@ -303,6 +311,7 @@ bool TypeRef::is_integer() const {
 bool TypeRef::is_string() const {
 	if (m_data_type_node) {
 		IRDataTypeManager* dtm = m_data_type_node->get_dtm();
+		
 		return *this == dtm->get_const_char_star();
 	}
 	return false;

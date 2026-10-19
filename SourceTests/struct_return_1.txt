@@ -1,0 +1,22 @@
+struct A{
+	int m_a;
+	int m_b;
+};
+
+A return_struct(){
+	A item;
+	item.m_a = 1;
+	item.m_b = 2;
+	return item;
+}
+
+int main(){
+	A item = return_struct();
+	print(item.m_a);
+	print(item.m_b);
+
+	return 0;
+}
+#------------------
+1
+2

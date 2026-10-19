@@ -7,6 +7,5 @@ public:
 		add_child(m_expr);
 	}
 
-	//ReferencePtr<AbstractSyntaxTreeNode> get_expression() { return m_expr; }
 	ReferencePtr<AbstractSyntaxTreeNode> get_expr_node() { return m_expr; }
 };

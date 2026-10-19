@@ -37,7 +37,7 @@ public:
 
 enum class TestMode {
 	INTERPRETER_OUTPUT,
-	JIT_RETURN,
+	JIT_OUTPUT,
 };
 
 namespace fs = std::filesystem;
@@ -47,10 +47,13 @@ private:
 	std::string m_source_dir;
 	std::string m_expected_dir;
 	std::map<std::string, ErrorType> m_error_name_to_error_type;
+	static PrintMessageCollector m_print_msg_collector;
 public:
 	std::vector<std::string> read_expected_lines(const fs::path& file_path);
 	Tester(const std::string& s_d, const std::string& e_d,TestMode m);
 	bool run_single_test(const fs::path& source_file, const fs::path& expected_path,bool flag);
 	void run_all_tests(const std::vector<std::string>& test_names, const std::vector<std::string>& test_error_names);
 	std::string read_entire_file(const fs::path& file_path);
+	static PrintMessageCollector& get_message_collector();
+	bool compare_test_ouput(const fs::path& source_file, const std::vector<std::string>& actual_outputs, const std::vector<std::string>& expected_outputs);
 };

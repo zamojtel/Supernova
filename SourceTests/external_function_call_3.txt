@@ -4,7 +4,8 @@ int function(){
 }
 
 int main(){
-	return function(0); // we expect external function call
+	print(function(0));
+	return 0; // we expect external function call
 }
 #------------------
 1

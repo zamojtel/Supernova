@@ -66,6 +66,21 @@ void Interpreter::pop_frame() {
 	m_frames.pop_back();
 }
 
+void Interpreter::cast_operand(IRTriple* current_triple, const IROperand& op1,const IROperand& op2) {
+	uint8_t* op_1_addr = get_operand_address(current_triple->m_operands[0]);
+	uint8_t* op_2_addr = get_operand_address(current_triple->m_operands[1]);
+
+	if (op1.get_data_type().is_basic_data_type()) {
+		ConstantValue value{ op2.get_data_type().remove_reference().get_ir_basic_type(),op_2_addr };
+		ConstantValue casted_value = value.unsafe_convert(op1.get_data_type().get_ir_basic_type());
+		uint8_t* result_addr = m_current_frame->m_memory_stack.data() + current_triple->get_local_mem_offset();
+		memcpy(result_addr, casted_value.get_address(), op1.get_data_type().get_size());
+		m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result_addr;
+	}
+	else
+		m_current_frame->m_triple_addresses[current_triple->get_global_index()] = op_2_addr;
+}
+
 void Interpreter::start(IRFunction* fn) {
 	m_current_function = fn;
 	auto basic_blks = m_current_function->get_basic_blocks();
@@ -296,6 +311,8 @@ void Interpreter::start(IRFunction* fn) {
 				IRBasicType basic_type = type.get_ir_basic_type();
 				StringRef ref{ address };
 				ConstantValue value = ConstantValue{basic_type,address};
+				char letter = *address;
+				
 				if(basic_type==IRBasicType::CHAR)
 					m_listener->print_called(value.to_string());
 				else
@@ -304,29 +321,30 @@ void Interpreter::start(IRFunction* fn) {
 
 			break;
 		}
-		case IROperation::MEMCPY: {
-			IROperand dest = current_triple->m_operands[0];
-			IROperand source = current_triple->m_operands[1];
-			IROperand count = current_triple->m_operands[2];
+		//case IROperation::MEMCPY: {
+		//	IROperand dest = current_triple->m_operands[0];
+		//	IROperand source = current_triple->m_operands[1];
+		//	IROperand count = current_triple->m_operands[2];
 
-			uint8_t* value = get_operand_address(count);
-			IRBasicType basic_type = count.get_data_type().get_ir_basic_type();
-			ConstantValue cv = ConstantValue{ basic_type,value };
+		//	uint8_t* value = get_operand_address(count);
+		//	IRBasicType basic_type = count.get_data_type().get_ir_basic_type();
+		//	ConstantValue cv = ConstantValue{ basic_type,value };
+		//	// naprawic memcpy 
 
-			std::optional<uint64_t> converted_value = cv.unsafe_convert_value_to<uint64_t>();
-			if (converted_value.has_value()) {
-				uint64_t c_value = converted_value.value();
-				uint8_t* dest_address = nullptr;
-				uint8_t* source_address = nullptr;
-				memcpy(&dest_address,get_operand_address(dest),sizeof(dest_address));
-				memcpy(&source_address,get_operand_address(source),sizeof(source_address));
-				memcpy(dest_address, source_address, c_value);
-			}
-			else
-				throw std::runtime_error("could not read the value");
+		//	std::optional<uint64_t> converted_value = cv.unsafe_convert_value_to<uint64_t>();
+		//	if (converted_value.has_value()) {
+		//		uint64_t c_value = converted_value.value();
+		//		uint8_t* dest_address = nullptr;
+		//		uint8_t* source_address = nullptr;
+		//		memcpy(&dest_address,get_operand_address(dest),sizeof(dest_address));
+		//		memcpy(&source_address,get_operand_address(source),sizeof(source_address));
+		//		memcpy(dest_address, source_address, c_value);
+		//	}
+		//	else
+		//		throw std::runtime_error("could not read the value");
 
-			break;
-		}
+		//	break;
+		//}
 		case IROperation::ARRAY_TO_POINTER: {
 			IROperand type = current_triple->m_operands[0];
 			IROperand array = current_triple->m_operands[1];
@@ -423,9 +441,8 @@ void Interpreter::start(IRFunction* fn) {
 				starting_address = get_operand_address(op1);
 				starting_address = *reinterpret_cast<uint8_t**>(starting_address);
 			}
-			else {
+			else
 				throw std::runtime_error("unkown type");
-			}
 
 			size_t size_of_element = type.get_size();
 
@@ -439,59 +456,95 @@ void Interpreter::start(IRFunction* fn) {
 			std::optional<int64_t> converted_value_op = convert_value_to<int64_t>(constant_value);
 			
 			size_t converted_value;
-			if (converted_value_op.has_value()) {
+			if (converted_value_op.has_value())
 				converted_value = converted_value_op.value();
-			}
 			else
 				throw std::runtime_error("can't convert value from empty optional");
 		
 			size_t offset = converted_value * size_of_element;
 			uint8_t* result_addr = starting_address + offset;
-			std::cout <<"Stored value "<< *reinterpret_cast<uint32_t*>(result_addr) << std::endl;
-			m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result_addr;
+			uint8_t* result_slot = m_current_frame->m_memory_stack.data() + current_triple->get_local_mem_offset();
+			memcpy(result_slot,&result_addr,sizeof(result_addr));
+			char znak = **(reinterpret_cast<char**>(result_slot));
+			std::cout << znak << std::endl;
+
+			// WAZNE ZAPISUJEMY SZUFLADKÊ Z ADRESEM NIE SAM ADRES POLA, TO ZMIANA DO UJDENOLICENIA WSKANIKÓW
+			m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result_slot;
 			break;
 		}
 		case IROperation::MEMBER_ACCESS: {
-			IROperand op1 = current_triple->m_operands[0];
-			IROperand op2 = current_triple->m_operands[1];
+			IROperand object = current_triple->m_operands[0];
+			IROperand member_field = current_triple->m_operands[1];
 
-			TypeRef type = op1.get_data_type();
-			uint8_t* starting_address = nullptr;
+			// the address of the object the member is accessed on 
+			uint8_t* base_object_address = get_operand_address(object);
+			IRMember* ir_member = member_field.get_member();
+			size_t member_offeset = ir_member->get_offset();
+			uint8_t* exact_field_address = base_object_address + member_offeset;
 
-			if (type.is_pointer()) {
-				type = type.remove_pointer_with_qualifiers();
-				starting_address = get_operand_address(op1);
-				starting_address = *reinterpret_cast<uint8_t**>(starting_address);
-			}
-			else if (type.is_composite()) {
-				type = type.remove_all_extents();
-				starting_address = get_operand_address(op1);
-			}
-			else {
-				throw std::runtime_error("unkown type");
-			}
-			
-			size_t offset = op2.get_member()->get_offset();
-			uint8_t* result_addr = starting_address + offset;
-			m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result_addr;
+			// under the triple address the exact_field_address is coppied
+			uint8_t* result_address = m_current_frame->m_memory_stack.data() + current_triple->get_local_mem_offset();
+
+			memcpy(result_address,&exact_field_address,sizeof(exact_field_address));
+
+			m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result_address;
 			break;
 		}
-		case IROperation::ADREESS_OF: {
+		case IROperation::WRITE_TO_POINTER: {
+			//IROperand target_triple = current_triple->m_operands[0];
+			//IROperand operand = current_triple->m_operands[1];
+			//uint8_t* target_address = get_operand_address(target_triple);
+			//uint8_t* operand_address = get_operand_address(operand);
+			//int a = 123;
+			//int* p = &a;
+			
+			//memcpy(target_address, operand_address, operand.get_data_type().get_size());
+			
+			// CHANGED
+			// szufladka z adresem do adresu do którego chemy zapisaæ
+			uint8_t* pointer_slot = get_operand_address(current_triple->m_operands[0]);
+			// wyci¹gamy z niej adres
+			uint8_t* destination = *reinterpret_cast<uint8_t**>(pointer_slot);
+			uint8_t* source = get_operand_address(current_triple->m_operands[1]);
+			memcpy(destination, source, current_triple->m_operands[1].get_data_type().get_size());
+
+			break;
+		}
+		case IROperation::ADDRESS_OF: {
 			IROperand op1 = current_triple->m_operands[0];
+			//uint8_t* op_1_addr = nullptr;
+
+	/*		if (op1.m_operand_type==IROperandType::TRIPLE && op1.get_triple()->get_ir_operation()==IROperation::DEREFERENCE) {
+
+			}
+			else {*/
 			uint8_t* op_1_addr = get_operand_address(op1);
 			uint8_t* result_addr = &m_current_frame->m_memory_stack[0] + current_triple->get_local_mem_offset();
 			int32_t* result = reinterpret_cast<int32_t*>(op_1_addr);
-
+			
 			*reinterpret_cast<void**>(result_addr) = op_1_addr;
 			m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result_addr;
+			//}
+
 
 			break;
 		}
 		case IROperation::DEREFERENCE: {
+			//IROperand op1 = current_triple->m_operands[0];
+			//uint8_t* op_1_address = get_operand_address(op1);
+			//uint8_t* result_address = m_current_frame->m_memory_stack.data() + current_triple->get_local_mem_offset();
+			//memcpy(result_address, op_1_address, current_triple->get_data_type().get_size());
+			//m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result_address;
 			IROperand op1 = current_triple->m_operands[0];
-			uint8_t* op_1_addr = get_operand_address(op1);
-			uint8_t* result_addr = nullptr;
-			m_current_frame->m_triple_addresses[current_triple->get_global_index()] = *reinterpret_cast<uint8_t**>(op_1_addr);
+			uint8_t* op_1_address = get_operand_address(op1);
+			uint8_t* result = *(reinterpret_cast<uint8_t**>(op_1_address));
+			m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result;
+
+			//uint8_t* pointer_slot = get_operand_address(current_triple->m_operands[0]);
+			//uint8_t* actual_source = *reinterpret_cast<uint8_t**>(pointer_slot);
+			//uint8_t* result_slot = m_current_frame->m_memory_stack.data() + current_triple->get_local_mem_offset();
+			//memcpy(result_slot, actual_source, current_triple->m_data_type.get_size());
+			//m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result_slot;
 			break;
 		}
 		case IROperation::SELECT: {
@@ -562,15 +615,33 @@ void Interpreter::start(IRFunction* fn) {
 			uint8_t* op_1_addr = get_operand_address(current_triple->m_operands[0]);
 			uint8_t* op_2_addr = get_operand_address(current_triple->m_operands[1]);
 			
-			if (op1.get_data_type().is_basic_data_type()) {
-				ConstantValue value{op2.get_data_type().remove_reference().get_ir_basic_type(),op_2_addr};
-				ConstantValue casted_value = value.unsafe_convert(op1.get_data_type().get_ir_basic_type());
+			if (op2.get_data_type().is_array()) {
+				// cast on array
+				IRArrayNode* ir_array_node = (IRArrayNode*) op2.get_data_type().get_data_type_node();
+				size_t count = ir_array_node->get_count();
+
+				ArrayIterator array_iter{op_2_addr ,op2.get_data_type()};
+				const TypeRef element_type = ir_array_node->m_element_type;
 				uint8_t* result_addr = m_current_frame->m_memory_stack.data() + current_triple->get_local_mem_offset();
-				memcpy(result_addr,casted_value.get_address(),op1.get_data_type().get_size());
+
+				ArrayIterator result_array{result_addr,op1.get_data_type()};
+				const TypeRef element_type_to = op1.get_data_type().remove_array().remove_qualifiers();
+
+				for (size_t i = 0; i < count; i++) {
+					uint8_t* new_array_element_address = *result_array;
+					ConstantValue value{ element_type.get_ir_basic_type(),*array_iter};
+					ConstantValue casted_value = value.unsafe_convert(element_type_to.get_ir_basic_type());
+					memcpy(new_array_element_address,casted_value.get_address(),element_type.get_size());
+					array_iter.next();
+					result_array.next();
+				}
+
 				m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result_addr;
 			}
-			else
-				m_current_frame->m_triple_addresses[current_triple->get_global_index()] = op_2_addr;
+			else {
+				// single cast
+				cast_operand(current_triple,op1,op2);
+			}
 
 			break;
 		}

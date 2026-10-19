@@ -214,6 +214,9 @@
     <Filter Include="Source Files\FunctionNames">
       <UniqueIdentifier>{e2a42d5f-3a84-435a-beea-3aa53296b2c1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Listener">
+      <UniqueIdentifier>{4fad87b8-4af5-4dd7-9a23-996187ded7a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -434,6 +437,9 @@
     </ClCompile>
     <ClCompile Include="IRExternalFunction.cpp">
       <Filter>Source Files\IR\IRFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="PrintMessageCollector.cpp">
+      <Filter>Source Files\Listener</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -908,6 +914,12 @@
     <ClInclude Include="FunctionNames.h">
       <Filter>Source Files\FunctionNames</Filter>
     </ClInclude>
+    <ClInclude Include="PrintListener.h">
+      <Filter>Source Files\Listener</Filter>
+    </ClInclude>
+    <ClInclude Include="PrintMessageCollector.h">
+      <Filter>Source Files\Listener</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="commands.txt">
@@ -1111,23 +1123,8 @@
     <Text Include="arr_3.txt">
       <Filter>Source Files\Tests\Array</Filter>
     </Text>
-    <Text Include="member_access_1.txt">
-      <Filter>Source Files\Tests\MemberAccess</Filter>
-    </Text>
-    <Text Include="member_access_2.txt">
-      <Filter>Source Files\Tests\MemberAccess</Filter>
-    </Text>
-    <Text Include="member_access_3.txt">
-      <Filter>Source Files\Tests\MemberAccess</Filter>
-    </Text>
-    <Text Include="member_access_4.txt">
-      <Filter>Source Files\Tests\MemberAccess</Filter>
-    </Text>
     <Text Include="reference_access_1.txt">
       <Filter>Source Files\Tests\ReferenceAccess</Filter>
-    </Text>
-    <Text Include="member_access_5.txt">
-      <Filter>Source Files\Tests\MemberAccess</Filter>
     </Text>
     <Text Include="reference_access_2.txt">
       <Filter>Source Files\Tests\ReferenceAccess</Filter>
@@ -1377,5 +1374,33 @@
     <Text Include="SourceTests\external_function_call_2.txt" />
     <Text Include="SourceTests\external_function_call_3.txt" />
     <Text Include="SourceTests\mixed_function_call_1.txt" />
+    <Text Include="SourceTests\dereference_jit_1.txt" />
+    <Text Include="SourceTests\array_jit_1.txt" />
+    <Text Include="SourceTests\member_acces_1.txt" />
+    <Text Include="SourceTests\member_1.txt" />
+    <Text Include="SourceTests\member_access_point_jit_1.txt" />
+    <Text Include="SourceTests\member_access_point_1.txt" />
+    <Text Include="SourceTests\member_point_1.txt" />
+    <Text Include="SourceTests\member_access_1.txt" />
+    <Text Include="SourceTests\struct_jit_1.txt" />
+    <Text Include="SourceTests\member_access_jit_1.txt" />
+    <Text Include="SourceTests\union_jit_1.txt" />
+    <Text Include="SourceTests\pointer_to_struct_field_1.txt" />
+    <Text Include="SourceTests\print_array_2.txt" />
+    <Text Include="SourceTests\overload_4.txt" />
+    <Text Include="SourceTests\struct_return_1.txt" />
+    <Text Include="SourceTests\table_return_1.txt" />
+    <Text Include="SourceTests\struct_return_2.txt" />
+    <Text Include="SourceTests\table_return_2.txt" />
+    <Text Include="SourceTests\struct_return_3.txt" />
+    <Text Include="SourceTests\broadcasting_1.txt" />
+    <Text Include="SourceTests\simple_cast_1.txt" />
+    <Text Include="SourceTests\array_cast_1.txt" />
+    <Text Include="SourceTests\array_cast_2.txt" />
+    <Text Include="SourceTests\string_10.txt" />
+    <Text Include="SourceTests\print_char_1.txt" />
+    <Text Include="SourceTests\array_3.txt" />
+    <Text Include="SourceTests\string_11.txt" />
+    <Text Include="SourceTests\address_of_3.txt" />
   </ItemGroup>
 </Project>

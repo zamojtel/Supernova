@@ -3,7 +3,7 @@ int main(){
 	float result = function(x);
 	print(result); // 1
 	
-	return (int) result;
+	return 0;
 }
 #------------------
 1

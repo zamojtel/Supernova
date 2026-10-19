@@ -1,0 +1,14 @@
+struct A{
+	int m_a;
+	int m_b;
+};
+
+int main(){
+	A item;
+	item.m_a = 10;
+	item.m_b = 5;
+	print(item.m_a);
+	return 0;
+}
+#------------------
+10

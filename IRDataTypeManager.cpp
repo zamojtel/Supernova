@@ -75,7 +75,7 @@ TypeRef IRDataTypeManager::add_struct(const std::string& name) {
 TypeRef IRDataTypeManager::add_union(const std::string& name) {
 	IRUnion* new_union = new IRUnion{ this,name };
 	
-	m_structs.emplace_back(new_union);
+	m_unions.emplace_back(new_union);
 	m_all_data_types.push_back(new_union);
 	return new_union;
 }
@@ -83,7 +83,7 @@ TypeRef IRDataTypeManager::add_union(const std::string& name) {
 TypeRef IRDataTypeManager::add_pointer(const TypeRef &type_node) {
 	if (m_existing_pointer_types.count(type_node.m_data_type_node)==0) {
 		IRPointerNode* new_pointer = new IRPointerNode{this,type_node};
-		//new_pointer.
+		
 		m_existing_pointer_types[type_node.m_data_type_node] = new_pointer;
 		m_all_data_types.push_back(new_pointer);
 		return new_pointer;

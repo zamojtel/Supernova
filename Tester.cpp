@@ -116,11 +116,36 @@ void Tester::run_all_tests(const std::vector<std::string>& test_names,const std:
     std::cout << "Number of error tests failed: " << error_tests_failed << std::endl;
 }
 
+PrintMessageCollector Tester::m_print_msg_collector;
+
+PrintMessageCollector& Tester:: get_message_collector() {
+    return m_print_msg_collector;
+}
+
+bool Tester::compare_test_ouput(const fs::path& source_file,const std::vector<std::string>& actual_outputs,const std::vector<std::string>& expected_outputs) {
+    if (actual_outputs.size() != expected_outputs.size()) {
+        std::cout << "Number of actual outputs differs from expected outputs" << std::endl;
+        return false;
+    }
+    else {
+        for (size_t i = 0; i < actual_outputs.size(); i++) {
+            if (actual_outputs[i] != expected_outputs[i]) {
+                std::cout << source_file.filename().string()
+                    << "\n expected : " << expected_outputs[i]
+                    << "\n received :" << actual_outputs[i] << "\n";
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
 
 bool Tester::run_single_test(const fs::path& source_file, const fs::path& expected_path,bool is_error_test) {
     IRPrinter printer;
     std::string source_code = read_entire_file(source_file);
     std::vector<std::string> expected_outputs = read_expected_lines(source_file);
+    get_message_collector().clear();
 
     antlr4::ANTLRInputStream stream(source_code);
     GrammarLexer lexer(&stream);
@@ -196,6 +221,7 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
     }
 
     IRInliner inliner;
+    
     std::vector<IROperand> fn_arguments{};
     IRFunction* main_fn = ir_program.get_function("main", {});
 
@@ -228,14 +254,19 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
     if (!is_error_test)
         inliner.expand_functions(main_fn);
 
-    if (!is_error_test &&
+    if (!is_error_test && inliner.m_inline_instance_counter!=0 && 
         inliner.m_inline_instance_counter - expansions_before < expected_inline_expansions) {
         std::cout << "not all inline function calls were expanded\n";
         return false;
     }
 
-    if (!is_error_test && m_mode == TestMode::JIT_RETURN) {
+    if (!is_error_test && m_mode == TestMode::JIT_OUTPUT) {
         IRToLLVMIRConverter ir_to_llvm_converter(&ir_program);
+        IRPrinter printer_new;
+        inliner.expand_functions(main_fn);
+        ir_program.sort_blocks();
+        printer_new.print_ir_representation(ir_program);
+
         auto llvm_module = ir_to_llvm_converter.convert();
         auto jit_result = llvm::orc::LLJITBuilder().create();
 
@@ -283,29 +314,10 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
 
         MainFunction compiled_main = main->toPtr<MainFunction>();
 
-        if (expected_outputs.size() != 1) {
-            std::cout << "JIT test requires one expected return value" << std::endl;
-            return false;
-        }
-
-        std::istringstream expected_stream{ expected_outputs.front() };
-        int expected_return{};
-        std::string extra;
-
-        if (!(expected_stream >> expected_return) || (expected_stream >> extra)) {
-            std::cout << "Expected return value must be a single int\n";
-            return false;
-        }
-
         int result = compiled_main();
-        if (result != expected_return) {
-            std::cout << source_file.filename().string()
-                << "\n expected : " << expected_return
-                << "\n received :" << result << "\n";
-            return false;
-        }
-
-        return true;
+        PrintMessageCollector print_message_printer = Tester::get_message_collector();
+        const std::vector<std::string> actual_outputs = print_message_printer.get_messages();
+        return compare_test_ouput(source_file,actual_outputs,expected_outputs);
     }
     else {
         if (is_error_test) {
@@ -368,7 +380,9 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
 
             auto& actual_outputs = test_listener.get_messages();
 
-            if (actual_outputs.size() != expected_outputs.size()) {
+            return compare_test_ouput(source_file, actual_outputs, expected_outputs);
+
+            /*if (actual_outputs.size() != expected_outputs.size()) {
                 std::cout << "differenet number of results, expected: " << expected_outputs.size() << "\n ";
                 std::cout << "Got: " << actual_outputs.size() << "\n";
                 return false;
@@ -382,7 +396,7 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
                     system("pause");
                     return false;
                 }
-            }
+            }*/
         }
     }
 

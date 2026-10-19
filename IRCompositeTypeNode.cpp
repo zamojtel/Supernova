@@ -1,6 +1,6 @@
 
 void IRCompositeTypeNode::add_field(const TypeRef &ref_type,const std::string &f_name) {
-	m_field_list.push_back(new IRMember{ref_type,f_name});
+	m_field_list.push_back(new IRMember{ref_type,f_name,m_field_list.size()});
 }
 
 IRCompositeTypeNode::IRCompositeTypeNode(IRDataTypeManager* dtm, const std::string& name) : IRDataTypeNode{ dtm }, m_name{ name }, m_is_finished{ false } {}
@@ -12,8 +12,7 @@ std::string IRCompositeTypeNode::get_name() const {
 size_t IRCompositeTypeNode::calculate_size() {
 	size_t total_size = 0;
 	IRDataTypeNodeType type_node = get_node_type();
-	// STRUCT,
-	// UNION,
+
 	if ( type_node == IRDataTypeNodeType::STRUCT ) {
 		for (auto* member : m_field_list) {
 			TypeRef ref = member->get_data_type();
@@ -27,21 +26,20 @@ size_t IRCompositeTypeNode::calculate_size() {
 		}
 	}
 	else if (type_node == IRDataTypeNodeType::UNION) {
-
+		size_t max_field_size = 0;
+		for (IRMember* member : m_field_list) {
+			TypeRef ref = member->get_data_type();
+			if (ref.has_size()) {
+				size_t size = ref.get_size();
+				// its zero because every field in the union starts at the same offset 
+				member->set_offset(0);
+				max_field_size = std::max(max_field_size,ref.get_size());
+			}
+			else
+				throw std::runtime_error("field size is not set");
+		}
+		total_size = max_field_size;
 	}
-
-	//for (auto *element : m_field_list) {
-	//	TypeRef ref = element->get_data_type();
-	//	if(ref.has_size()) {
-	//		size_t size = ref.get_size();
-	//		total_size += size;
-	//	}
-	//	else
-	//		throw std::runtime_error("field size is not set");
-	//}
-
-	std::string msg = std::format("\n{} size {}",m_name,total_size);
-	std::cout << msg << std::endl;
 
 	return total_size;
 }
@@ -59,3 +57,5 @@ IRMember* IRCompositeTypeNode::get_member(const std::string& field_name) const {
 
 	return nullptr;
 }
+
+const std::vector<IRMember*>& IRCompositeTypeNode::get_members() const { return m_field_list; }

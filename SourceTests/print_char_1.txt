@@ -1,0 +1,9 @@
+
+int main(){
+	char letter = 'a';
+
+	print(letter);
+	return 0;
+}
+#------------------
+a

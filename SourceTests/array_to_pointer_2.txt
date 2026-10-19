@@ -3,6 +3,7 @@ void print_array(int *a,int size){
 		print(a[i]);
 	}
 }
+
 // konwersja tablic na wskazniki 
 int main(){
 	int [3] array;

@@ -6,7 +6,8 @@ int calculate(int a, int b) {
 }
 
 int main() {
-    return calculate(7, 5);
+    int result = calculate(7, 5);
+    return 0;
 }
 #------------------
 135

@@ -330,9 +330,9 @@ void ASTConverter::find_function_signatures(const ReferencePtr<AbstractSyntaxTre
 		ReferencePtr<IdentifierNode> identifier_node = current_node->get_identifier_node();
 		std::string union_name = identifier_node->get_identifier();
 
-		TypeRef ref_struct = m_dtm->add_struct(union_name);
-		m_symbol_table.add_symbol(identifier_node->get_identifier(), ref_struct);
-		current_node->m_ir_composite_data_type = ref_struct;
+		TypeRef ref_union = m_dtm->add_union(union_name);
+		m_symbol_table.add_symbol(identifier_node->get_identifier(), ref_union);
+		current_node->m_ir_composite_data_type = ref_union;
 		break;
 	}
 	default:
@@ -450,14 +450,18 @@ void ASTConverter::implicit_conversion(size_t line_number, const TypeRef& to,IRO
 }
 
 void ASTConverter::cast_if_necessary(size_t line_number,IRBasicType to,IROperand& operand) {
-	if (to != operand.get_data_type().get_ir_basic_type()) {
+	const TypeRef operand_type = operand.get_data_type().remove_reference().remove_qualifiers();
+
+	if (operand_type.is_basic_data_type() && (to != operand_type.get_ir_basic_type())) {
 		IRTriple* casted_triple = m_coder.add_triple(line_number,IROperation::CAST,m_dtm->get_basic_type_node(to),operand);
 		operand = casted_triple;
 	}
 }
 
 bool ASTConverter::prepare_for_binary_operation_signed_types(size_t line_number, IRBasicType to, IROperand& left, IROperand& right) {
-	if (left.get_data_type().get_ir_basic_type() == to || right.get_data_type().get_ir_basic_type() == to) {
+	const TypeRef left_type = left.get_data_type().remove_reference().remove_qualifiers();
+	const TypeRef right_type = right.get_data_type().remove_reference().remove_qualifiers();
+	if ((left_type.is_basic_data_type() && left_type.get_ir_basic_type() == to) || (right_type.is_basic_data_type() && right_type.get_ir_basic_type() == to)) {
 		cast_if_necessary(line_number, to, left);
 		cast_if_necessary(line_number, to, right);
 		return true;
@@ -466,7 +470,10 @@ bool ASTConverter::prepare_for_binary_operation_signed_types(size_t line_number,
 }
 
 bool ASTConverter::prepare_for_binary_operation_integer_unsigned_types(size_t line_number, IRBasicType to, IROperand& left, IROperand& right) {
-	if (left.get_data_type().get_ir_basic_type() == to || right.get_data_type().get_ir_basic_type() == to) {
+	const TypeRef left_type = left.get_data_type().remove_reference().remove_qualifiers();
+	const TypeRef right_type = right.get_data_type().remove_reference().remove_qualifiers();
+
+	if ((left_type.is_basic_data_type() && left_type.get_ir_basic_type()  == to ) || (right_type.is_basic_data_type() && right_type.get_ir_basic_type() == to ) ) {
 		bool signed_operands = (left.get_data_type().is_signed() || right.get_data_type().is_signed());
 		if (signed_operands) {
 			if (to == IRBasicType::UINT64) {
@@ -496,22 +503,87 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 	switch (type)
 	{
 	case TreeNodeType::ASSIGNMENT: {
-
 		ReferencePtr<AssignmentNode> current_node = node.cast<AssignmentNode>();
 		ReferencePtr<AbstractSyntaxTreeNode> left_expr = current_node->get_left_expr_node();
 		ReferencePtr<AbstractSyntaxTreeNode> right_expr = current_node->get_right_expr_node();
 
-		post_order_traverse(current_node->get_left_expr_node());
 		post_order_traverse(current_node->get_right_expr_node());
-
-		IROperand variable = get_op(left_expr);
 		IROperand expr_op = get_op(right_expr);
 
-		implicit_conversion(current_node->get_line_number(),variable.get_data_type(),expr_op);
+		IRTriple* triple = nullptr;
+		if (left_expr->get_type() == TreeNodeType::DEREFERENCE) {
+			ReferencePtr<DereferenceNode> dereference_node = left_expr.cast<DereferenceNode>();
+			ReferencePtr<AbstractSyntaxTreeNode> ptr_variable = dereference_node->get_child(0);
+			post_order_traverse(ptr_variable);
+			IROperand ptr_variable_op = get_op(ptr_variable);
+			implicit_conversion(current_node->get_line_number(), ptr_variable_op.get_data_type().remove_pointer(), expr_op);
+			triple = m_coder.add_triple(current_node->get_line_number(), IROperation::WRITE_TO_POINTER, ptr_variable_op, expr_op);
+		}
+		else if (left_expr->get_type() == TreeNodeType::ARRAY_ACCESS) {
+			ReferencePtr<ArrayAccessNode> array_access_node = left_expr.cast<ArrayAccessNode>();
+			ReferencePtr<AbstractSyntaxTreeNode> array_ptr_variable = array_access_node->get_child(0);
+			ReferencePtr<AbstractSyntaxTreeNode> array_index = array_access_node->get_child(1);
+			post_order_traverse(array_ptr_variable);
+			IROperand variable_ptr_op = get_op(array_ptr_variable);
+			post_order_traverse(array_index);
+			IROperand index_op = get_op(array_index);
+			IRTriple* element_address = m_coder.add_triple(
+				current_node->get_line_number(),
+				IROperation::ARRAY_ACCESS,
+				variable_ptr_op,
+				index_op
+			);
 
-		IRTriple* t = m_coder.add_triple(current_node->get_line_number(), IROperation::ASSIGN, variable, expr_op);
-		set_op(current_node, t);
+			TypeRef target_type =
+				element_address->get_data_type().remove_pointer();
 
+			implicit_conversion(
+				current_node->get_line_number(),
+				target_type,
+				expr_op
+			);
+
+			triple = m_coder.add_triple(
+				current_node->get_line_number(),
+				IROperation::WRITE_TO_POINTER,
+				element_address,
+				expr_op
+			);
+
+			//IROperand index_op = get_op(array_index);
+
+			//TypeRef target_type = variable_ptr_op.get_data_type().remove_array();
+			//implicit_conversion(current_node->get_line_number(),target_type, expr_op);
+
+			//IRTriple* array_accees_triple = m_coder.add_triple(current_node->get_line_number(),IROperation::ARRAY_ACCESS,variable_ptr_op,index_op);
+			//triple = m_coder.add_triple(current_node->get_line_number(),IROperation::WRITE_TO_POINTER,array_accees_triple,expr_op);
+		}
+		else if (left_expr->get_type() == TreeNodeType::MEMBER_ACCESS) {
+			ReferencePtr<MemberAccessNode> member_access_node = left_expr.cast<MemberAccessNode>();
+			ReferencePtr<AbstractSyntaxTreeNode> left_object = member_access_node->get_child(0);
+			ReferencePtr<AbstractSyntaxTreeNode> member_field_identifier = member_access_node->get_child(1);
+			post_order_traverse(left_object);
+			IROperand object_operand = get_op(left_object);
+	
+			std::string field_name = member_field_identifier.cast<IdentifierNode>()->get_identifier();
+		
+			const TypeRef type = object_operand.get_data_type().remove_pointer().remove_qualifiers();
+			IRCompositeTypeNode* composite_node = static_cast<IRCompositeTypeNode*>(type.get_data_type_node());
+			IRMember* member = composite_node->get_member(field_name);
+
+			IRTriple* member_address = m_coder.add_triple(current_node->get_line_number(),IROperation::MEMBER_ACCESS,object_operand,member);
+			implicit_conversion(current_node->get_line_number(), member->get_data_type(), expr_op);
+
+			triple = m_coder.add_triple(current_node->get_line_number(), IROperation::WRITE_TO_POINTER, member_address, expr_op);
+		}
+		else {
+			post_order_traverse(current_node->get_left_expr_node());
+			IROperand left_op = get_op(left_expr);
+			implicit_conversion(current_node->get_line_number(),left_op.get_data_type(),expr_op);
+			triple = m_coder.add_triple(current_node->get_line_number(), IROperation::ASSIGN, left_op, expr_op);
+		}
+
+		set_op(current_node, triple);
 		break;
 	}
 	case TreeNodeType::FUNCTION_CALL: {
@@ -647,7 +719,6 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 				current_item->get_child(i);
 
 				std::string variable_name = current_item->get_indentifier_node()->get_identifier();
-
 				TypeRef type = dtn->m_ir_data_type;
 
 				if (!m_symbol_table.can_add(variable_name))
@@ -663,13 +734,13 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 
 				if (expr_node.get_ptr() != nullptr) {
 					IROperand expr_op = get_op(expr_node);
-
+					int line_number = current_node->get_line_number();
 					implicit_conversion(current_node->get_line_number(),variable->get_data_type(), expr_op);
 
 					// for handling reference 
 					if (variable->get_data_type().is_reference()) {
 						if (variable->get_data_type().remove_reference().remove_qualifiers() != expr_op.get_data_type().remove_reference().remove_qualifiers()) {
-							std::string msg = std::format("can't assign value of different type to the reference variable");
+							std::string msg = std::format("can't assign value of different type to the reference variable from {} to {}",expr_op.get_data_type().to_string(), variable->get_data_type().to_string());
 							m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR,current_item->get_line_number(),msg });
 						}
 
@@ -1046,21 +1117,21 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		IRTriple *triple = m_coder.add_triple(current_node->get_line_number(),IROperation::ASSERT,op);
 		break;
 	}
-	case TreeNodeType::MEMCPY: {
-		ReferencePtr<MemcpyNode> current_node = node.cast<MemcpyNode>();
-		post_order_traverse(current_node->get_destination());
-		post_order_traverse(current_node->get_source());
-		post_order_traverse(current_node->get_count());
-		
-		IROperand destination = get_op(current_node->get_destination());
-		IROperand source = get_op(current_node->get_source());
-		IROperand count = get_op(current_node->get_count());
+	//case TreeNodeType::MEMCPY: {
+	//	ReferencePtr<MemcpyNode> current_node = node.cast<MemcpyNode>();
+	//	post_order_traverse(current_node->get_destination());
+	//	post_order_traverse(current_node->get_source());
+	//	post_order_traverse(current_node->get_count());
+	//	
+	//	IROperand destination = get_op(current_node->get_destination());
+	//	IROperand source = get_op(current_node->get_source());
+	//	IROperand count = get_op(current_node->get_count());
 
-		IRTriple* triple = m_coder.add_triple(current_node->get_line_number(), IROperation::MEMCPY, destination, source, count);
+	//	IRTriple* triple = m_coder.add_triple(current_node->get_line_number(), IROperation::MEMCPY, destination, source, count);
 
-		set_op(current_node,triple);
-		break;
-	}
+	//	set_op(current_node,triple);
+	//	break;
+	//}
 	case TreeNodeType::PRINT: {
 		ReferencePtr<PrintNode> current_node = node.cast<PrintNode>();
 		post_order_traverse(current_node->m_expr);
@@ -1176,7 +1247,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		post_order_traverse(expr_node);
 		IROperand expr_op = get_op(expr_node);
 
-		IRTriple *triple = m_coder.add_triple(current_node->get_line_number(),IROperation::ADREESS_OF,expr_op);
+		IRTriple *triple = m_coder.add_triple(current_node->get_line_number(),IROperation::ADDRESS_OF,expr_op);
 		set_op(current_node,triple);
 		break;
 	}
@@ -1284,14 +1355,6 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		break;
 	}
 	case TreeNodeType::MEMBER_ACCESS: {
-		// TODO wygenerowaæ triple 
-		/*
-			struct A {
-				int m_a;
-			};
-		*/
-		// A fun();
-		// fun().m_a;
 		ReferencePtr<MemberAccessNode> current_node = node.cast<MemberAccessNode>();
 		ReferencePtr<IdentifierNode> id_node = current_node->get_field_identifier();
 		ReferencePtr<AbstractSyntaxTreeNode> left_expr = current_node->get_expr();
@@ -1300,11 +1363,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		IROperand left_expr_op = get_op(left_expr);
 		TypeRef data_type_ref = left_expr_op.get_data_type();
 		
-		// it's a node that TypeRef indicates
-		//IRDataTypeNode* data_type_node = data_type_ref.get_data_type_node();
-		
 		data_type_ref = data_type_ref.remove_reference();
-
 		if (current_node->is_arrow()) {
 			if (data_type_ref.is_pointer_with_qualifiers())
 				data_type_ref = data_type_ref.remove_pointer_with_qualifiers();
@@ -1322,7 +1381,10 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 			IRCompositeTypeNode* composite_node = static_cast<IRCompositeTypeNode*>(data_type_ref.get_data_type_node());
 			if (IRMember* member = composite_node->get_member(field_name)) {
 				IRTriple* member_access = m_coder.add_triple(current_node->get_line_number(), IROperation::MEMBER_ACCESS, left_expr_op, member);
-				set_op(current_node, member_access);
+				
+				IRTriple* deref = m_coder.add_triple(current_node->get_line_number(), IROperation::DEREFERENCE, member_access);
+
+				set_op(current_node, deref);
 			}
 			else {
 				std::string msg = std::format("composite type does not have field with name {}", field_name);
@@ -1347,8 +1409,8 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		IROperand array_index_expr_op =  get_op(index_expr);
 
 		IRTriple* array_assignment = m_coder.add_triple(current_node->get_line_number(),IROperation::ARRAY_ACCESS,array_name_expr_op,array_index_expr_op);
-
-		set_op(current_node,array_assignment);
+		IRTriple* triple = m_coder.add_triple(current_node->get_line_number(), IROperation::DEREFERENCE, array_assignment);
+		set_op(current_node,triple);
 		break;
 	}
 	case TreeNodeType::SELECT: {
@@ -1458,15 +1520,6 @@ void ASTConverter::convert(ASTConverterListener* listener) {
 	}
 	
 	IRPrinter printer;
-	//std::cout << "Representation before removing triples " << std::endl;
-	//printer.print_ir_representation(*m_current_fn->get_ir_prgram());
-
-	//IROptimizer optimizer;
-	//for (auto& [key,fns] : map) {
-	//	for (auto&fn :fns) {
-	//		optimizer.run(fn);
-	//	}
-	//}
 
 
 	// TODO MOVE FROM HERE 
@@ -1479,5 +1532,6 @@ void ASTConverter::convert(ASTConverterListener* listener) {
 		m_coder.add_triple(0,IROperation::RETURN);
 	}
 
+	std::cout << "Before expanding" << std::endl;
 	printer.print_ir_representation(*m_ir_program);
 }

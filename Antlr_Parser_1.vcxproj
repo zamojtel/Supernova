@@ -387,6 +387,9 @@
     <ClCompile Include="OverloadResolver.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="PrintMessageCollector.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="StringLiteralPool.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -573,6 +576,8 @@
     <ClInclude Include="OverloadMatch.h" />
     <ClInclude Include="OverloadResolver.h" />
     <ClInclude Include="PointerNode.h" />
+    <ClInclude Include="PrintListener.h" />
+    <ClInclude Include="PrintMessageCollector.h" />
     <ClInclude Include="PrintNode.h" />
     <ClInclude Include="ProgNode.h" />
     <ClInclude Include="QualifierNode.h" />
@@ -702,11 +707,6 @@
     <Text Include="loop5.txt" />
     <Text Include="loop6.txt" />
     <Text Include="for_1.txt" />
-    <Text Include="member_access_1.txt" />
-    <Text Include="member_access_2.txt" />
-    <Text Include="member_access_3.txt" />
-    <Text Include="member_access_4.txt" />
-    <Text Include="member_access_5.txt" />
     <Text Include="member_pointer.txt" />
     <Text Include="pointer_1.txt" />
     <Text Include="pointer_to_a_struct_field.txt" />
@@ -735,20 +735,36 @@
     <Text Include="sml_4.txt" />
     <Text Include="sml_5.txt" />
     <Text Include="sml_6.txt" />
+    <Text Include="SourceTests\address_of_3.txt" />
     <Text Include="SourceTests\add_function_call.txt">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </Text>
+    <Text Include="SourceTests\array_3.txt" />
+    <Text Include="SourceTests\array_cast_1.txt" />
+    <Text Include="SourceTests\array_cast_2.txt" />
+    <Text Include="SourceTests\array_jit_1.txt" />
+    <Text Include="SourceTests\broadcasting_1.txt" />
+    <Text Include="SourceTests\overload_4.txt" />
+    <Text Include="SourceTests\print_array_2.txt" />
     <Text Include="SourceTests\array_to_pointer_1.txt" />
     <Text Include="SourceTests\array_to_pointer_2.txt" />
     <Text Include="SourceTests\bitwise_operations_1.txt" />
     <Text Include="SourceTests\character_1.txt" />
+    <Text Include="SourceTests\dereference_jit_1.txt" />
     <Text Include="SourceTests\external_function_call_1.txt" />
     <Text Include="SourceTests\external_function_call_2.txt" />
     <Text Include="SourceTests\external_function_call_3.txt" />
     <Text Include="SourceTests\logical_vs_arithmetical_shift_1.txt" />
+    <Text Include="SourceTests\member_1.txt" />
+    <Text Include="SourceTests\member_access_1.txt" />
+    <Text Include="SourceTests\member_access_jit_1.txt" />
+    <Text Include="SourceTests\member_access_point_1.txt" />
+    <Text Include="SourceTests\member_access_point_jit_1.txt" />
+    <Text Include="SourceTests\member_acces_1.txt" />
+    <Text Include="SourceTests\member_point_1.txt" />
     <Text Include="SourceTests\memcpy_1.txt" />
     <Text Include="SourceTests\mixed_function_call_1.txt" />
     <Text Include="SourceTests\overloading_1.txt" />
@@ -762,6 +778,8 @@
     <Text Include="SourceTests\overloading_single_argument_2.txt" />
     <Text Include="SourceTests\overloading_single_argument_error_1.txt" />
     <Text Include="SourceTests\overloading_single_argument_error_2.txt" />
+    <Text Include="SourceTests\pointer_to_struct_field_1.txt" />
+    <Text Include="SourceTests\print_char_1.txt" />
     <Text Include="SourceTests\right_bitwise_shift_cast_error_1.txt" />
     <Text Include="SourceTests\left_bitwise_shift_1.txt" />
     <Text Include="SourceTests\constant_conversion_1.txt" />
@@ -844,12 +862,15 @@
     <Text Include="SourceTests\return_promotion_error.txt" />
     <Text Include="SourceTests\right_bitwise_shift_1.txt" />
     <Text Include="SourceTests\right_bitwise_shift_with_cast_1.txt" />
+    <Text Include="SourceTests\simple_cast_1.txt" />
     <Text Include="SourceTests\simple_jit_2.txt" />
     <Text Include="SourceTests\simple_jit_3.txt" />
     <Text Include="SourceTests\simple_jit_4.txt" />
     <Text Include="SourceTests\simple_jit_5.txt" />
     <Text Include="SourceTests\simple_jit_6.txt" />
     <Text Include="SourceTests\string_1.txt" />
+    <Text Include="SourceTests\string_10.txt" />
+    <Text Include="SourceTests\string_11.txt" />
     <Text Include="SourceTests\string_2.txt" />
     <Text Include="SourceTests\string_3.txt" />
     <Text Include="SourceTests\string_4.txt" />
@@ -857,6 +878,13 @@
     <Text Include="SourceTests\string_6.txt" />
     <Text Include="SourceTests\string_7.txt" />
     <Text Include="SourceTests\string_8.txt" />
+    <Text Include="SourceTests\struct_jit_1.txt" />
+    <Text Include="SourceTests\struct_return_1.txt" />
+    <Text Include="SourceTests\struct_return_2.txt" />
+    <Text Include="SourceTests\struct_return_3.txt" />
+    <Text Include="SourceTests\table_return_1.txt" />
+    <Text Include="SourceTests\table_return_2.txt" />
+    <Text Include="SourceTests\union_jit_1.txt" />
     <Text Include="SourceTests\unreachable_blk_1.txt" />
     <Text Include="SourceTests\useless_statements_1.txt" />
     <Text Include="ss_1.txt" />

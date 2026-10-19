@@ -103,6 +103,8 @@
 #include "ErrorList.h"
 #include "ErrorTraits.h"
 
+#include "PrintListener.h"
+#include "PrintMessageCollector.h"
 #include "ParserHelper.h"
 #include "UselessControlFlowEliminator.h"
 #include "CandidateComparison.h"

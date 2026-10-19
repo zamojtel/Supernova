@@ -9,7 +9,6 @@ private:
 	IRProgram* m_ir_program = nullptr;
 	// inside of the function we remember how many triples we have
 	size_t m_triple_count;
-	size_t m_index;
 	std::vector<IRBasicBlock*> m_basic_blocks;
 	std::vector<IRConstant*> m_constants;
 	std::vector<IRVariable*> m_variables;
@@ -43,7 +42,6 @@ public:
 	const std::string& get_name();
 	const std::vector<IRVariable*>& get_parameters() const;
 	//bool compare_arguments(const std::vector<IROperand> &arguments);
-	size_t get_index();
 	size_t get_required_size();
 	const std::string& get_identifier() const;
 	IRProgram* get_ir_prgram();

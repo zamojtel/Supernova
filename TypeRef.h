@@ -38,6 +38,8 @@ public:
 	bool is_void() const;
 	bool is_error() const;
 	bool is_composite() const;
+	bool is_struct() const;
+	bool is_union() const;
 	bool is_pointer() const;
 	bool is_nullptr() const;
 	bool is_reference() const;

@@ -106,14 +106,8 @@ void IROptimizer::run(IRFunction* fn) {
 			default:
 				break;
 			}
-
 		}
-
 	}
-
-	//IRPrinter printer;
-	//std::cout << "Representation before removing triples " << std::endl;
-	//printer.print_ir_representation(*fn->get_ir_prgram());
 
 	bool changed = false;
 	do {

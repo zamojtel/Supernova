@@ -1,12 +1,12 @@
 
 IRFunction::IRFunction(size_t index,const std::string& name,const TypeRef& r_t) 
-	: IRBaseFunction("", {},r_t,IRBaseFunction::Kind::INTERNAL), m_triple_count{ 0 }, m_index{ index } 
+	: IRBaseFunction("",index, {},r_t,IRBaseFunction::Kind::INTERNAL), m_triple_count{ 0 } 
 { 
 	m_basic_blocks.push_back(new IRBasicBlock{ this, m_basic_blocks.size() });
 }
 
 IRFunction::IRFunction(size_t index, const std::string& name, bool is_inline, const TypeRef& r_t, IRProgram* p) 
-	: IRBaseFunction(name, {},r_t,IRBaseFunction::Kind::INTERNAL), m_triple_count{ 0 }, m_index{ index }, m_is_inline{ is_inline }, m_return_type{ r_t }, m_ir_program{ p } 
+	: IRBaseFunction(name,index, {},r_t,IRBaseFunction::Kind::INTERNAL), m_triple_count{ 0 }, m_is_inline{ is_inline }, m_return_type{ r_t }, m_ir_program{ p } 
 { 
 	m_basic_blocks.push_back(new IRBasicBlock{ this, m_basic_blocks.size() });
 }
@@ -162,10 +162,6 @@ void IRFunction::reindex_triples() {
 
 const TypeRef& IRFunction::get_return_type() const {
 	return m_return_type;
-}
-
-size_t IRFunction::get_index() {
-	return m_index;
 }
 //
 //bool IRFunction::compare_arguments(const std::vector<IROperand>& arguments) {

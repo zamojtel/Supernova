@@ -4,6 +4,7 @@ class IRProgram {
 private:
 	std::vector<IRGlobalVariable*> m_global_variables;
 	std::unordered_map<std::string,std::vector<IRFunction*>> m_functions;
+	size_t m_current_fn_index;
 	std::unordered_map<std::string,std::vector<IRExternalFunction*>> m_external_fns;
 	IRChecker m_checker;
 	IRDataTypeManager m_dtm;
@@ -16,6 +17,7 @@ public:
 	void set_checker_listener(IRCheckerListener* listener);
 	void check_program();
 	const std::unordered_map<std::string,std::vector<IRFunction*>>& get_functions() const;
+	const std::unordered_map<std::string,std::vector<IRExternalFunction*>>& get_external_functions() const;
 	std::vector<IRBaseFunction*> get_functions_with_name(const std::string& name) const;
 	//IRFunction* get_function(const std::string &name,const std::vector<IROperand> &arguments);
 	IRFunction* get_function(const std::string &name,const std::vector<TypeRef> &argument_types);
@@ -31,4 +33,5 @@ public:
 	void calculate_memory_layout();
 	size_t calculate_size_required_for_global_variables();
 	StringRef get_or_add_string_literal(const std::string& text);
+	void sort_blocks();
 };

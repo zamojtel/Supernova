@@ -16,7 +16,6 @@ IROperand IRInliner::get_remapped_operand(const IROperand& op, InlineContext& ct
 	if (ctx.m_operands.count(op)>0)
 		return ctx.m_operands.at(op);
 	else if (
-		op.m_operand_type == IROperandType::CONSTANT		  ||
 		op.m_operand_type == IROperandType::FUNCTION		  ||
 		op.m_operand_type == IROperandType::EXTERNAL_FUNCTION ||
 		op.m_operand_type == IROperandType::DATA_TYPE		  ||
@@ -43,8 +42,12 @@ void IRInliner::expand_functions(IRFunction * main) {
 	for (IRBasicBlock* blk : blks) {
 		std::vector<IRTriple*> all_triples = blk->get_all_triples();
 		for (IRTriple* t : all_triples) {
-			if (t->m_operation == IROperation::FUNCTION_CALL)
+			if (t->m_operation == IROperation::FUNCTION_CALL) {
+				if (t->m_operands[0].get_function()->get_name() == "square") {
+					int x = 123;
+				}
 				expand_function_call(t);
+			}
 		}
 	}
 }
@@ -146,6 +149,13 @@ void IRInliner::expand_function_call(IRTriple* function_call) {
 		}
 		else
 			ctx.m_operands[parameters[i]] = ctx.m_call->m_operands[i + 1];
+	}
+
+	auto callee_constants = ctx.m_callee->get_constants();
+	for (size_t i = 0; i < callee_constants.size();i++) {
+		ConstantValue cv = callee_constants[i]->get_value();
+		IROperand constant_operand = ctx.m_caller->add_constant(cv);
+		ctx.m_operands[callee_constants[i]] = constant_operand;
 	}
 
 	for (size_t j = parameters.size(); j < variables.size();j++) {

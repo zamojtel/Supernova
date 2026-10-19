@@ -4,12 +4,14 @@ private:
 	TypeRef m_data_type;
 	std::string m_name;
 	size_t m_offset;
+	size_t m_index;
 public:
-	IRMember(const TypeRef& ref_type, const std::string& f_name) : m_data_type{ ref_type }, m_name{ f_name }, m_offset{0} {}
+	IRMember(const TypeRef& ref_type, const std::string& f_name, size_t index) : m_data_type{ ref_type }, m_name{ f_name }, m_offset{ 0 }, m_index{index} {}
 	const TypeRef& get_data_type() const;
 	const std::string get_field_name() const;
 	size_t get_offset() const;
 	void set_offset(size_t offset);
 	IROperandType get_operand_type() const;
 	IROperand get_operand() override;
+	size_t get_index() const;
 };

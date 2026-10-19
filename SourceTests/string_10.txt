@@ -1,0 +1,12 @@
+
+int main(){
+	char [4] str;
+	memcpy(&str[0],"abc",4);
+	char const * p = "abc";
+	print(p[0]);
+	print(str[0]);
+	return 0;
+}
+#------------------
+a
+a

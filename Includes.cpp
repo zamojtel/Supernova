@@ -19,6 +19,7 @@
 #include "StringStorage.cpp"
 #include "StringLiteralPool.cpp"
 #include "IRExternalFunction.cpp"
+#include "PrintMessageCollector.cpp"
 #include "StringTests/StringTests.cpp"
 
 #endif INCLUDES_CPP
