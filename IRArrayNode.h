@@ -7,4 +7,5 @@ public:
 	IRArrayNode(IRDataTypeManager* dtm,const TypeRef& ref, size_t s);
 	IRDataTypeNodeType get_node_type() const override;
 	size_t calculate_size() override;
+	size_t get_count() const;
 };

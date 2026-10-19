@@ -14,5 +14,8 @@ size_t IRArrayNode::calculate_size() {
 	catch (std::runtime_error e) {
 		throw e;
 	}
+}
 
+size_t IRArrayNode::get_count() const {
+	return m_count;
 }

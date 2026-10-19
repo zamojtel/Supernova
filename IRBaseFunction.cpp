@@ -1,5 +1,5 @@
 
-IRBaseFunction::IRBaseFunction(const std::string& name, const std::vector<TypeRef>& types, const TypeRef& return_type, Kind kind) : m_identifier{ name }, m_parameter_types{ types }, m_return_type{ return_type }, m_kind{kind} {}
+IRBaseFunction::IRBaseFunction(const std::string& name, size_t index, const std::vector<TypeRef>& types, const TypeRef& return_type, Kind kind) : m_identifier{ name }, m_index{index}, m_parameter_types { types }, m_return_type{ return_type }, m_kind{ kind } {}
 
 const std::string& IRBaseFunction::get_name() const { return m_identifier; }
 
@@ -21,3 +21,5 @@ bool IRBaseFunction::compare_arguments(const std::vector<TypeRef>& argument_type
 }
 
 const TypeRef IRBaseFunction::get_return_type() const { return m_return_type; }
+
+size_t IRBaseFunction::get_index() const { return m_index; }

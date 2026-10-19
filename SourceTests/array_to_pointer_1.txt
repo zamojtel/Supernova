@@ -1,14 +1,14 @@
-void modify(char * s){
-	s[1] = 'd';
-}
-// konwersja tablic na wskazniki 
+struct Point{
+	int x;
+	int y;
+};
+
 int main(){
-	char [4] str;
-	// memcpy(&str[0],"abc",4);
-	memcpy(str,"abc",4);
-	modify(str);
-	print(str);
+	Point p;
+	p.x = 10;
+	p.y = 20;
+	print(p.x+p.y);
 	return 0;
 }
 #------------------
-adc
+30

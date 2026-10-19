@@ -18,6 +18,8 @@ public:
 	void start(IRFunction* fn);
 	void set_listener(IRInterpreterListener *l);
 	uint8_t* get_operand_address(IROperand op, bool ignore_reference = false);
+	void cast_operand(IRTriple* current_triple, const IROperand& op1, const IROperand& op2);
+	//void cast_operand(IRTriple* current_triple, const IROperand& op1, uint8_t* op_2_address, const TypeRef& type_2);
 	template <class To>
 	std::optional<To> convert_value_to(ConstantValue& v) const;
 };

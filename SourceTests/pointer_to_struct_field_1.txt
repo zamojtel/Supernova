@@ -1,0 +1,15 @@
+struct A{
+	int m_a;
+	int m_b;
+};
+
+int main(){
+	A item;
+	item.m_a = 10;
+	item.m_b = 20;
+	int * p = &item.m_a;
+	print(*p);
+	return *p;
+}
+#------------------
+10

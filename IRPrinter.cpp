@@ -56,7 +56,7 @@ std::string IRPrinter::ir_operation_to_string(const IROperation op) const {
 		return "PRINT";
 	case IROperation::PRINT_TYPE:
 		return "PRINT_TYPE";
-	case IROperation::ADREESS_OF:
+	case IROperation::ADDRESS_OF:
 		return "ADDRESS_OF";
 	case IROperation::DEREFERENCE:
 		return "DEREFERENCE";
@@ -76,10 +76,12 @@ std::string IRPrinter::ir_operation_to_string(const IROperation op) const {
 		return "LEFT_SHIFT";
 	case IROperation::RIGHT_SHIFT:
 		return "RIGHT_SHIFT";
-	case IROperation::MEMCPY:
-		return "MEMCPY";
+	//case IROperation::MEMCPY:
+	//	return "MEMCPY";
 	case IROperation::ARRAY_TO_POINTER:
 		return "ARRAY_TO_POINTER";
+	case IROperation::WRITE_TO_POINTER:
+		return "WRITE_TO_POINTER";
 	default:
 		throw std::runtime_error("can't find such ir operation");
 	}

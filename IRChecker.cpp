@@ -148,7 +148,8 @@ void IRChecker::check_triple(IRTriple* triple)
 		break;
 	}
 	case IROperation::MEMBER_ACCESS: {
-		triple->m_data_type = op2->get_data_type();
+		IRMember* member = op2->get_member();
+		triple->m_data_type = m_dtm->add_pointer(member->get_data_type());
 		break;
 	}
 	case IROperation::ARRAY_ACCESS: {
@@ -160,11 +161,12 @@ void IRChecker::check_triple(IRTriple* triple)
 
 		TypeRef data_type_ref = op1->get_data_type();
 		if (data_type_ref.is_array())
-			triple->m_data_type = op1->get_data_type().remove_array();
+			triple->m_data_type = m_dtm->add_pointer(op1->get_data_type().remove_array());
 		else if (data_type_ref.is_pointer_with_qualifiers())
-			triple->m_data_type = op1->get_data_type().remove_pointer_with_qualifiers();
+			triple->m_data_type = m_dtm->add_pointer(op1->get_data_type().remove_pointer_with_qualifiers());
 		else
 			m_listener->add_error(triple->m_line_number,ErrorType::INVALID_OPERAND_TYPE,"expected pointer or array type");
+
 		break;
 	}
 	case IROperation::ASSERT: {
@@ -184,7 +186,7 @@ void IRChecker::check_triple(IRTriple* triple)
 
 		break;
 	}
-	case IROperation::ADREESS_OF: {
+	case IROperation::ADDRESS_OF: {
 		TypeRef dataType = op1->get_data_type();
 		dataType = m_dtm->add_pointer(dataType);
 
@@ -308,28 +310,45 @@ void IRChecker::check_triple(IRTriple* triple)
 		triple->m_data_type = op1->get_data_type();
 		break;
 	}
-	case IROperation::MEMCPY: {
-		const TypeRef op1_dt = op1->get_data_type().remove_reference().remove_qualifiers();
-		const TypeRef op2_dt = op2->get_data_type().remove_reference().remove_qualifiers();
-		const TypeRef op3_dt = op3->get_data_type().remove_reference().remove_qualifiers();
+	//case IROperation::MEMCPY: {
+	//	const TypeRef op1_dt = op1->get_data_type().remove_reference().remove_qualifiers();
+	//	const TypeRef op2_dt = op2->get_data_type().remove_reference().remove_qualifiers();
+	//	const TypeRef op3_dt = op3->get_data_type().remove_reference().remove_qualifiers();
 
-		if (!op1_dt.is_pointer())
-			m_listener->add_error(triple->m_line_number,ErrorType::POINTER_TYPE_REQUIRED,"first operand must be an address");
-		else if(op1_dt.is_const())
-			m_listener->add_error(triple->m_line_number, ErrorType::NON_CONST_TYPE_REQUIRED, "destination must point to a writable memory");
+	//	if (!op1_dt.is_pointer())
+	//		m_listener->add_error(triple->m_line_number,ErrorType::POINTER_TYPE_REQUIRED,"first operand must be an address");
+	//	else if(op1_dt.is_const())
+	//		m_listener->add_error(triple->m_line_number, ErrorType::NON_CONST_TYPE_REQUIRED, "destination must point to a writable memory");
 
-		if (!op2_dt.is_pointer())
-			m_listener->add_error(triple->m_line_number,ErrorType::POINTER_TYPE_REQUIRED,"second operand must be an address");
+	//	if (!op2_dt.is_pointer())
+	//		m_listener->add_error(triple->m_line_number,ErrorType::POINTER_TYPE_REQUIRED,"second operand must be an address");
 
-		if (!op3_dt.is_integer())
-			m_listener->add_error(triple->m_line_number, ErrorType::INTEGER_TYPE_REQUIRED, "allocation size must be a positive integer");
-		
-		triple->m_data_type = m_dtm->get_void();
+	//	if (!op3_dt.is_integer())
+	//		m_listener->add_error(triple->m_line_number, ErrorType::INTEGER_TYPE_REQUIRED, "allocation size must be a positive integer");
+	//	
+	//	triple->m_data_type = m_dtm->get_void();
+	//	break;
+	//}
+	case IROperation::ARRAY_TO_POINTER: {
+		// TODO add coditions
+		triple->m_data_type = op1->get_data_type();
 		break;
 	}
-	case IROperation::ARRAY_TO_POINTER: {
-		// add coditions
-		triple->m_data_type = op1->get_data_type();
+	case IROperation::WRITE_TO_POINTER: {
+		if (!op1->get_data_type().is_pointer())
+			m_listener->add_error(triple->m_line_number, ErrorType::POINTER_TYPE_REQUIRED, "left operand must be an address");
+		TypeRef pointee_type = op1->get_data_type().remove_reference().remove_pointer();
+
+		if (pointee_type.is_const())
+			m_listener->add_error(triple->m_line_number, ErrorType::NON_CONST_TYPE_REQUIRED, "destination must point to a writable memory");
+
+		TypeRef clean_left_type = pointee_type.remove_qualifiers();
+		if (clean_left_type != op2->get_data_type()) {
+			std::string msg = std::format("can't assign value of different types from {} to {}",clean_left_type.to_string(),op2->get_data_type().to_string());
+			m_listener->add_error(triple->m_line_number, ErrorType::TYPE_MISMATCH,msg);
+		}
+		
+		triple->m_data_type = clean_left_type;
 		break;
 	}
 	default:

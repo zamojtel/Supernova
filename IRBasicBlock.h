@@ -16,6 +16,7 @@ public:
 	IRBasicBlock(IRFunction* c_f, size_t i, const std::string& name) : m_current_function{ c_f }, m_index{ i }, m_name{name} {}
 	IRBasicBlock* add_basic_block(const std::string& name);
 	bool check_operand_types(const IROperand& op1, const IROperand& op2) const;
+	void set_index(size_t i);
 	size_t get_index() const { return m_index; }
 	size_t get_number_of_operands_for_operation(IROperation op);
 	void deduce_triple_data_type(IRTriple* triple);

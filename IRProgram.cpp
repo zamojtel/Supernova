@@ -1,18 +1,98 @@
 
 // For testing 
+// move somewhere else 
 extern "C" __declspec(dllexport) int function(int x) {
 	return x + 1;
 }
 
 template <class T>
 void print(T value) {
+	ConstantValue cv{value};
+	Tester::get_message_collector().print_called(cv.to_string());
 	std::cout << value << std::endl;
 }
 
-IRProgram::IRProgram(): m_checker{ this } {
+void print_string(const char * str) {
+	std::string message{ str };
+	if (str!="") {
+		Tester::get_message_collector().print_called(message);
+	}
+	else {
+		Tester::get_message_collector().print_called("!empty string!");
+	}
+}
+
+void print_char_array(const char* data,size_t count) {
+	std::string message;
+
+	for (size_t i = 0; i < count && data[i] != '\0';i++)
+		message.push_back(data[i]);
+	
+	Tester::get_message_collector().print_called(message);
+}
+
+template <class T>
+void print_type(T value) {
+	if constexpr (std::is_same_v<T, int8_t>) {
+		Tester::get_message_collector().print_called("int8");
+	}
+	else if constexpr (std::is_same_v<T, char>) {
+		Tester::get_message_collector().print_called("char");
+	}
+	else if constexpr (std::is_same_v<T, int16_t>) {
+		Tester::get_message_collector().print_called("int16");
+	}
+	else if constexpr (std::is_same_v<T, int32_t>) {
+		Tester::get_message_collector().print_called("int32");
+	}
+	else if constexpr (std::is_same_v<T, int64_t>) {
+		Tester::get_message_collector().print_called("int64");
+	}
+	else if constexpr (std::is_same_v<T, float>) {
+		Tester::get_message_collector().print_called("float");
+	}
+	else if constexpr (std::is_same_v<T, double>) {
+		Tester::get_message_collector().print_called("double");
+	}
+	else if constexpr (std::is_same_v<T, uint8_t>) {
+		Tester::get_message_collector().print_called("uint8");
+	}
+	else if constexpr (std::is_same_v<T, uint16_t>) {
+		Tester::get_message_collector().print_called("uint16");
+	}
+	else if constexpr (std::is_same_v<T, uint32_t>) {
+		Tester::get_message_collector().print_called("uint32");
+	}
+	else if constexpr (std::is_same_v<T, uint64_t>) {
+		Tester::get_message_collector().print_called("uint64");
+	}
+}
+
+template <class T>
+void print_array(const T* array, size_t size) {
+	std::string msg = "[";
+
+	for (size_t i = 0; i < size; i++) {
+		if (i != 0)
+			msg += ",";
+		ConstantValue value = ConstantValue{array[i]};
+		msg += value.to_string();
+	}
+
+	msg += "]";
+
+	Tester::get_message_collector().print_called(msg);
+}
+
+IRProgram::IRProgram() : m_checker{ this }, m_current_fn_index{0} {
 	std::vector<TypeRef> paramaters{ m_dtm.get_int()};
 	std::string name = "function";
-	add_external_function(name, new IRExternalFunction{ name, function,m_dtm.get_int(), paramaters,
+	add_external_function(name, new IRExternalFunction{ 
+		name,
+		m_current_fn_index++,
+		function,
+		m_dtm.get_int(),
+		paramaters,
 		[](void** args,void* result_address) {
 			*reinterpret_cast<int*>(result_address) = function(*reinterpret_cast<int*>(args[0]));
 			} 
@@ -21,6 +101,7 @@ IRProgram::IRProgram(): m_checker{ this } {
 
 	add_external_function("malloc", new IRExternalFunction{
 		"malloc",
+		m_current_fn_index++,
 		std::malloc,
 		m_dtm.get_void_star(),
 		{m_dtm.get_uint64()},
@@ -33,6 +114,7 @@ IRProgram::IRProgram(): m_checker{ this } {
 
 	add_external_function("memcpy", new IRExternalFunction{
 		"memcpy",
+		m_current_fn_index++,
 		std::memcpy,
 		m_dtm.get_void_star(),
 		{
@@ -41,6 +123,11 @@ IRProgram::IRProgram(): m_checker{ this } {
 			m_dtm.get_uint64()
 		},
 		[](void** args, void* result_address) {
+			const char * str = *((const char**) args[1]);
+			uint64_t size = *((uint64_t *) args[2]);
+			std::cout << str << std::endl;
+			std::cout << size << std::endl;
+
 			*reinterpret_cast<void**>(result_address) = std::memcpy(
 				*reinterpret_cast<void**>(args[0]),
 				*reinterpret_cast<const void**>(args[1]),
@@ -51,6 +138,7 @@ IRProgram::IRProgram(): m_checker{ this } {
 
 	add_external_function("free", new IRExternalFunction{
 		"free",
+		m_current_fn_index++,
 		std::free,
 		m_dtm.get_void(),
 		{m_dtm.get_void_star()},
@@ -73,7 +161,8 @@ IRFunction* IRProgram::add_function(const std::string& name,bool is_in,const Typ
 	if (l_param_names.size() != l_param_types.size())
 		throw std::runtime_error("number of parameters is different from number of types passed");
 
-	IRFunction* ir_function = new IRFunction{m_functions.size(), name,is_in,return_type,this};
+	IRFunction* ir_function = new IRFunction{m_current_fn_index, name,is_in,return_type,this};
+	m_current_fn_index++;
 	m_functions[name].push_back(ir_function);
 
 	std::vector<IRVariable*> params;
@@ -97,6 +186,9 @@ void IRProgram::check_program() {
 
 const std::unordered_map<std::string, std::vector<IRFunction*>>& IRProgram::get_functions() const {
 	return m_functions;
+}
+const std::unordered_map<std::string, std::vector<IRExternalFunction*>>& IRProgram::get_external_functions() const {
+	return m_external_fns;
 }
 
 std::vector<IRBaseFunction*> IRProgram::get_functions_with_name(const std::string& name) const {
@@ -205,6 +297,41 @@ IRFunction* IRProgram::get_function(const std::string& name, const std::vector<T
 	}
 
 	return nullptr;
+}
+
+void IRProgram::sort_blocks() {
+	for (auto &[name,functions] : m_functions) {
+		
+		for (IRFunction* fn : functions) {
+			IRBasicBlock* starting_blk = fn->get_basic_blk(0);
+			int number_of_blocks = fn->get_basic_blocks().size();
+			std::vector<bool> visited(number_of_blocks,false);
+			std::queue<IRBasicBlock*> queue;
+			std::vector<IRBasicBlock*> traversal_order;
+			queue.push(starting_blk);
+			traversal_order.push_back(starting_blk);
+
+			visited[starting_blk->get_index()] = true;
+			while (!queue.empty()) {
+
+				IRBasicBlock* current_blk = queue.front();
+				queue.pop();
+
+				for (IRBasicBlock* successor : current_blk->get_successors()) {
+					if (!visited[successor->get_index()]) {
+						visited[successor->get_index()] = true;
+						traversal_order.push_back(successor);
+						queue.push(successor);
+					}
+				}
+			}
+
+			for (size_t i = 0; i < traversal_order.size();i++)
+				traversal_order[i]->set_index(i);
+
+			fn->m_basic_blocks = std::move(traversal_order);
+		}
+	}
 }
 
 IRExternalFunction* IRProgram::get_external_function(const std::string& name, const std::vector<TypeRef>& argument_types) {

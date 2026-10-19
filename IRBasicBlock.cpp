@@ -45,6 +45,8 @@ void IRBasicBlock::add_successor(IRBasicBlock* blk) {
 	}
 }
 
+void IRBasicBlock::set_index(size_t i) { m_index = i; }
+
 std::vector<IRBasicBlock*> IRBasicBlock::get_successors() const {
 	std::vector<IRBasicBlock*> blks;
 	for (const auto& [key, value] : m_successors) {

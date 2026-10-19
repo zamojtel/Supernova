@@ -1,0 +1,15 @@
+
+int [2] return_array(){
+	int [2] t;
+	t[0] = 1 ;
+	t[1] = 2 ;
+
+	return t;
+}
+
+int main(){
+	print(return_array());
+	return 0;
+}
+#------------------
+[1,2]

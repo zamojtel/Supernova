@@ -1,0 +1,26 @@
+int fun(int a,int b){
+	return a*b;
+}
+
+double fun(double a,double b){
+	return a+b;
+}
+
+int main(){
+	int a = 10;
+	int b = 20;
+	double c = 33.00;
+	double d = 44.00;
+	float e = 50.00f;
+
+	int result1 = fun(a,b);
+	double result2 = fun(c,d);
+
+	print(result1);
+	print(result2);
+
+	return 0;
+}
+#------------------
+200
+77

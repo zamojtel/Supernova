@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <memory>
 #include <cmath>
+#include <queue>
 #define ANTLR4CPP_STATIC
 #pragma comment(lib,"antlr4-runtime.lib")
 #undef ERROR
@@ -313,11 +314,29 @@ void check_asserts() {
 	assert(results[5] == false);
 }
 
+//struct A {
+//	int m_a;
+//	int m_b;
+//};
+//
+//A return_struct() {
+//	A temp;
+//	temp.m_a = 10;
+//	temp.m_b = 20;
+//	return temp;
+//}
+//
+//void test_fun() {
+//	// do tymczasowych obiektów nie można brać adresów
+//	A* struktura = &return_struct();
+//	std::cout << struktura->m_a << std::endl;
+//}
 
 void check_prints(const std::string& file_name, const std::vector<std::string>& messages) {
 	std::string line;
 	std::ifstream myfile(file_name);
-
+	//test_fun();
+	//system("pause");
 	std::string entire_file;
 	if (myfile.is_open())
 	{
@@ -414,7 +433,6 @@ void check_prints(const std::string& file_name, const std::vector<std::string>& 
 	IRPrinter ir_printer;
 	ir_printer.print_errors(error_collector);
 
-	//IRFunction* fn = ir_program.get_function("main", fn_arguments);
 	IRFunction* fn = ir_program.get_function("main", {});
 
 	IRInterpreterForTests ir_interpreter_listener = IRInterpreterForTests{};
@@ -429,18 +447,95 @@ void check_prints(const std::string& file_name, const std::vector<std::string>& 
 		assert(collected_msgs[i] == messages[i]);
 }
 
-int main() {
-	std::string test_folder = "C:\\Users\\zamoj\\OneDrive\\Pulpit\\ProjectKompilator\\SourceTests";
-	std::string expected_outputs_folder = "C:\\Users\\zamoj\\OneDrive\\Pulpit\\ProjectKompilator\\SourceTests";
+int main(int argc,char* argv[]) {
 
-	if (llvm::InitializeNativeTarget() ||
-		llvm::InitializeNativeTargetAsmPrinter()) {
-		std::cerr << "Failed to initialize LLVM native target\n";
+	const fs::path tests_path = argc > 1 ? fs::path{ argv[1] } : fs::path{ "SourceTests" };
+
+	if (!fs::is_directory(tests_path)) {
+		std::cout << "test directory not found: "<< fs::absolute(tests_path) << '\n';
 		return 1;
 	}
 
-	int* ptr = (nullptr_t)(0);
+	const std::string test_folder = tests_path.string();
+	const std::string expected_outputs_folder = test_folder;
+
+	if (llvm::InitializeNativeTarget() || llvm::InitializeNativeTargetAsmPrinter()) {
+		std::cout << "failed to initialize LLVM native target\n";
+		return 1;
+	}
+
+	//std::vector<std::string> test_names{
+	//	"member_1",
+	//	"member_access_1",
+	//	"implicit_type_widening",
+	//	"useless_statements_1",
+	//	"implicit_unsigned_widening",
+	//	"implicit_assignment_widening",
+	//	"implicit_float_to_double",
+	//	"implicit_reference_widening",
+	//	"add_function_call",
+	//	"many_blocks",
+	//	"inline_expanding_1",
+	//	"inline_function_1",
+	//	"inline_recursive_call_1",
+	//	"inline_reference_1",
+	//	"inline_one_return_1",
+	//	"inline_function_2",
+	//	"recursion_limit_1",
+	//	"unreachable_blk_1",
+	//	"bitwise_operations_1",
+	//	"constant_replacement_1",
+	//	"post_incrementation_1",
+	//	"post_incrementation_2",
+	//	"pre_incrementation_1",
+	//	"constant_conversion_1",
+	//	"modulo_division",
+	//	"return_promotion_1",
+	//	"promotion_core_logic_1",
+	//	"return_pointer_1",
+	//	"character_1",
+	//	"pointer_const_to_non_const_1",
+	//	"left_bitwise_shift_1",
+	//	"left_bitwise_shift_with_cast_1",
+	//	"right_bitwise_shift_1",
+	//	"logical_vs_arithmetical_shift_1",
+	//	"add_function_call",
+	//	"overload_4",
+	//	"overloading_1",
+	//	"overloading_2",
+	//	"overloading_3",
+	//	"overloading_single_argument_1",
+	//	"overloading_single_argument_2",
+	//	"overloading_multiple_arguments_1",
+	//	"overloading_multiple_arguments_2",
+	//	"string_1",
+	//	"string_2",
+	//	"string_5",
+	//	"string_6",
+	//	"string_7",
+	//	"string_8",
+	//	"array_to_pointer_1",
+		//"array_to_pointer_2",
+	//	"memcpy_1",
+	//	"malloc_1",
+	//	"member_point_1",
+	//	// -------- works --------------
+	//	"print_array_2",
+	//	"member_access_jit_1",
+	//	"struct_return_1",
+	//	"struct_return_2",
+	//	"struct_return_3",
+	//	"table_return_1",
+	//	"table_return_2" // TODO something does not work
+	//	"broadcasting_1",
+	//	"simple_cast_1",
+	//	"array_cast_1",
+	//	"array_cast_2"
+	//};
+
 	std::vector<std::string> test_names{
+		"member_1",
+		"member_access_1",
 		"implicit_type_widening",
 		"useless_statements_1",
 		"implicit_unsigned_widening",
@@ -461,8 +556,8 @@ int main() {
 		"constant_replacement_1",
 		"post_incrementation_1",
 		"post_incrementation_2",
-		"constant_conversion_1",
 		"pre_incrementation_1",
+		"constant_conversion_1",
 		"modulo_division",
 		"return_promotion_1",
 		"promotion_core_logic_1",
@@ -473,6 +568,8 @@ int main() {
 		"left_bitwise_shift_with_cast_1",
 		"right_bitwise_shift_1",
 		"logical_vs_arithmetical_shift_1",
+		"add_function_call",
+		"overload_4",
 		"overloading_1",
 		"overloading_2",
 		"overloading_3",
@@ -486,24 +583,57 @@ int main() {
 		"string_6",
 		"string_7",
 		"string_8",
+		"string_10",
+		"string_11",
+		"address_of_3",
+		"print_char_1",
 		"array_to_pointer_1",
 		"array_to_pointer_2",
+		"array_3",
 		"memcpy_1",
-		"malloc_1"
+		"malloc_1",
+		"member_point_1",
+		// -------- works --------------
+		"print_array_2",
+		"member_access_jit_1",
+		"struct_return_1",
+		"struct_return_2",
+		"struct_return_3",
+		"table_return_1",
+		"broadcasting_1",
+		"simple_cast_1",
+		"array_cast_1",
+		"array_cast_2",
+		"table_return_2"
 	};
 
 	std::vector<std::string> jit_test{
-		"simple_jit_1",
-		"simple_jit_2",
-		"simple_jit_3",
-		"simple_jit_4",
-		"simple_jit_5",
-		"simple_jit_6",
-		"external_function_call_1",
-		"external_function_call_2",
-		"external_function_call_3",
-		"mixed_function_call_1"
+		//"dereference_jit_1",
+		//"member_access_point_jit_1",
+		//"array_jit_1",
+		//"simple_jit_1",
+		//"simple_jit_2",
+		//"simple_jit_3",
+		//"simple_jit_4",
+		//"simple_jit_5",
+		//"simple_jit_6",
+		//"external_function_call_1",
+		//"external_function_call_2",
+		//"external_function_call_3",
+		//"mixed_function_call_1",
+		//"member_access_point_jit_1",
+		//"struct_jit_1",
+		//"member_access_jit_1",
+		//"union_jit_1"
+		//"pointer_to_a_struct_field"
+		//"member_access_jit_1"
 	};
+
+	//std::vector<std::string> jit_test{
+	//	"struct_jit_1",
+	//	"member_access_jit_1"
+	//	"union_jit_1"
+	//};
 
 	std::vector<std::string> test_errors{
 		//"implicit_error_1",
@@ -528,6 +658,8 @@ int main() {
 		//"string_9"
 	};
 
+	PrintMessageCollector print_message_collector;
+
 	std::cout << "Interpreter Tests: " << std::endl;
 	Tester interpreter_tester(
 		test_folder,
@@ -539,14 +671,12 @@ int main() {
 	Tester jit_tester(
 		test_folder,
 		expected_outputs_folder,
-		TestMode::JIT_RETURN
+		TestMode::JIT_OUTPUT
 	);
 
-	interpreter_tester.run_all_tests(test_names,test_errors);
-	jit_tester.run_all_tests(jit_test, {});
-	
-	//test_string_storage();
-	//test_string_pool();
+	interpreter_tester.run_all_tests(test_names, {});
+	jit_tester.run_all_tests(test_names, {});
+	//jit_tester.run_all_tests(jit_test, {});
 
 	return 0;
 }

@@ -1,0 +1,11 @@
+
+
+
+int main(){
+	float x = 123.32;
+	int y = (int) x;
+	print(y);
+	return 0;
+}
+#------------------
+123

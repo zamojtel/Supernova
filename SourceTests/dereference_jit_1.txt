@@ -1,0 +1,9 @@
+int main() {
+    int a = 7;
+    int* ptr = &a;
+    *ptr = 123;
+    print(*ptr);
+    return 0;
+}
+#------------------
+123

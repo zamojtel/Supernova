@@ -131,6 +131,10 @@ bool IRDataTypeTraits::can_explicitly_convert(const IROperand& op,const TypeRef&
 	const TypeRef& from_value = op.get_data_type().remove_reference().remove_qualifiers();
 	const TypeRef& to_value = to.remove_reference().remove_qualifiers();
 	
+	if (from_value.is_array() && to_value.is_array() && can_explicitly_convert(from_value.remove_array(),to_value.remove_array())) {
+		return true;
+	}
+
 	if (from_value.is_pointer() &&
 		to_value.is_pointer() &&
 		can_implicitly_convert_pointers(from_value, to_value)) {
