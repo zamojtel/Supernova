@@ -82,6 +82,8 @@ std::string IRPrinter::ir_operation_to_string(const IROperation op) const {
 		return "ARRAY_TO_POINTER";
 	case IROperation::WRITE_TO_POINTER:
 		return "WRITE_TO_POINTER";
+	case IROperation::SELECT:
+		return "SELECT";
 	default:
 		throw std::runtime_error("can't find such ir operation");
 	}

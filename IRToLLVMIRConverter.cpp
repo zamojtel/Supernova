@@ -109,9 +109,16 @@ llvm::Type* IRToLLVMIRConverter::get_llvm_type(const TypeRef& type) const {
 	}
 
 	if (normalized_type.is_array()) {
-		llvm::Type* element_type = get_llvm_type(normalized_type.remove_array());
+		const TypeRef element_type_ref = normalized_type.remove_array().remove_qualifiers();
+		llvm::Type* element_type = get_llvm_type(element_type_ref);
 		IRArrayNode *array_node = static_cast<IRArrayNode*>(normalized_type.get_data_type_node());
-		return llvm::ArrayType::get(element_type, array_node->get_count());
+
+		if (element_type_ref.is_numeric()) {
+			return llvm::FixedVectorType::get(element_type,array_node->get_count());
+		}
+		else {
+			return llvm::ArrayType::get(element_type, array_node->get_count());
+		}
 	}
 
 	if (normalized_type.is_struct()) {
@@ -449,33 +456,67 @@ void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
 			case IROperation::SUB: {
 				const TypeRef left_type = triple->m_operands[0].get_data_type().remove_reference().remove_qualifiers();
 				const TypeRef right_type = triple->m_operands[1].get_data_type().remove_reference().remove_qualifiers();
-				if (left_type.is_array()) {
-					IRArrayNode* left_array_node = static_cast<IRArrayNode*>(left_type.get_data_type_node());
-					size_t count = left_array_node->get_count();
-					llvm::Value* left_array_value = get_operand_value(triple->m_operands[0]);
-					llvm::Value* right_array_value = get_operand_value(triple->m_operands[1]);
-					// destination is the same as the left type
-					llvm::Value* result_array = llvm::UndefValue::get(get_llvm_type(left_type));
-					const TypeRef element_type = left_type.remove_array().remove_reference().remove_qualifiers();
 
-					for (size_t i = 0; i < count;i++) {
-						llvm::Value* left_array_element = m_builder->CreateExtractValue(left_array_value, { static_cast<unsigned>(i) });
-						llvm::Value* right_array_element = m_builder->CreateExtractValue(right_array_value, { static_cast<unsigned>(i) });
-						
-						bool integer = element_type.is_integer();
-						auto op_code = integer ? llvm::Instruction::BinaryOps::Add : llvm::Instruction::BinaryOps::FAdd;
+				//if (left_type.is_array()) {
+				//	// NOT FOR VECTOR
+				//	//IRArrayNode* left_array_node = static_cast<IRArrayNode*>(left_type.get_data_type_node());
+				//	//size_t count = left_array_node->get_count();
+				//	//llvm::Value* left_array_value = get_operand_value(triple->m_operands[0]);
+				//	//llvm::Value* right_array_value = get_operand_value(triple->m_operands[1]);
+				//	//// destination is the same as the left type
+				//	//llvm::Value* result_array = llvm::UndefValue::get(get_llvm_type(left_type));
+				//	//const TypeRef element_type = left_type.remove_array().remove_reference().remove_qualifiers();
 
-						if (triple->get_ir_operation() == IROperation::SUB)
-							op_code = integer ? llvm::Instruction::BinaryOps::Sub : llvm::Instruction::BinaryOps::FSub;
+				//	//for (size_t i = 0; i < count;i++) {
+				//	//	llvm::Value* left_array_element = m_builder->CreateExtractValue(left_array_value, { static_cast<unsigned>(i) });
+				//	//	llvm::Value* right_array_element = m_builder->CreateExtractValue(right_array_value, { static_cast<unsigned>(i) });
+				//	//	
+				//	//	bool integer = element_type.is_integer();
+				//	//	auto op_code = integer ? llvm::Instruction::BinaryOps::Add : llvm::Instruction::BinaryOps::FAdd;
 
-						if (triple->get_ir_operation() == IROperation::MUL)
-							op_code = integer ? llvm::Instruction::BinaryOps::Mul : llvm::Instruction::BinaryOps::FMul;
+				//	//	if (triple->get_ir_operation() == IROperation::SUB)
+				//	//		op_code = integer ? llvm::Instruction::BinaryOps::Sub : llvm::Instruction::BinaryOps::FSub;
 
-						llvm::Value* calc_value = m_builder->CreateBinOp(op_code, left_array_element , right_array_element);
-						result_array = m_builder->CreateInsertValue(result_array,calc_value, { static_cast<unsigned>(i) });
-					}
+				//	//	if (triple->get_ir_operation() == IROperation::MUL)
+				//	//		op_code = integer ? llvm::Instruction::BinaryOps::Mul : llvm::Instruction::BinaryOps::FMul;
 
-					m_triple_values[triple->get_global_index()] = result_array;
+				//	//	llvm::Value* calc_value = m_builder->CreateBinOp(op_code, left_array_element , right_array_element);
+				//	//	result_array = m_builder->CreateInsertValue(result_array,calc_value, { static_cast<unsigned>(i) });
+				//	//}
+
+				//	//m_triple_values[triple->get_global_index()] = result_array;
+				//}
+				if (left_type.is_array() || right_type.is_array()) {
+					const TypeRef res_type = triple->get_data_type().remove_reference().remove_qualifiers();
+					size_t res_count = static_cast<IRArrayNode*>(res_type.get_data_type_node())->get_count();
+					size_t left_count = left_type.is_array() ? static_cast<IRArrayNode*>(left_type.get_data_type_node())->get_count() : 1;
+					size_t right_count = right_type.is_array() ? static_cast<IRArrayNode*>(right_type.get_data_type_node())->get_count() : 1;
+					llvm::Value* left_val = get_operand_value(triple->m_operands[0]);
+					llvm::Value* right_val = get_operand_value(triple->m_operands[1]);
+
+					auto broadcast_to_res = [&](llvm::Value* val, const TypeRef& t, size_t count) -> llvm::Value* {
+						if (!t.is_array())
+							return m_builder->CreateVectorSplat(res_count, val);
+						if (count == res_count)
+							return val;
+						std::vector<int> mask(res_count);
+						for (size_t i = 0; i < res_count; i++)
+							mask[i] = static_cast<int>(i % count);
+						return m_builder->CreateShuffleVector(val, llvm::UndefValue::get(val->getType()), mask);
+					};
+
+					left_val = broadcast_to_res(left_val, left_type, left_count);
+					right_val = broadcast_to_res(right_val, right_type, right_count);
+					
+					const TypeRef element_type = res_type.remove_array().remove_reference().remove_qualifiers();
+					bool integer = element_type.is_integer();
+					auto op_code = integer ? llvm::Instruction::BinaryOps::Add : llvm::Instruction::BinaryOps::FAdd;
+					if (triple->get_ir_operation() == IROperation::SUB)
+						op_code = integer ? llvm::Instruction::BinaryOps::Sub : llvm::Instruction::BinaryOps::FSub;
+					if (triple->get_ir_operation() == IROperation::MUL)
+						op_code = integer ? llvm::Instruction::BinaryOps::Mul : llvm::Instruction::BinaryOps::FMul;
+
+					m_triple_values[triple->get_global_index()] = m_builder->CreateBinOp(op_code, left_val, right_val);
 				}
 				else {
 					// for basic types
@@ -672,6 +713,10 @@ void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
 					}
 					case IRBasicType::DOUBLE: {
 						m_triple_values[triple->m_global_index] = get_function_call_instance(triple, print<double>);
+						break;
+					}
+					case IRBasicType::BOOL: {
+						m_triple_values[triple->m_global_index] = get_function_call_instance(triple, print<bool>);
 						break;
 					}
 					case IRBasicType::UINT8: {
@@ -980,12 +1025,10 @@ void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
 				IRVariable* variable = triple->m_operands[0].get_variable();
 				llvm::Value* ptr = nullptr;
 
-				if (variable->is_global()) {
+				if (variable->is_global())
 					ptr = m_global_variables[variable->get_index()];
-				}
-				else {
+				else
 					ptr = m_variables[variable->get_index()];
-				}
 
 				llvm::Value* old_value = get_operand_value(triple->m_operands[0]);
 				llvm::Value* new_value = nullptr;

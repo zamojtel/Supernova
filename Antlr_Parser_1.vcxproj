@@ -746,7 +746,15 @@
     <Text Include="SourceTests\array_cast_1.txt" />
     <Text Include="SourceTests\array_cast_2.txt" />
     <Text Include="SourceTests\array_jit_1.txt" />
+    <Text Include="SourceTests\array_operation_1.txt" />
+    <Text Include="SourceTests\bool_value_1.txt" />
+    <Text Include="SourceTests\bool_value_2.txt" />
     <Text Include="SourceTests\broadcasting_1.txt" />
+    <Text Include="SourceTests\broadcasting_2.txt" />
+    <Text Include="SourceTests\broadcasting_3.txt" />
+    <Text Include="SourceTests\broadcasting_4.txt" />
+    <Text Include="SourceTests\broadcasting_5.txt" />
+    <Text Include="SourceTests\domination_frontiers_1.txt" />
     <Text Include="SourceTests\overload_4.txt" />
     <Text Include="SourceTests\print_array_2.txt" />
     <Text Include="SourceTests\array_to_pointer_1.txt" />

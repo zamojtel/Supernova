@@ -292,7 +292,6 @@ void Interpreter::start(IRFunction* fn) {
 				IROperand op = current_triple->m_operands[0];
 				uint8_t* value_address = get_operand_address(op);
 				std::string msg;
-				//std::sin;
 				if (type.is_string()) {
 					const char* pointer_value = nullptr;
 					memcpy(&pointer_value, value_address, sizeof(pointer_value));
@@ -321,30 +320,7 @@ void Interpreter::start(IRFunction* fn) {
 
 			break;
 		}
-		//case IROperation::MEMCPY: {
-		//	IROperand dest = current_triple->m_operands[0];
-		//	IROperand source = current_triple->m_operands[1];
-		//	IROperand count = current_triple->m_operands[2];
 
-		//	uint8_t* value = get_operand_address(count);
-		//	IRBasicType basic_type = count.get_data_type().get_ir_basic_type();
-		//	ConstantValue cv = ConstantValue{ basic_type,value };
-		//	// naprawic memcpy 
-
-		//	std::optional<uint64_t> converted_value = cv.unsafe_convert_value_to<uint64_t>();
-		//	if (converted_value.has_value()) {
-		//		uint64_t c_value = converted_value.value();
-		//		uint8_t* dest_address = nullptr;
-		//		uint8_t* source_address = nullptr;
-		//		memcpy(&dest_address,get_operand_address(dest),sizeof(dest_address));
-		//		memcpy(&source_address,get_operand_address(source),sizeof(source_address));
-		//		memcpy(dest_address, source_address, c_value);
-		//	}
-		//	else
-		//		throw std::runtime_error("could not read the value");
-
-		//	break;
-		//}
 		case IROperation::ARRAY_TO_POINTER: {
 			IROperand type = current_triple->m_operands[0];
 			IROperand array = current_triple->m_operands[1];

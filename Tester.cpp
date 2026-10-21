@@ -6,6 +6,45 @@ Tester::Tester(const std::string& s_d, const std::string& e_d,TestMode m) :m_sou
     }
 }
 
+void print_module_assembly(llvm::Module& module) {
+    std::string error;
+    std::string target_triple = module.getTargetTriple();
+    if (target_triple.empty()) {
+        target_triple = llvm::sys::getDefaultTargetTriple();
+        module.setTargetTriple(target_triple);
+    }
+    const llvm::Target* target = llvm::TargetRegistry::lookupTarget(target_triple, error);
+    if (!target) {
+        llvm::errs() << "Target lookup failed: " << error << "\n";
+        return;
+    }
+    llvm::TargetOptions opt;
+    std::unique_ptr<llvm::TargetMachine> target_machine(
+        target->createTargetMachine(
+            target_triple,
+            //"generic", // lub np. "znver3" / "skylake" / llvm::sys::getHostCPUName()
+            //"",
+            llvm::sys::getHostCPUName(), // zamiast "generic"
+            "+avx2",
+            opt,
+            llvm::Reloc::PIC_,
+            std::nullopt,
+            llvm::CodeGenOptLevel::Default // albo None (-O0) / Aggressive (-O3)
+        )
+    );
+    module.setDataLayout(target_machine->createDataLayout());
+    llvm::SmallString<0> asm_buffer;
+    llvm::raw_svector_ostream dest(asm_buffer);
+    llvm::legacy::PassManager pass;
+    if (target_machine->addPassesToEmitFile(pass, dest, nullptr, llvm::CodeGenFileType::AssemblyFile)) {
+        llvm::errs() << "TargetMachine can't emit assembly file!\n";
+        return;
+    }
+    pass.run(module);
+    llvm::outs() << "\n=== GENERATED ASSEMBLY ===\n"
+        << asm_buffer
+        << "==========================\n";
+}
 
 std::string Tester::read_entire_file(const fs::path& file_path) {
     std::vector<std::string> lines;
@@ -269,20 +308,35 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
 
         auto llvm_module = ir_to_llvm_converter.convert();
         auto jit_result = llvm::orc::LLJITBuilder().create();
+       
 
         if (!jit_result) {
             llvm::errs() << llvm::toString(jit_result.takeError()) << '\n';
             return false;
         }
 
+
         std::unique_ptr<llvm::orc::LLJIT> jit = std::move(*jit_result);
+        
         bool invalid_module = llvm_module.withModuleDo(
             [&](llvm::Module& module) {
                 module.setDataLayout(jit->getDataLayout());
                 module.setTargetTriple(jit->getTargetTriple().str());
-                return llvm::verifyModule(module, &llvm::errs());
+                bool broken = llvm::verifyModule(module, &llvm::errs());
+                if (!broken) {
+                    print_module_assembly(module);
+                }
+                return broken;
             }
         );
+
+        //bool invalid_module = llvm_module.withModuleDo(
+        //    [&](llvm::Module& module) {
+        //        module.setDataLayout(jit->getDataLayout());
+        //        module.setTargetTriple(jit->getTargetTriple().str());
+        //        return llvm::verifyModule(module, &llvm::errs());
+        //    }
+        //);
 
         if (invalid_module)
             return false;

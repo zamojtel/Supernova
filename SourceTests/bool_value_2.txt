@@ -1,0 +1,9 @@
+
+int main(){
+	int x = 10;
+	bool y = (x > 1) && (x<=10);
+	print(y);
+	return 0;
+}
+#------------------
+1

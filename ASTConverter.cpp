@@ -127,6 +127,8 @@ IROperand ASTConverter::get_op(const ReferencePtr<AbstractSyntaxTreeNode> &node)
 		break;
 	case TreeNodeType::CHAR:
 		break;
+	case TreeNodeType::AND:
+		break;
 	default:
 		throw std::runtime_error("unkown tree node type");
 		break;
