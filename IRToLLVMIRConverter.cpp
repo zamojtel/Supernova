@@ -113,7 +113,7 @@ llvm::Type* IRToLLVMIRConverter::get_llvm_type(const TypeRef& type) const {
 		llvm::Type* element_type = get_llvm_type(element_type_ref);
 		IRArrayNode *array_node = static_cast<IRArrayNode*>(normalized_type.get_data_type_node());
 
-		if (element_type_ref.is_numeric()) {
+		if (element_type_ref.is_numeric() || element_type_ref.is_boolean()) {
 			return llvm::FixedVectorType::get(element_type,array_node->get_count());
 		}
 		else {
@@ -303,6 +303,31 @@ void print_llvm_type(llvm::Type * type) {
 
 	type->print(llvm::outs());
 	llvm::outs() << '\n';
+}
+
+//auto broadcast_to_res = [&](llvm::Value* val, const TypeRef& t, size_t count) -> llvm::Value* {
+//	if (!t.is_array())
+//		return m_builder->CreateVectorSplat(res_count, val);
+//	if (count == res_count)
+//		return val;
+//	std::vector<int> mask(res_count);
+//	for (size_t i = 0; i < res_count; i++)
+//		mask[i] = static_cast<int>(i % count);
+//	return m_builder->CreateShuffleVector(val, llvm::UndefValue::get(val->getType()), mask);
+//	};
+
+llvm::Value* IRToLLVMIRConverter::expand_vector(llvm::Value* value,const TypeRef& type,size_t count,size_t result_count) {
+	if (!type.is_array())
+		return m_builder->CreateVectorSplat(result_count,value);
+
+	if (count == result_count)
+		return value;
+	std::vector<int> mask(result_count);
+
+	for (size_t i = 0; i < result_count;i++)
+		mask[i] = static_cast<int>(i%count);
+
+	return m_builder->CreateShuffleVector(value,llvm::UndefValue::get(value->getType()),mask);
 }
 
 void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
@@ -532,6 +557,31 @@ void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
 
 					convert_arithmetic_operation(op_code, triple);
 				}
+				break;
+			}
+			case IROperation::SELECT: {
+				const TypeRef cond_type = triple->m_operands[0].get_data_type().remove_reference().remove_qualifiers();
+				const TypeRef true_type = triple->m_operands[1].get_data_type().remove_reference().remove_qualifiers();
+				const TypeRef false_type = triple->m_operands[2].get_data_type().remove_reference().remove_qualifiers();
+				const TypeRef result_type = triple->get_data_type().remove_reference().remove_qualifiers();
+
+				size_t result_count = result_type.is_array() ? static_cast<IRArrayNode*>(result_type.get_data_type_node())->get_count() : 1;
+				size_t cond_count = cond_type.is_array() ? static_cast<IRArrayNode*>(cond_type.get_data_type_node())->get_count() : 1;
+				size_t true_count = true_type.is_array() ? static_cast<IRArrayNode*>(true_type.get_data_type_node())->get_count() : 1;
+				size_t false_count = false_type.is_array() ? static_cast<IRArrayNode*>(false_type.get_data_type_node())->get_count() : 1;
+
+				llvm::Value* cond_value = get_operand_value(triple->m_operands[0]);
+				llvm::Value* true_value = get_operand_value(triple->m_operands[1]);
+				llvm::Value* false_value = get_operand_value(triple->m_operands[2]);
+
+				if (result_type.is_array()) {
+					cond_value = expand_vector(cond_value,cond_type,cond_count,result_count);
+					true_value = expand_vector(true_value,true_type,true_count,result_count);
+					false_value = expand_vector(false_value,false_type,false_count,result_count);
+				}
+
+				m_triple_values[triple->get_global_index()] = m_builder->CreateSelect(cond_value,true_value,false_value);
+
 				break;
 			}
 			case IROperation::CAST: {
