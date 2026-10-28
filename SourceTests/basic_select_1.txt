@@ -1,0 +1,12 @@
+int main() {
+    int [4] data;
+    data[0] = -5;
+    data[1] = 10;
+    data[2] = 0;
+    data[3] = 7;
+    int [4] sign = select(data >= 0, 1, -1);
+    print(sign);
+    return 0;
+}
+#------------------
+[-1,1,1,1]

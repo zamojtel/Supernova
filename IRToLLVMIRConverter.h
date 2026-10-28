@@ -31,4 +31,5 @@ public:
 	llvm::CallInst* get_function_call_instance_array(IRTriple* triple, void* fn_address);
 	llvm::FunctionType* get_llvm_function_type(IRBaseFunction* base_fn);
 	llvm::Value* expand_vector(llvm::Value* val, const TypeRef& type, size_t count, size_t result_count);
+	llvm::CmpInst::Predicate get_cmp_predicate(IROperation operation, bool is_float, bool is_signed);
 };

@@ -1,0 +1,13 @@
+int main() {
+    int [5] raw;
+    raw[0] = -25;
+    raw[1] = 0;
+    raw[2] = 45;
+    raw[3] = 100;
+    raw[4] = 250;
+    int [5] clamped = select(raw < 0, 0, select(raw > 100, 100, raw)); // 0 - 100
+    print(clamped);
+    return 0;
+}
+#------------------
+[0,0,45,100,100]
