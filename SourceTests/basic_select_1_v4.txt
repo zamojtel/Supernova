@@ -1,0 +1,14 @@
+int main() {
+    float [4] data;
+    data[0] = -5;
+    data[1] = 10;
+    data[2] = 0;
+    data[3] = 7;
+    float a = 7.0f;
+    float b = 15.0f;
+    float [4] sign = select(data >= 0.0f, a, b);
+    print(sign);
+    return 0;
+}
+#------------------
+[15,7,7,7]

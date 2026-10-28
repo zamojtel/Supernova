@@ -1402,5 +1402,13 @@
     <Text Include="SourceTests\array_3.txt" />
     <Text Include="SourceTests\string_11.txt" />
     <Text Include="SourceTests\address_of_3.txt" />
+    <Text Include="SourceTests\domination_frontiers_1.txt" />
+    <Text Include="SourceTests\array_operation_1.txt" />
+    <Text Include="SourceTests\bool_value_1.txt" />
+    <Text Include="SourceTests\bool_value_2.txt" />
+    <Text Include="SourceTests\broadcasting_2.txt" />
+    <Text Include="SourceTests\broadcasting_3.txt" />
+    <Text Include="SourceTests\broadcasting_4.txt" />
+    <Text Include="SourceTests\broadcasting_5.txt" />
   </ItemGroup>
 </Project>

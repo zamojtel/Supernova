@@ -1,0 +1,22 @@
+
+int main(){
+	// int [3] t{1,2,3,4};
+	// int [3] t = {1,2,3,4};
+	int [3] t1;
+	int [3] t2;
+
+	t1[0] = 0;
+	t1[1] = 1;
+	t1[2] = 2;
+
+	t2[0] = 1;
+	t2[1] = 0;
+	t2[2] = 5;
+
+	// bool [3] result = (int [3])(t1<t2); // [true,false,true]
+	int [3] result = (int [3])(t1<t2); // [true,false,true]
+	print(result);
+	return 0;
+}
+#------------------
+[1,0,1]

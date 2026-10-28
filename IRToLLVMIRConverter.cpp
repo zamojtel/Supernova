@@ -109,9 +109,16 @@ llvm::Type* IRToLLVMIRConverter::get_llvm_type(const TypeRef& type) const {
 	}
 
 	if (normalized_type.is_array()) {
-		llvm::Type* element_type = get_llvm_type(normalized_type.remove_array());
+		const TypeRef element_type_ref = normalized_type.remove_array().remove_qualifiers();
+		llvm::Type* element_type = get_llvm_type(element_type_ref);
 		IRArrayNode *array_node = static_cast<IRArrayNode*>(normalized_type.get_data_type_node());
-		return llvm::ArrayType::get(element_type, array_node->get_count());
+
+		if (element_type_ref.is_numeric() || element_type_ref.is_boolean()) {
+			return llvm::FixedVectorType::get(element_type,array_node->get_count());
+		}
+		else {
+			return llvm::ArrayType::get(element_type, array_node->get_count());
+		}
 	}
 
 	if (normalized_type.is_struct()) {
@@ -222,6 +229,49 @@ void IRToLLVMIRConverter::create_llvm_function(IRBaseFunction* current_fn) {
 	m_function_callees.at(current_fn->get_index()) = llvm::FunctionCallee(function_type, llvm_callee);
 }
 
+llvm::CmpInst::Predicate IRToLLVMIRConverter::get_cmp_predicate(IROperation operation,bool is_float,bool is_signed) {
+	if (is_float) {
+		switch (operation)
+		{
+		case IROperation::GT:
+			return llvm::CmpInst::FCMP_OGT;
+		case IROperation::GE:
+			return llvm::CmpInst::FCMP_OGE;
+		case IROperation::LT:
+			return llvm::CmpInst::FCMP_OLT;
+		case IROperation::LE:
+			return llvm::CmpInst::FCMP_OLE;
+		case IROperation::EQ:
+			return llvm::CmpInst::FCMP_OEQ;
+		case IROperation::NEQ:
+			return llvm::CmpInst::FCMP_ONE;
+		default:
+			throw std::runtime_error("invalid float comparison operation");
+			break;
+		}
+	}
+	else {
+		switch (operation)
+		{
+		case IROperation::GT:
+			return is_signed ? llvm::CmpInst::ICMP_SGT : llvm::CmpInst::ICMP_UGT;
+		case IROperation::GE:
+			return is_signed ? llvm::CmpInst::ICMP_SGE : llvm::CmpInst::ICMP_UGE;
+		case IROperation::LT:
+			return is_signed ? llvm::CmpInst::ICMP_SLT : llvm::CmpInst::ICMP_ULT;
+		case IROperation::LE:
+			return is_signed ? llvm::CmpInst::ICMP_SLE : llvm::CmpInst::ICMP_ULE;
+		case IROperation::EQ:
+			return llvm::CmpInst::ICMP_EQ;
+		case IROperation::NEQ:
+			return llvm::CmpInst::ICMP_NE;
+		default:
+			throw std::runtime_error("invalid integer comparison operation");
+			break;
+		}
+	}
+}
+
 IRToLLVMIRConverter::IRToLLVMIRConverter(IRProgram* ir_program) : m_ir_program{ ir_program } {
 	size_t counter = 0;
 	auto& fn_map = m_ir_program->get_functions();
@@ -296,6 +346,20 @@ void print_llvm_type(llvm::Type * type) {
 
 	type->print(llvm::outs());
 	llvm::outs() << '\n';
+}
+
+llvm::Value* IRToLLVMIRConverter::expand_vector(llvm::Value* value,const TypeRef& type,size_t count,size_t result_count) {
+	if (!type.is_array())
+		return m_builder->CreateVectorSplat(result_count,value);
+
+	if (count == result_count)
+		return value;
+	std::vector<int> mask(result_count);
+
+	for (size_t i = 0; i < result_count;i++)
+		mask[i] = static_cast<int>(i%count);
+
+	return m_builder->CreateShuffleVector(value,llvm::UndefValue::get(value->getType()),mask);
 }
 
 void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
@@ -449,43 +513,36 @@ void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
 			case IROperation::SUB: {
 				const TypeRef left_type = triple->m_operands[0].get_data_type().remove_reference().remove_qualifiers();
 				const TypeRef right_type = triple->m_operands[1].get_data_type().remove_reference().remove_qualifiers();
-				if (left_type.is_array()) {
-					IRArrayNode* left_array_node = static_cast<IRArrayNode*>(left_type.get_data_type_node());
-					size_t count = left_array_node->get_count();
-					llvm::Value* left_array_value = get_operand_value(triple->m_operands[0]);
-					llvm::Value* right_array_value = get_operand_value(triple->m_operands[1]);
-					// destination is the same as the left type
-					llvm::Value* result_array = llvm::UndefValue::get(get_llvm_type(left_type));
-					const TypeRef element_type = left_type.remove_array().remove_reference().remove_qualifiers();
 
-					for (size_t i = 0; i < count;i++) {
-						llvm::Value* left_array_element = m_builder->CreateExtractValue(left_array_value, { static_cast<unsigned>(i) });
-						llvm::Value* right_array_element = m_builder->CreateExtractValue(right_array_value, { static_cast<unsigned>(i) });
-						
-						bool integer = element_type.is_integer();
-						auto op_code = integer ? llvm::Instruction::BinaryOps::Add : llvm::Instruction::BinaryOps::FAdd;
+				if (left_type.is_array() || right_type.is_array()) {
+					const TypeRef res_type = triple->get_data_type().remove_reference().remove_qualifiers();
+					size_t result_count = static_cast<IRArrayNode*>(res_type.get_data_type_node())->get_count();
+					size_t left_count = left_type.is_array() ? static_cast<IRArrayNode*>(left_type.get_data_type_node())->get_count() : 1;
+					size_t right_count = right_type.is_array() ? static_cast<IRArrayNode*>(right_type.get_data_type_node())->get_count() : 1;
+					llvm::Value* left_val = get_operand_value(triple->m_operands[0]);
+					llvm::Value* right_val = get_operand_value(triple->m_operands[1]);
 
-						if (triple->get_ir_operation() == IROperation::SUB)
-							op_code = integer ? llvm::Instruction::BinaryOps::Sub : llvm::Instruction::BinaryOps::FSub;
+					left_val = expand_vector(left_val, left_type, left_count,result_count);
+					right_val = expand_vector(right_val, right_type, right_count,result_count);
+					
+					const TypeRef element_type = res_type.remove_array().remove_reference().remove_qualifiers();
+					bool integer = element_type.is_integer();
+					auto op_code = integer ? llvm::Instruction::BinaryOps::Add : llvm::Instruction::BinaryOps::FAdd;
+					if (triple->get_ir_operation() == IROperation::SUB)
+						op_code = integer ? llvm::Instruction::BinaryOps::Sub : llvm::Instruction::BinaryOps::FSub;
+					if (triple->get_ir_operation() == IROperation::MUL)
+						op_code = integer ? llvm::Instruction::BinaryOps::Mul : llvm::Instruction::BinaryOps::FMul;
 
-						if (triple->get_ir_operation() == IROperation::MUL)
-							op_code = integer ? llvm::Instruction::BinaryOps::Mul : llvm::Instruction::BinaryOps::FMul;
-
-						llvm::Value* calc_value = m_builder->CreateBinOp(op_code, left_array_element , right_array_element);
-						result_array = m_builder->CreateInsertValue(result_array,calc_value, { static_cast<unsigned>(i) });
-					}
-
-					m_triple_values[triple->get_global_index()] = result_array;
+					m_triple_values[triple->get_global_index()] = m_builder->CreateBinOp(op_code, left_val, right_val);
 				}
 				else {
 					// for basic types
 					auto type = triple->get_data_type();
 					bool integer = type.is_integer();
+					// add method to handle opcode 
 					auto op_code = integer ? llvm::Instruction::BinaryOps::Add : llvm::Instruction::BinaryOps::FAdd;
-
 					if (triple->get_ir_operation() == IROperation::SUB)
 						op_code = integer ? llvm::Instruction::BinaryOps::Sub : llvm::Instruction::BinaryOps::FSub;
-
 					if (triple->get_ir_operation() == IROperation::MUL)
 						op_code = integer ? llvm::Instruction::BinaryOps::Mul : llvm::Instruction::BinaryOps::FMul;
 
@@ -493,34 +550,45 @@ void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
 				}
 				break;
 			}
+			case IROperation::SELECT: {
+				const TypeRef cond_type = triple->m_operands[0].get_data_type().remove_reference().remove_qualifiers();
+				const TypeRef true_type = triple->m_operands[1].get_data_type().remove_reference().remove_qualifiers();
+				const TypeRef false_type = triple->m_operands[2].get_data_type().remove_reference().remove_qualifiers();
+				const TypeRef result_type = triple->get_data_type().remove_reference().remove_qualifiers();
+
+				size_t result_count = result_type.is_array() ? static_cast<IRArrayNode*>(result_type.get_data_type_node())->get_count() : 1;
+				size_t cond_count = cond_type.is_array() ? static_cast<IRArrayNode*>(cond_type.get_data_type_node())->get_count() : 1;
+				size_t true_count = true_type.is_array() ? static_cast<IRArrayNode*>(true_type.get_data_type_node())->get_count() : 1;
+				size_t false_count = false_type.is_array() ? static_cast<IRArrayNode*>(false_type.get_data_type_node())->get_count() : 1;
+
+				llvm::Value* cond_value = get_operand_value(triple->m_operands[0]);
+				llvm::Value* true_value = get_operand_value(triple->m_operands[1]);
+				llvm::Value* false_value = get_operand_value(triple->m_operands[2]);
+
+				if (result_type.is_array()) {
+					cond_value = expand_vector(cond_value,cond_type,cond_count,result_count);
+					true_value = expand_vector(true_value,true_type,true_count,result_count);
+					false_value = expand_vector(false_value,false_type,false_count,result_count);
+				}
+
+				m_triple_values[triple->get_global_index()] = m_builder->CreateSelect(cond_value,true_value,false_value);
+
+				break;
+			}
 			case IROperation::CAST: {
 				llvm::Type* dst_llvm_type = get_llvm_type(triple->m_operands[0].get_data_type());
-				const TypeRef src_type = triple->m_operands[1].get_data_type().remove_reference().remove_qualifiers();
-				const TypeRef dst_type = triple->m_operands[0].get_data_type().remove_reference().remove_qualifiers();
 				llvm::Value* src_value = get_operand_value(triple->m_operands[1]);
+				const TypeRef dst_type = triple->m_operands[0].get_data_type().remove_reference().remove_qualifiers();
+				const TypeRef src_type = triple->m_operands[1].get_data_type().remove_reference().remove_qualifiers();
+				// cast can be done on the entire array at the same time
+				
+				m_triple_values[triple->get_global_index()] = auto_cast(
+					src_value,
+					dst_llvm_type,
+					src_type.remove_reference().remove_array().remove_qualifiers().is_signed(),
+					dst_type.remove_reference().remove_array().remove_qualifiers().is_signed()
+				);
 
-				// ogarnac ten fragment
-				if (src_type.is_array()) {
-					IRArrayNode* array_node = static_cast<IRArrayNode*>(src_type.get_data_type_node());
-					size_t count = array_node->get_count();
-					TypeRef src_element_type = src_type.remove_array().remove_qualifiers();
-					TypeRef dst_element_type = dst_type.remove_array().remove_qualifiers();
-					llvm::Type* dst_element_llvm_type = get_llvm_type(dst_element_type);
-
-
-					llvm::Value* result_array = llvm::UndefValue::get(dst_llvm_type);
-					for (size_t i = 0; i < count; i++) {
-						llvm::Value* element = m_builder->CreateExtractValue(src_value, { static_cast<unsigned>(i) });
-						llvm::Value* casted_element = auto_cast(element, dst_element_llvm_type, src_element_type.is_signed(), dst_element_type.is_signed());
-						result_array = m_builder->CreateInsertValue(result_array, casted_element, { static_cast<unsigned>(i) });
-					}
-
-					m_triple_values[triple->get_global_index()] = result_array;
-				}
-				else {
-					auto casted_value = auto_cast(src_value, dst_llvm_type, src_type.is_signed(), dst_type.is_signed());
-					m_triple_values[triple->get_global_index()] = casted_value;
-				}
 				break;
 			}
 			case IROperation::REINTERPRET_CAST: {
@@ -674,6 +742,10 @@ void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
 						m_triple_values[triple->m_global_index] = get_function_call_instance(triple, print<double>);
 						break;
 					}
+					case IRBasicType::BOOL: {
+						m_triple_values[triple->m_global_index] = get_function_call_instance(triple, print<bool>);
+						break;
+					}
 					case IRBasicType::UINT8: {
 						m_triple_values[triple->get_global_index()] = get_function_call_instance(triple, print<uint8_t>);
 						break;
@@ -706,6 +778,10 @@ void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
 
 					switch (element_type.get_ir_basic_type())
 					{
+					case IRBasicType::BOOL: {
+						m_triple_values[triple->m_global_index] = get_function_call_instance_array(triple, print_array<bool>);
+						break;
+					}
 					case IRBasicType::INT8: {
 						m_triple_values[triple->m_global_index] = get_function_call_instance_array(triple, print_array<int8_t>);
 						break;
@@ -776,125 +852,39 @@ void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
 
 				break;
 			}
-			case IROperation::GE: {
+			case IROperation::GE:
+			case IROperation::GT:
+			case IROperation::LE:
+			case IROperation::LT:
+			case IROperation::EQ:
+			case IROperation::NEQ:
+			{
 				llvm::Value* left = get_operand_value(triple->m_operands[0]);
 				llvm::Value* right = get_operand_value(triple->m_operands[1]);
 
-				TypeRef left_operand_type_ref = triple->m_operands[0].get_data_type().remove_reference().remove_qualifiers();
-
-				llvm::Value* result = nullptr;
-
-				if (left->getType()->isIntegerTy()) {
-					result = left_operand_type_ref.is_signed() ? 
-						m_builder->CreateICmpSGE(left, right, "ge") : 
-						m_builder->CreateICmpUGE(left,right,"ge") ;
+				const TypeRef result_type = triple->get_data_type().remove_reference().remove_qualifiers();
+				const TypeRef left_type = triple->m_operands[0].get_data_type().remove_reference().remove_qualifiers();
+				const TypeRef right_type = triple->m_operands[1].get_data_type().remove_reference().remove_qualifiers();
+				
+				if (result_type.is_array()) {
+					size_t result_count = result_type.is_array() ? static_cast<IRArrayNode*>(result_type.get_data_type_node())->get_count() : 1;
+					size_t left_operand_count = left_type.is_array() ? static_cast<IRArrayNode*>(left_type.get_data_type_node())->get_count() : 1;
+					size_t right_operand_count = right_type.is_array() ? static_cast<IRArrayNode*>(right_type.get_data_type_node())->get_count() : 1;
+				
+					left = expand_vector(left,left_type,left_operand_count,result_count);
+					right = expand_vector(right,right_type,right_operand_count,result_count);
 				}
-				else if (left->getType()->isFloatingPointTy()) {
-					result = m_builder->CreateFCmpOGE(left,right,"ge");
-				}else {
-					throw std::runtime_error("unsupported operand type for GE");
-				}
 
-				m_triple_values[triple->get_global_index()] = result;
-				break;
-			}
-			case IROperation::LE: {
-				llvm::Value* left = get_operand_value(triple->m_operands[0]);
-				llvm::Value* right = get_operand_value(triple->m_operands[1]);
+				bool is_float = left->getType()->isFPOrFPVectorTy();
+				bool is_integer = left->getType()->isIntOrIntVectorTy();
+				bool is_signed = left_type.remove_reference().remove_array().remove_qualifiers().is_signed();
 
-				TypeRef left_operand_type_ref = triple->m_operands[0].get_data_type().remove_reference().remove_qualifiers();
+				if (!is_float && !is_integer)
+					throw std::runtime_error("unsupported operand type for comparison");
 
-				llvm::Value* result = nullptr;
+				llvm::CmpInst::Predicate predicate = get_cmp_predicate(triple->get_ir_operation(), is_float, is_signed);
+				m_triple_values[triple->get_global_index()] = is_float ? m_builder->CreateFCmp(predicate,left,right) : m_builder->CreateICmp(predicate,left,right);
 
-				if (left->getType()->isIntegerTy()) {
-					result = left_operand_type_ref.is_signed() ?
-						m_builder->CreateICmpSLE(left, right, "le") :
-						m_builder->CreateICmpULE(left, right, "le");
-				}
-				else if (left->getType()->isFloatingPointTy())
-					result = m_builder->CreateFCmpOLE(left, right, "le");
-				else
-					throw std::runtime_error("unsupported operand type for LE");
-
-				m_triple_values[triple->get_global_index()] = result;
-				break;
-			}
-			case IROperation::GT: {
-				llvm::Value* left = get_operand_value(triple->m_operands[0]);
-				llvm::Value* right = get_operand_value(triple->m_operands[1]);
-
-				TypeRef operand_type = triple->m_operands[0].get_data_type()
-					.remove_reference()
-					.remove_qualifiers();
-
-				llvm::Value* result = nullptr;
-
-				if (left->getType()->isIntegerTy()) {
-					result = operand_type.is_signed()
-						? m_builder->CreateICmpSGT(left, right, "gt")
-						: m_builder->CreateICmpUGT(left, right, "gt");
-				}
-				else if (left->getType()->isFloatingPointTy())
-					result = m_builder->CreateFCmpOGT(left, right, "gt");
-				else 
-					throw std::runtime_error("unsupported operand type for GT");
-
-				m_triple_values.at(triple->get_global_index()) = result;
-				break;
-			}
-			case IROperation::LT: {
-				llvm::Value* left = get_operand_value(triple->m_operands[0]);
-				llvm::Value* right = get_operand_value(triple->m_operands[1]);
-
-				TypeRef operand_type = triple->m_operands[0].get_data_type()
-					.remove_reference()
-					.remove_qualifiers();
-
-				llvm::Value* result = nullptr;
-
-				if (left->getType()->isIntegerTy()) {
-					result = operand_type.is_signed()
-						? m_builder->CreateICmpSLT(left, right, "lt")
-						: m_builder->CreateICmpULT(left, right, "lt");
-				}
-				else if (left->getType()->isFloatingPointTy())
-					result = m_builder->CreateFCmpOLT(left, right, "lt");
-				else
-					throw std::runtime_error("unsupported operand type for LT");
-
-				m_triple_values.at(triple->get_global_index()) = result;
-				break;
-			}
-			case IROperation::EQ:{
-				llvm::Value* left = get_operand_value(triple->m_operands[0]);
-				llvm::Value* right = get_operand_value(triple->m_operands[1]);
-				TypeRef left_operand_type_ref = triple->m_operands[0].get_data_type().remove_reference().remove_qualifiers();
-
-				llvm::Value* result = nullptr;
-				if (left->getType()->isIntegerTy())
-					result = m_builder->CreateICmpEQ(left, right, "eq");
-				else if (left->getType()->isFloatingPointTy())
-					result = m_builder->CreateFCmpOEQ(left, right, "eq");
-				else
-					throw std::runtime_error("unsupported operand type for EQ");
-
-				m_triple_values[triple->get_global_index()] = result;
-				break;
-			}
-			case IROperation::NEQ: {
-				llvm::Value* left = get_operand_value(triple->m_operands[0]);
-				llvm::Value* right = get_operand_value(triple->m_operands[1]);
-				TypeRef left_operand_type_ref = triple->m_operands[0].get_data_type().remove_reference().remove_qualifiers();
-
-				llvm::Value* result = nullptr;
-				if (left->getType()->isIntegerTy())
-					result = m_builder->CreateICmpNE(left, right, "neq");
-				else if (left->getType()->isFloatingPointTy())
-					result = m_builder->CreateFCmpONE(left, right, "neq");
-				else
-					throw std::runtime_error("unsupported operand type for NEQ");
-
-				m_triple_values[triple->get_global_index()] = result;
 				break;
 			}
 			case IROperation::JC: {
@@ -980,12 +970,10 @@ void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
 				IRVariable* variable = triple->m_operands[0].get_variable();
 				llvm::Value* ptr = nullptr;
 
-				if (variable->is_global()) {
+				if (variable->is_global())
 					ptr = m_global_variables[variable->get_index()];
-				}
-				else {
+				else
 					ptr = m_variables[variable->get_index()];
-				}
 
 				llvm::Value* old_value = get_operand_value(triple->m_operands[0]);
 				llvm::Value* new_value = nullptr;
@@ -1153,7 +1141,6 @@ llvm::CallInst* IRToLLVMIRConverter::get_function_call_instance_array(IRTriple* 
 
 	if (!fn_address)
 		throw std::runtime_error("address not found");
-
 
 	IROperand array_operand = triple->m_operands[0];
 	TypeRef array_type = array_operand.get_data_type().remove_reference().remove_qualifiers();

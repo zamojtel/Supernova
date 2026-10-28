@@ -1,0 +1,23 @@
+int main() {
+    int [6] cond_src;
+    cond_src[0] = 1;
+    cond_src[1] = -1;
+    cond_src[2] = 1;
+    cond_src[3] = -1;
+    cond_src[4] = 1;
+    cond_src[5] = 1;
+    int [2] pattern_true;
+    pattern_true[0] = 10;
+    pattern_true[1] = 20;
+    int [3] pattern_false;
+    pattern_false[0] = 100;
+    pattern_false[1] = 200;
+    pattern_false[2] = 300;
+
+    int [6] res = select(cond_src > 0, pattern_true, pattern_false);
+    print(res);
+
+    return 0;
+}
+#------------------
+[10,200,10,100,10,20]
