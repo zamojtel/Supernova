@@ -157,3 +157,12 @@ TypeRef IRDataTypeManager::get_void_const_star() {
 TypeRef IRDataTypeManager::get_nullptr() const {
 	return m_nullptr_node;
 }
+
+TypeRef IRDataTypeManager::get_struct(const std::string& name) const {
+	for (size_t i = 0; i < m_structs.size();i++) {
+		if (static_cast<IRCompositeTypeNode*>(m_structs[i].get_data_type_node())->get_name() == name)
+			return m_structs[i];
+	}
+
+	return {};
+}

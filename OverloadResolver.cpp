@@ -1,5 +1,5 @@
 
-OverloadResolver::OverloadResolver(IRProgram* p) :m_ir_program{ p } { }
+OverloadResolver::OverloadResolver(IRProgram* p) : m_ir_program{ p } { }
 
 std::vector<IRBaseFunction*> OverloadResolver::find_matching_functions(size_t line_number, const std::string& fn_name, const std::vector<IROperand>& arguments) {
 	std::vector<IRBaseFunction*> fns_with_name = m_ir_program->get_functions_with_name(fn_name);
@@ -139,5 +139,5 @@ OverloadMatch OverloadResolver::run(size_t line_number,const std::string& fn_nam
 		}
 	}
 
-	return { MatchStatus::AMBIGUOUS,nullptr };
+	return { MatchStatus::AMBIGUOUS, nullptr };
 }

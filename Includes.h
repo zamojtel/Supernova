@@ -114,6 +114,7 @@
 
 #include "ASTConvIncludes.h"
 #include "Tester.h"
+#include "SupernovaCompiler.h"
 
 #endif INCLUDES_H
 

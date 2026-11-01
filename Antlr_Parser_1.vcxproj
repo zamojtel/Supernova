@@ -402,6 +402,9 @@
     <ClCompile Include="StringTests\StringTests.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="SupernovaCompiler.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="SymbolTable.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -595,6 +598,7 @@
     <ClInclude Include="StringStorage.h" />
     <ClInclude Include="StringTests\StringTests.h" />
     <ClInclude Include="StructNode.h" />
+    <ClInclude Include="SupernovaCompiler.h" />
     <ClInclude Include="SymbolTable.h" />
     <ClInclude Include="Tester.h" />
     <ClInclude Include="TreePrinter.h" />
@@ -618,6 +622,7 @@
     <None Include="Generated\ExprLexer.interp" />
     <None Include="Generated\ExprLexer.tokens" />
     <None Include="Grammar.g4" />
+    <None Include="SourceTestsJIT\functions.sn" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AbstractSyntaxTree.h" />
@@ -747,6 +752,14 @@
     <Text Include="SourceTests\array_cast_2.txt" />
     <Text Include="SourceTests\array_jit_1.txt" />
     <Text Include="SourceTests\array_operation_1.txt" />
+    <Text Include="SourceTests\array_passed_by_value_1.txt" />
+    <Text Include="SourceTests\basic_select_1.txt" />
+    <Text Include="SourceTests\basic_select_1_v2.txt" />
+    <Text Include="SourceTests\basic_select_1_v3.txt" />
+    <Text Include="SourceTests\basic_select_1_v4.txt" />
+    <Text Include="SourceTests\basic_select_2.txt" />
+    <Text Include="SourceTests\basic_select_4.txt" />
+    <Text Include="SourceTests\basic_select_5.txt" />
     <Text Include="SourceTests\bool_value_1.txt" />
     <Text Include="SourceTests\bool_value_2.txt" />
     <Text Include="SourceTests\broadcasting_1.txt" />
@@ -755,7 +768,10 @@
     <Text Include="SourceTests\broadcasting_4.txt" />
     <Text Include="SourceTests\broadcasting_5.txt" />
     <Text Include="SourceTests\domination_frontiers_1.txt" />
+    <Text Include="SourceTests\jit_compiled_function_1.txt" />
+    <Text Include="SourceTests\jit_compiled_function_with_args_1.txt" />
     <Text Include="SourceTests\overload_4.txt" />
+    <Text Include="SourceTests\potential_error_1.txt" />
     <Text Include="SourceTests\print_array_2.txt" />
     <Text Include="SourceTests\array_to_pointer_1.txt" />
     <Text Include="SourceTests\array_to_pointer_2.txt" />
@@ -788,6 +804,7 @@
     <Text Include="SourceTests\overloading_single_argument_error_2.txt" />
     <Text Include="SourceTests\pointer_to_struct_field_1.txt" />
     <Text Include="SourceTests\print_char_1.txt" />
+    <Text Include="SourceTests\reference_1.txt" />
     <Text Include="SourceTests\right_bitwise_shift_cast_error_1.txt" />
     <Text Include="SourceTests\left_bitwise_shift_1.txt" />
     <Text Include="SourceTests\constant_conversion_1.txt" />
@@ -887,9 +904,11 @@
     <Text Include="SourceTests\string_7.txt" />
     <Text Include="SourceTests\string_8.txt" />
     <Text Include="SourceTests\struct_jit_1.txt" />
+    <Text Include="SourceTests\struct_passed_by_value_1.txt" />
     <Text Include="SourceTests\struct_return_1.txt" />
     <Text Include="SourceTests\struct_return_2.txt" />
     <Text Include="SourceTests\struct_return_3.txt" />
+    <Text Include="SourceTests\supernova_tests.txt" />
     <Text Include="SourceTests\table_return_1.txt" />
     <Text Include="SourceTests\table_return_2.txt" />
     <Text Include="SourceTests\union_jit_1.txt" />

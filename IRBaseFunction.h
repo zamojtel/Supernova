@@ -16,4 +16,6 @@ public:
 	bool compare_arguments(const std::vector<TypeRef>& argument_types);
 	const TypeRef get_return_type() const;
 	size_t get_index() const;
+	bool is_external() const;
+	bool is_internal() const;
 };

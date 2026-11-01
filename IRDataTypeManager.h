@@ -66,4 +66,5 @@ public:
 	TypeRef get_void_star() ; 
 	TypeRef get_void_const_star();
 	TypeRef get_nullptr() const;
+	TypeRef get_struct(const std::string& name) const;
 };

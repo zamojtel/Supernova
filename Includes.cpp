@@ -21,5 +21,5 @@
 #include "IRExternalFunction.cpp"
 #include "PrintMessageCollector.cpp"
 #include "StringTests/StringTests.cpp"
-
+#include "SupernovaCompiler.cpp"
 #endif INCLUDES_CPP

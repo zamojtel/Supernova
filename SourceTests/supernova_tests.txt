@@ -1,0 +1,135 @@
+
+struct A{
+	int m_a;
+	int m_b;
+};
+
+int func_0(int x){
+	return x;
+}
+
+int func_1(A a){
+	return a.m_a;
+}
+
+int func_6(A a){
+	return a.m_b;
+}
+
+// arrays can be passed by value but size have to be provided
+int func_2(int [3] t){
+	int sum = 0;
+	for(int i=0;i<3;i++){
+		sum = sum+t[i];
+	}
+
+	return sum;
+}
+
+int func_4(int a) { return 1; }
+
+int func_5(A a){
+	return a.m_a+a.m_b+1;
+}
+
+int array_test(int [10] t){
+	int sum = t[0] + t[9];
+	return sum;
+}
+
+int array_return_1st_element_test(int [10] t){
+	return t[0];
+}
+
+int array_return_2nd_element_test(int [10] t){
+	return t[1];
+}
+
+//int function_three_arguments(int a,int b,int c){
+//	int temp;
+//	if(a>b){
+//		temp = a;
+//	}else{
+//		temp = b;
+//	}
+//	if(temp>c){
+//		return temp;
+//	}else{
+//		return c;
+//	}
+//}
+
+int function_three_arguments(int a,int b,int c){
+	int temp = a;
+	
+	if(temp<b){
+		temp = b;
+	}
+
+	if(temp<c){
+		temp = c;
+	}
+
+	return temp;
+}
+
+void reference1_test(int &value){
+	value = 4;
+}
+
+void reference2_test(A &a){
+	a.m_a = 10;
+	a.m_b = 20;
+}
+
+void reference3_test(int &a,int &b){
+	int temp = a;
+	a = b;
+	b = temp;
+}
+
+struct C {
+	int [3] m_tab;
+};
+
+void reference4_test(C &item){
+	item.m_tab[1] = 10;
+}
+
+void reference5_test(int &x){
+	int& local_ref = x;
+	local_ref = 5;
+}
+
+void reference6_test( A &item_a, C &item_c ){
+	int& local_ref = item_a.m_a;
+	int& element = item_c.m_tab[2];
+	local_ref = 33;
+	element = 100;
+}
+
+void reference7_test(A &item){
+	reference3_test(item.m_a,item.m_b);
+}
+
+struct D{
+	A m_inner;
+	int m_element;
+};
+
+void reference8_test(D &d){
+	reference2_test(d.m_inner);
+}
+
+void reference9_test(C &item){
+	item.m_tab = item.m_tab + 10;
+}
+
+void reference10_test(int &value){
+	value++;
+}
+
+void reference11_test(int &value){
+	value--;
+}
+

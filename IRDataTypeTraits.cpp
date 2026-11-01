@@ -168,9 +168,11 @@ bool IRDataTypeTraits::can_implicitly_convert_array_to_pointer(const TypeRef& fr
 }
 
 bool IRDataTypeTraits::can_implicitly_convert_argument(const IROperand& argument, const TypeRef& to) {
+
 	if (to.is_reference()) {
-		if (argument.m_operand_type != IROperandType::VARIABLE)
+		if (!(argument.m_operand_type == IROperandType::VARIABLE || (argument.m_operand_type == IROperandType::TRIPLE && argument.get_triple()->get_ir_operation() == IROperation::DEREFERENCE))) {
 			return false;
+		}
 
 		const TypeRef argument_type = argument.get_data_type().remove_reference();
 		const TypeRef target_reference_type = to.remove_reference();
@@ -178,6 +180,12 @@ bool IRDataTypeTraits::can_implicitly_convert_argument(const IROperand& argument
 	}
 
 	if (can_implicitly_convert(argument.get_data_type(),to))
+		return true;
+
+	const TypeRef normalized_argument_type = argument.get_data_type().remove_reference().remove_qualifiers();
+	const TypeRef normalized_to_type = to.remove_reference().remove_qualifiers();
+
+	if(normalized_argument_type==normalized_to_type)
 		return true;
 
 	if (!argument.is_constant() || !to.is_basic_data_type())

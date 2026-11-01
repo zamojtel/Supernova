@@ -1,5 +1,4 @@
-﻿
-#include <iostream>
+﻿#include <iostream>
 #include <vector>
 #include <array>
 #include <variant>
@@ -156,10 +155,7 @@ public:
 #include <llvm/Support/CommandLine.h>
 #include <llvm/TargetParser/Host.h>
 
-
 #include "Includes.cpp"
-
-
 
 void func() {
 	llvm::LLVMContext* context = new llvm::LLVMContext{};
@@ -171,9 +167,10 @@ void func() {
 	std::vector<llvm::Type*> paramTypes{ i32Ty, i32Ty };
 	llvm::FunctionType* fnType =
 		llvm::FunctionType::get(
-			/*Result*/ i32Ty,
-			/*Params*/ paramTypes,
-			/*isVarArg*/ false);
+			i32Ty,
+			paramTypes,
+			false
+		);
 
 	llvm::Function* addFn = llvm::Function::Create(
 		fnType,
@@ -198,6 +195,256 @@ void func() {
 	module->print(llvm::outs(), nullptr);
 }
 
+// move to one place
+std::string read_entire_file(const fs::path& file_path) {
+	std::vector<std::string> lines;
+	std::ifstream file(file_path);
+	if (!file.is_open())
+		return {};
+
+	std::string line;
+	while (std::getline(file, line)) {
+
+		if (line == "#------------------")
+			break;
+
+		line = line + '\n';
+		lines.push_back(line);
+	}
+
+	std::string read_source_code;
+	for (auto& line : lines) {
+		read_source_code += line;
+	}
+
+	return read_source_code;
+}
+
+std::vector<std::string> read_expected_lines(const fs::path& file_path) {
+	std::vector<std::string> lines;
+	std::ifstream file(file_path);
+
+	std::string line;
+	while (std::getline(file, line)) {
+		if (line == "#------------------") {
+			std::string expected_value;
+			while (std::getline(file, expected_value))
+			{
+				lines.push_back(expected_value);
+			}
+			break;
+		}
+	}
+
+	return lines;
+}
+
+// dodawanie struktur z poziomu C++
+void supernova_jit_tests(const fs::path& source_file) {
+	std::string source_code = read_entire_file(source_file);
+	SupernovaCompiler supernova{};
+	supernova.compile(source_code);
+
+	auto dtm = supernova.m_ir_program.get_dtm_manager();
+	using function = int (*)(int);
+	std::vector<TypeRef> parameters{ dtm->get_int() };
+	auto compiled_function = supernova.get_function<function>("func_4", parameters);
+	if (compiled_function) {
+		std::cout << "SupernovaCompiler: " << compiled_function(2) << std::endl;
+	}
+	std::cout << compiled_function(2) << std::endl;
+	assert(compiled_function(2)==1);
+
+	// situations when we declare structures in two places should not occur 
+	struct A {
+		int m_a;
+		int m_b;
+	};
+	A a;
+	a.m_a = 10;
+	a.m_b = 20;
+	uint8_t* p = (uint8_t *) &a;
+	uint8_t* member_b = (uint8_t*) &a.m_b;
+	int diff = member_b - p;
+	std::cout << "Address diff: " << diff << std::endl;
+
+	using function_2 = int (*)(A);
+	auto structure_type = dtm->get_struct("A");
+	size_t size = structure_type.get_size();
+	std::vector<TypeRef> parameters_2{ structure_type };
+	auto compiled_function_2 = supernova.get_function<function_2>("func_1", parameters_2);
+	if (compiled_function_2) {
+		std::cout << "SupernovaCompiler: " << compiled_function_2(a) << std::endl;
+	}
+	assert(compiled_function_2(a) == 10);
+
+	struct B {
+		int m_t[10];
+	};
+	B b;
+	b.m_t[0] = 1;
+	b.m_t[1] = 1;
+	b.m_t[2] = 1;
+	b.m_t[3] = 1;
+	b.m_t[4] = 1;
+	b.m_t[5] = 1;
+	b.m_t[6] = 1;
+	b.m_t[7] = 1;
+	b.m_t[8] = 1;
+	b.m_t[9] = 10;
+
+	//using function_3 = int (*)(B);
+	//auto structure_b_type = dtm->get_struct("B");
+	//size_t structure_b_size = structure_b_type.get_size();
+	//TypeRef basic_type = dtm->get_int();
+	//TypeRef array_type = dtm->add_array(basic_type, 10);
+	//std::vector<TypeRef> parameters3{array_type};
+	//auto compiled_function_4 = supernova.get_function<function_3>("array_test",parameters3);
+	//if (compiled_function_4) {
+	//	std::cout << "SupernovaCompiler: " << compiled_function_4(b) << std::endl;
+	//}
+	//assert(compiled_function_4(b) == 11);
+
+	int a_v = 10;
+	int b_v = 20;
+	int c_v = 30;
+	using function_4 = int (*)(int,int,int);
+	std::vector<TypeRef> parameters4{ dtm->get_int(),dtm->get_int(),dtm->get_int() };
+	auto compiled_function_5 = supernova.get_function<function_4>("function_three_arguments",parameters4);
+	if (compiled_function_5) {
+		std::cout << "SupernovaCompiler: " << compiled_function_5(a_v,b_v,c_v) << std::endl;
+	}
+	assert(compiled_function_5(a_v,b_v,c_v) == 30);
+	
+	// reference tests
+	// reference1_test
+	int x = 1;
+	using function_6 = void (*)(int&);
+	std::vector<TypeRef> parameters6{ dtm->add_reference(dtm->get_int()) };
+	auto compiled_function_6 = supernova.get_function<function_6>("reference1_test", parameters6);
+
+	if (compiled_function_6)
+		compiled_function_6(x);
+	assert(x == 4);
+
+	// reference2_test
+	A item;
+	using function_7 = void (*)(A&);
+	const TypeRef struct_A = dtm->add_reference(dtm->get_struct("A"));
+	std::vector<TypeRef> parameters7{ struct_A };
+	auto compiled_function_7 = supernova.get_function<function_7>("reference2_test", parameters7);
+	if (compiled_function_7)
+		compiled_function_7(item);
+	assert(item.m_a == 10 && item.m_b==20);
+
+	// reference3_test
+	int val1 = 10;
+	int val2 = 20;
+	dtm->add_reference(dtm->get_struct("C"));
+	using function_8 = void (*)(int&,int&);
+	std::vector<TypeRef> parameters8{ dtm->add_reference(dtm->get_int()),dtm->add_reference(dtm->get_int())};
+	auto compiled_function_8 = supernova.get_function<function_8>("reference3_test", parameters8);
+	if (compiled_function_8)
+		compiled_function_8(val1,val2);
+	assert(val1==20 && val2 ==10);
+
+	// reference4_test
+	struct C {
+		int m_tab[3];
+	};
+
+	C c;
+	c.m_tab[0] = 1;
+	c.m_tab[1] = 2;
+	c.m_tab[2] = 3;
+
+	using function_9 = void (*)(C&);
+	const TypeRef struct_C = dtm->add_reference(dtm->get_struct("C"));
+	std::vector<TypeRef> parameters9{ struct_C };
+	auto compiled_function_9 = supernova.get_function<function_9>("reference4_test", parameters9);
+	if (compiled_function_9)
+		compiled_function_9(c);
+	assert(c.m_tab[1] == 10);
+
+	// reference5_test
+	int test_value = 0;
+	using function_10 = void (*)(int&);
+	std::vector<TypeRef> parameters10{ dtm->add_reference(dtm->get_int()) };
+	auto compiled_function_10 = supernova.get_function<function_10>("reference5_test", parameters10);
+	if (compiled_function_10)
+		compiled_function_10(test_value);
+	assert(test_value == 5);
+
+	A test6_item_a;
+	C test6_item_c;
+	const TypeRef test_struct_a = dtm->get_struct("A");
+	const TypeRef test_struct_c = dtm->get_struct("C");
+	using function_11 = void (*)(A&,C&);
+	std::vector<TypeRef> parameters11{ dtm->add_reference(test_struct_a) ,dtm->add_reference(test_struct_c)};
+	auto compiled_function_11 = supernova.get_function<function_11>("reference6_test", parameters11);
+	if (compiled_function_11)
+		compiled_function_11(test6_item_a,test6_item_c);
+	assert(test6_item_a.m_a ==33 && test6_item_c.m_tab[2]==100);
+
+	A test7_item_a;
+	test7_item_a.m_a = 10;
+	test7_item_a.m_b = 20;
+	const TypeRef test7_struct_a = dtm->get_struct("A");
+	using function_12 = void (*)(A&);
+	std::vector<TypeRef> parameters12{ dtm->add_reference(test7_struct_a) };
+	auto compiled_function_12 = supernova.get_function<function_12>("reference7_test", parameters12);
+	if (compiled_function_12)
+		compiled_function_12(test7_item_a);
+	assert(test7_item_a.m_a==20 && test7_item_a.m_b==10);
+
+	struct D {
+		A m_inner;
+		int m_element;
+	};
+
+	D test8_item_d;
+	test8_item_d.m_inner.m_a = 1;
+	test8_item_d.m_inner.m_b = 2;
+	test8_item_d.m_element = 30;
+
+	const TypeRef test8_struct_d = dtm->get_struct("D");
+	using function_13 = void (*)(D&);
+	std::vector<TypeRef> parameters13{ dtm->add_reference(test8_struct_d) };
+	auto compiled_function_13 = supernova.get_function<function_13>("reference8_test", parameters13);
+	if (compiled_function_13)
+		compiled_function_13(test8_item_d);
+	assert(test8_item_d.m_inner.m_a == 10 && test8_item_d.m_inner.m_b == 20);
+
+	C test9_item_c;
+	test9_item_c.m_tab[0] = 1;
+	test9_item_c.m_tab[1] = 2;
+	test9_item_c.m_tab[2] = 3;
+
+	const TypeRef test9_struct_c = dtm->get_struct("C");
+	using function_14 = void (*)(C&);
+	std::vector<TypeRef> parameters14{ dtm->add_reference(test9_struct_c) };
+	auto compiled_function_14 = supernova.get_function<function_14>("reference9_test", parameters14);
+	if (compiled_function_14)
+		compiled_function_14(test9_item_c);
+	assert(test9_item_c.m_tab[0] == 11 && test9_item_c.m_tab[1] == 12 && test9_item_c.m_tab[2] == 13);
+
+	int inc = 0;
+	using function_15 = void (*)(int&);
+	std::vector<TypeRef> parameters15{ dtm->add_reference(dtm->get_int())};
+	auto compiled_function_15 = supernova.get_function<function_15>("reference10_test", parameters15);
+	if (compiled_function_15)
+		compiled_function_15(inc);
+	assert(inc == 1);
+
+	int dec = 1;
+	using function_16 = void (*)(int&);
+	std::vector<TypeRef> parameters16{ dtm->add_reference(dtm->get_int())};
+	auto compiled_function_16 = supernova.get_function<function_16>("reference11_test", parameters16);
+	if (compiled_function_16)
+		compiled_function_16(dec);
+	assert(dec == 0);
+
+}
 
 void check_asserts() {
 	std::string line;
@@ -325,29 +572,10 @@ void check_asserts() {
 	assert(results[5] == false);
 }
 
-//struct A {
-//	int m_a;
-//	int m_b;
-//};
-//
-//A return_struct() {
-//	A temp;
-//	temp.m_a = 10;
-//	temp.m_b = 20;
-//	return temp;
-//}
-//
-//void test_fun() {
-//	// do tymczasowych obiektów nie można brać adresów
-//	A* struktura = &return_struct();
-//	std::cout << struktura->m_a << std::endl;
-//}
-
 void check_prints(const std::string& file_name, const std::vector<std::string>& messages) {
 	std::string line;
 	std::ifstream myfile(file_name);
-	//test_fun();
-	//system("pause");
+
 	std::string entire_file;
 	if (myfile.is_open())
 	{
@@ -614,23 +842,40 @@ int main(int argc,char* argv[]) {
 		//"simple_cast_1",
 		//"array_cast_1",
 		//"array_cast_2",
-		//"table_return_2"
-		// -------- works --------------
-		//"domination_frontiers_1"
-		// -------- broadcasting tests--------------
+		//"table_return_2",
+		//// -------- works -------------- OK
+		////"domination_frontiers_1"
+		//// -------- broadcasting tests--------------
 		//"array_operation_1",
 		//"select_7",
 		//"select_8",
 		//"bool_value_1",
-		//"bool_value_2"
+		//"bool_value_2",
 		//"broadcasting_1",
-		//"broadcasting_2"
+		//"broadcasting_2",
 		//"broadcasting_3",
 		//"broadcasting_4", // shorter vector than 7
-		"broadcasting_5" // shorter vector than 9
-
+		//"broadcasting_5", // shorter vector than 9
+		//// ----------- select tests ------------------
+		//"basic_select_1",
+		//"basic_select_1_v2",
+		//"basic_select_1_v3",
+		//"basic_select_1_v4",
+		//"basic_select_4",
+		//"basic_select_5",
+		//"basic_select_2",
+		//"intermediate_select_1",
+		//"intermediate_select_2",
+		//"advanced_select_1"
+		//"jit_compiled_function_1",
+		//"jit_compiled_function_with_args_1",
+		//"reference_1"
+		//"supernova_tests"
+		// tablice przez wartość
+		//"array_passed_by_value_1",
+		"struct_passed_by_value_1"
 	};
-
+	
 	std::vector<std::string> jit_test{
 		//"dereference_jit_1",
 		//"member_access_point_jit_1",
@@ -680,6 +925,7 @@ int main(int argc,char* argv[]) {
 		//"string_3",
 		//"string_4"
 		//"string_9"
+		//"potential_error_1"
 	};
 
 	PrintMessageCollector print_message_collector;
@@ -698,9 +944,11 @@ int main(int argc,char* argv[]) {
 		TestMode::JIT_OUTPUT
 	);
 
-	//interpreter_tester.run_all_tests(test_names, {});
+	interpreter_tester.run_all_tests(test_names, {});
 	jit_tester.run_all_tests(test_names, {});
 
+	SupernovaCompiler supernova_compiler;
+	supernova_jit_tests(tests_path / "supernova_tests.txt");
 	return 0;
 }
 

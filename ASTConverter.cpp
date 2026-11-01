@@ -569,7 +569,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 	
 			std::string field_name = member_field_identifier.cast<IdentifierNode>()->get_identifier();
 		
-			const TypeRef type = object_operand.get_data_type().remove_pointer().remove_qualifiers();
+			const TypeRef type = object_operand.get_data_type().remove_reference().remove_pointer().remove_qualifiers();
 			IRCompositeTypeNode* composite_node = static_cast<IRCompositeTypeNode*>(type.get_data_type_node());
 			IRMember* member = composite_node->get_member(field_name);
 
@@ -801,6 +801,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 
 		m_coder.set_basic_block(stmt_blk);
 		post_order_traverse(current_node->m_stmt);
+		// TODO
 		// USUNAC jmp W PRZYPADKU IF które koñcz¹ siê return 
 		if (current_node->m_else_stmt) {
 			m_coder.set_basic_block(else_stmt_blk);
@@ -822,7 +823,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 
 			m_coder.set_basic_block(stmt_blk);
 			if (stmt_blk->get_all_triples().back()->m_operation != IROperation::RETURN && stmt_blk->get_all_triples().back()->m_operation != IROperation::JMP)
-				m_coder.add_triple(current_node->m_else_stmt->get_line_number(), IROperation::JMP, after_if_basic_block);
+				m_coder.add_triple(current_node->m_stmt->get_line_number(), IROperation::JMP, after_if_basic_block);
 			m_coder.set_basic_block(after_if_basic_block);
 		}
 

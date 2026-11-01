@@ -217,6 +217,9 @@
     <Filter Include="Source Files\Listener">
       <UniqueIdentifier>{4fad87b8-4af5-4dd7-9a23-996187ded7a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Supernova">
+      <UniqueIdentifier>{6ea8804a-dbb0-4cfd-83e7-b9292cead512}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -441,6 +444,9 @@
     <ClCompile Include="PrintMessageCollector.cpp">
       <Filter>Source Files\Listener</Filter>
     </ClCompile>
+    <ClCompile Include="SupernovaCompiler.cpp">
+      <Filter>Source Files\Supernova</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Expr.g4">
@@ -474,6 +480,7 @@
       <Filter>GeneratedCLikeLanguage</Filter>
     </None>
     <None Include=".gitignore" />
+    <None Include="SourceTestsJIT\functions.sn" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Generated\ExprBaseListener.h">
@@ -919,6 +926,9 @@
     </ClInclude>
     <ClInclude Include="PrintMessageCollector.h">
       <Filter>Source Files\Listener</Filter>
+    </ClInclude>
+    <ClInclude Include="SupernovaCompiler.h">
+      <Filter>Source Files\Supernova</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1410,5 +1420,19 @@
     <Text Include="SourceTests\broadcasting_3.txt" />
     <Text Include="SourceTests\broadcasting_4.txt" />
     <Text Include="SourceTests\broadcasting_5.txt" />
+    <Text Include="SourceTests\basic_select_1.txt" />
+    <Text Include="SourceTests\basic_select_1_v2.txt" />
+    <Text Include="SourceTests\basic_select_1_v3.txt" />
+    <Text Include="SourceTests\basic_select_1_v4.txt" />
+    <Text Include="SourceTests\basic_select_2.txt" />
+    <Text Include="SourceTests\basic_select_4.txt" />
+    <Text Include="SourceTests\basic_select_5.txt" />
+    <Text Include="SourceTests\potential_error_1.txt" />
+    <Text Include="SourceTests\jit_compiled_function_1.txt" />
+    <Text Include="SourceTests\jit_compiled_function_with_args_1.txt" />
+    <Text Include="SourceTests\reference_1.txt" />
+    <Text Include="SourceTests\supernova_tests.txt" />
+    <Text Include="SourceTests\array_passed_by_value_1.txt" />
+    <Text Include="SourceTests\struct_passed_by_value_1.txt" />
   </ItemGroup>
 </Project>
