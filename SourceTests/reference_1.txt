@@ -1,0 +1,27 @@
+
+struct A{
+	int m_a;
+	int m_b;
+};
+
+void modify_struct(A & s) {
+	print(s.m_a);
+	print(s.m_b);
+	s.m_a = 30;
+	s.m_b = 40;
+	print(s.m_a);
+	print(s.m_b);
+}
+
+int main(){
+	A a;
+	a.m_a = 10;
+	a.m_b = 20;
+	modify_struct(a);
+	return 0;
+}
+#------------------
+10
+20
+30
+40

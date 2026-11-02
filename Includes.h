@@ -1,6 +1,7 @@
 #ifndef INCLUDES_H
 #define INCLUDES_H
 
+#include "IRInvalidTypeConstructionException.h"
 #include "TreeNodeType.h"
 #include "OperationType.h"
 
@@ -114,6 +115,7 @@
 
 #include "ASTConvIncludes.h"
 #include "Tester.h"
+#include "SupernovaCompiler.h"
 
 #endif INCLUDES_H
 

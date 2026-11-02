@@ -27,6 +27,14 @@ llvm::Value* IRToLLVMIRConverter::get_operand_value(const IROperand& op)  {
 	}
 	case IROperandType::VARIABLE: {
 		IRVariable* variable = op.get_variable();
+		const TypeRef type = op.get_data_type();
+		
+		// added #1
+		if (type.is_reference()) {
+			llvm::Value* loaded_address = get_operand_address(op);
+			return m_builder->CreateLoad(get_llvm_type(type.remove_reference()),loaded_address);
+		}
+
 		if (variable->is_global()) {
 			llvm::GlobalVariable* global_variable_address = m_global_variables[variable->get_index()];
 			return m_builder->CreateLoad(global_variable_address->getValueType(),global_variable_address);
@@ -48,7 +56,11 @@ llvm::Value* IRToLLVMIRConverter::get_operand_address(const IROperand& op) {
 	{
 	case IROperandType::VARIABLE: {
 		IRVariable* variable = op.get_variable();
+		const TypeRef type = op.get_data_type();
 
+		if (type.is_reference())
+			return m_builder->CreateLoad(llvm::PointerType::get(*m_context,0),m_variables[variable->get_index()]);
+		
 		if (variable->is_global())
 			return m_global_variables[variable->get_index()];
 
@@ -102,8 +114,10 @@ llvm::Value* IRToLLVMIRConverter::auto_cast(llvm::Value* src,llvm::Type* dstTy,b
 
 //it uses the one below
 llvm::Type* IRToLLVMIRConverter::get_llvm_type(const TypeRef& type) const {
+	if (type.is_reference())
+		return llvm::PointerType::get(*m_context,0);
+
 	TypeRef normalized_type = type.remove_reference().remove_qualifiers();
-	
 	if (normalized_type.is_pointer()) {
 		return llvm::PointerType::get(*m_context, 0);
 	}
@@ -113,12 +127,10 @@ llvm::Type* IRToLLVMIRConverter::get_llvm_type(const TypeRef& type) const {
 		llvm::Type* element_type = get_llvm_type(element_type_ref);
 		IRArrayNode *array_node = static_cast<IRArrayNode*>(normalized_type.get_data_type_node());
 
-		if (element_type_ref.is_numeric() || element_type_ref.is_boolean()) {
+		if (element_type_ref.is_numeric() || element_type_ref.is_boolean())
 			return llvm::FixedVectorType::get(element_type,array_node->get_count());
-		}
-		else {
+		else
 			return llvm::ArrayType::get(element_type, array_node->get_count());
-		}
 	}
 
 	if (normalized_type.is_struct()) {
@@ -494,17 +506,28 @@ void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
 		for (IRTriple * triple : blks[i]->get_all_triples()) {
 			switch (triple->get_ir_operation())
 			{
-			case IROperation::INIT_ASSIGN:
+			case IROperation::INIT_ASSIGN: {
+				IRVariable* variable = triple->m_operands[0].get_variable();
+				const TypeRef left_type = triple->m_operands[0].get_data_type();
+				const TypeRef right_type = triple->m_operands[1].get_data_type();
+
+				if (left_type.is_reference()) {
+					llvm::Value* value_address = get_operand_address(triple->m_operands[1]);
+					m_builder->CreateStore(value_address,m_variables[variable->get_index()]);
+				}
+				else {
+					llvm::Value* value = get_operand_value(triple->m_operands[1]);
+					llvm::Value* address = get_operand_address(triple->m_operands[0]);
+					m_builder->CreateStore(value,address);
+				}
+				break;
+			}
 			case IROperation::ASSIGN: {
 				IRVariable* variable = triple->m_operands[0].get_variable();
-				llvm::Value* value = get_operand_value(triple->m_operands[1]);
-
-				if (variable->is_global()) {
-					llvm::GlobalVariable* global_variable_address = m_global_variables[variable->get_index()];
-					m_builder->CreateStore(value, global_variable_address);
-				}
-				else
-					m_builder->CreateStore(value, m_variables[variable->get_index()]);
+				// now it works with anything on the right side & included
+				llvm::Value* right_value = get_operand_value(triple->m_operands[1]);
+				llvm::Value* address = get_operand_address(variable);
+				m_builder->CreateStore(right_value,address);
 
 				break;
 			}
@@ -696,12 +719,21 @@ void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
 			case IROperation::FUNCTION_CALL:
 			case IROperation::EXTERNAL_FUNCTION_CALL:
 			{
-				size_t called_fn_index = triple->m_operands[0].get_base_function()->get_index();
+				IRBaseFunction* function = triple->m_operands[0].get_base_function();
+				size_t called_fn_index = function->get_index();
 				llvm::FunctionCallee callee = m_function_callees.at(called_fn_index);
 
 				std::vector<llvm::Value*> args;
-				for (size_t i = 1; i < triple->m_operands.size();i++)
-					args.push_back(get_operand_value(triple->m_operands[i]));
+				const std::vector<TypeRef> parameters = function->get_parameter_types();
+
+				for (size_t i = 0; i < parameters.size(); i++)
+				{
+					// in case of the reference we want an address 
+					if (parameters[i].is_reference())
+						args.push_back(get_operand_address(triple->m_operands[i+1]));
+					else
+						args.push_back(get_operand_value(triple->m_operands[i+1]));
+				}
 
 				m_triple_values[triple->get_global_index()] = m_builder->CreateCall(callee,args);
 				break;
@@ -940,13 +972,7 @@ void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
 				break;
 			}
 			case IROperation::INC: {
-				IRVariable* variable = triple->m_operands[0].get_variable();
-				llvm::Value* ptr = nullptr;
-
-				if (variable->is_global())
-					ptr = m_global_variables[variable->get_index()];
-				else 
-					ptr = m_variables[variable->get_index()];
+				llvm::Value* ptr = get_operand_address(triple->m_operands[0]);
 
 				llvm::Value* old_value = get_operand_value(triple->m_operands[0]);
 				llvm::Value* new_value = nullptr;
@@ -967,14 +993,7 @@ void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
 			}
 			case IROperation::DEC:
 			{
-				IRVariable* variable = triple->m_operands[0].get_variable();
-				llvm::Value* ptr = nullptr;
-
-				if (variable->is_global())
-					ptr = m_global_variables[variable->get_index()];
-				else
-					ptr = m_variables[variable->get_index()];
-
+				llvm::Value* ptr = get_operand_address(triple->m_operands[0]);
 				llvm::Value* old_value = get_operand_value(triple->m_operands[0]);
 				llvm::Value* new_value = nullptr;
 				llvm::Value* one = nullptr;
@@ -1138,7 +1157,6 @@ llvm::CallInst* IRToLLVMIRConverter::get_function_call_instance(IRTriple* triple
 }
 
 llvm::CallInst* IRToLLVMIRConverter::get_function_call_instance_array(IRTriple* triple, void* fn_address) {
-
 	if (!fn_address)
 		throw std::runtime_error("address not found");
 

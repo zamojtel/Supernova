@@ -324,19 +324,11 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
                 module.setTargetTriple(jit->getTargetTriple().str());
                 bool broken = llvm::verifyModule(module, &llvm::errs());
                 if (!broken) {
-                    print_module_assembly(module);
+                    //print_module_assembly(module);
                 }
                 return broken;
             }
         );
-
-        //bool invalid_module = llvm_module.withModuleDo(
-        //    [&](llvm::Module& module) {
-        //        module.setDataLayout(jit->getDataLayout());
-        //        module.setTargetTriple(jit->getTargetTriple().str());
-        //        return llvm::verifyModule(module, &llvm::errs());
-        //    }
-        //);
 
         if (invalid_module)
             return false;
@@ -371,6 +363,20 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
         int result = compiled_main();
         PrintMessageCollector print_message_printer = Tester::get_message_collector();
         const std::vector<std::string> actual_outputs = print_message_printer.get_messages();
+
+        // Supernova Section
+        //SupernovaCompiler supernova(&ir_program);
+        //supernova.compile();
+        //auto dtm = ir_program.get_dtm_manager();
+        //dtm->get_int();
+        //std::vector<TypeRef> parameters{ dtm->get_int(),dtm->get_int()};
+        //using function = int (*)(int,int);
+        //auto compiled_function = supernova.get_function<function>("compiled_function",parameters);
+        //if (compiled_function) {
+        //    int x = 123;
+        //    std::cout <<"SupernovaCompiler: "<<compiled_function(2, 3) << std::endl;
+        //}
+
         return compare_test_ouput(source_file,actual_outputs,expected_outputs);
     }
     else {

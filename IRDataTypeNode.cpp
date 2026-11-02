@@ -16,7 +16,8 @@ std::optional<size_t> IRDataTypeNode::get_size(){
 			set_size(size);
 		}
 		catch (std::runtime_error& e) {
-			throw e;
+			//throw e;
+			set_size(0);
 		}
 	}
 }

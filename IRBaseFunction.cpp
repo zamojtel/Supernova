@@ -23,3 +23,7 @@ bool IRBaseFunction::compare_arguments(const std::vector<TypeRef>& argument_type
 const TypeRef IRBaseFunction::get_return_type() const { return m_return_type; }
 
 size_t IRBaseFunction::get_index() const { return m_index; }
+
+bool IRBaseFunction::is_external() const { return m_kind == Kind::EXTERNAL; }
+
+bool IRBaseFunction::is_internal() const { return m_kind == Kind::INTERNAL; }

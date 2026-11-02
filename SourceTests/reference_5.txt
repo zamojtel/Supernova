@@ -1,0 +1,16 @@
+
+void rec(int n,int& count){
+	if(n==0)
+		return;
+	count++;
+	rec(n-1,count);
+}
+
+int main(){
+	int count = 0;
+	rec(5,count);
+	print(count);
+	return 0;
+}
+#------------------
+5
