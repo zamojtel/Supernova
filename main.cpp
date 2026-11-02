@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <memory>
 #include <cmath>
+#include <chrono>
 #include <queue>
 #define ANTLR4CPP_STATIC
 #pragma comment(lib,"antlr4-runtime.lib")
@@ -293,18 +294,6 @@ void supernova_jit_tests(const fs::path& source_file) {
 	b.m_t[8] = 1;
 	b.m_t[9] = 10;
 
-	//using function_3 = int (*)(B);
-	//auto structure_b_type = dtm->get_struct("B");
-	//size_t structure_b_size = structure_b_type.get_size();
-	//TypeRef basic_type = dtm->get_int();
-	//TypeRef array_type = dtm->add_array(basic_type, 10);
-	//std::vector<TypeRef> parameters3{array_type};
-	//auto compiled_function_4 = supernova.get_function<function_3>("array_test",parameters3);
-	//if (compiled_function_4) {
-	//	std::cout << "SupernovaCompiler: " << compiled_function_4(b) << std::endl;
-	//}
-	//assert(compiled_function_4(b) == 11);
-
 	int a_v = 10;
 	int b_v = 20;
 	int c_v = 30;
@@ -443,6 +432,14 @@ void supernova_jit_tests(const fs::path& source_file) {
 	if (compiled_function_16)
 		compiled_function_16(dec);
 	assert(dec == 0);
+
+	int passed_value = 0;
+	using function_17 = void (*)(int&);
+	std::vector<TypeRef> parameters17{ dtm->add_reference(dtm->get_int())};
+	auto compiled_function_17 = supernova.get_function<function_17>("reference12_test", parameters17);
+	if (compiled_function_17)
+		compiled_function_17(passed_value);
+	assert(passed_value == 20);
 
 }
 
@@ -686,6 +683,13 @@ void check_prints(const std::string& file_name, const std::vector<std::string>& 
 		assert(collected_msgs[i] == messages[i]);
 }
 
+int fib(int n) {
+	if (n <= 1)
+		return n;
+
+	return fib(n-2)+fib(n-1);
+}
+
 int main(int argc,char* argv[]) {
 
 	const fs::path tests_path = argc > 1 ? fs::path{ argv[1] } : fs::path{ "SourceTests" };
@@ -843,7 +847,7 @@ int main(int argc,char* argv[]) {
 		//"array_cast_1",
 		//"array_cast_2",
 		//"table_return_2",
-		//// -------- works -------------- OK
+		//// -------- works --------------
 		////"domination_frontiers_1"
 		//// -------- broadcasting tests--------------
 		//"array_operation_1",
@@ -873,7 +877,11 @@ int main(int argc,char* argv[]) {
 		//"supernova_tests"
 		// tablice przez wartość
 		//"array_passed_by_value_1",
-		"struct_passed_by_value_1"
+		//"struct_passed_by_value_1",
+		//"reference_2",
+		//"reference_3"
+		//"reference_4",
+		//"reference_5"
 	};
 	
 	std::vector<std::string> jit_test{
@@ -898,12 +906,6 @@ int main(int argc,char* argv[]) {
 		//"member_access_jit_1"
 	};
 
-	//std::vector<std::string> jit_test{
-	//	"struct_jit_1",
-	//	"member_access_jit_1"
-	//	"union_jit_1"
-	//};
-
 	std::vector<std::string> test_errors{
 		//"implicit_error_1",
 		//"implicit_cast_not_allowed_error_1",
@@ -926,6 +928,8 @@ int main(int argc,char* argv[]) {
 		//"string_4"
 		//"string_9"
 		//"potential_error_1"
+		//"pointer_to_reference_error_1",
+		//"table_of_references_error_1"
 	};
 
 	PrintMessageCollector print_message_collector;
@@ -949,6 +953,7 @@ int main(int argc,char* argv[]) {
 
 	SupernovaCompiler supernova_compiler;
 	supernova_jit_tests(tests_path / "supernova_tests.txt");
+
 	return 0;
 }
 

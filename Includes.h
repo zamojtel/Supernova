@@ -1,6 +1,7 @@
 #ifndef INCLUDES_H
 #define INCLUDES_H
 
+#include "IRInvalidTypeConstructionException.h"
 #include "TreeNodeType.h"
 #include "OperationType.h"
 

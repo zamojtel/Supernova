@@ -37,6 +37,8 @@ std::string ErrorTraits::get_name(ErrorType type) {
 		return "TYPE_SIZE_MISTMATCH";
 	case ErrorType::INCOMPATIBLE_ARRAY_SIZES:
 		return "INCOMPATIBLE_ARRAY_SIZES";
+	case ErrorType::INVALID_TYPE_DECLARATION:
+		return "INVALID_TYPE_DECLARATION";
 	default:
 		throw std::runtime_error("type not found");
 	}

@@ -1,0 +1,7 @@
+
+int main(){
+	int &[3] table;
+	return 0;
+}
+#------------------
+3 INVALID_TYPE_DECLARATION

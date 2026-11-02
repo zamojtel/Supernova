@@ -52,6 +52,8 @@ TypeRef IRDataTypeManager::add_qualifiers(const TypeRef& type_node,uint8_t mask)
 }
 
 TypeRef IRDataTypeManager::add_array(const TypeRef& type_node,size_t arr_size) {
+	if (type_node.is_reference())
+		throw IRInvalidTypeConstructionException("cannot create an array of references");
 
 	ArrayKey new_key{ type_node.m_data_type_node,arr_size };
 
@@ -81,6 +83,10 @@ TypeRef IRDataTypeManager::add_union(const std::string& name) {
 }
 
 TypeRef IRDataTypeManager::add_pointer(const TypeRef &type_node) {
+
+	if (type_node.is_reference())
+		throw IRInvalidTypeConstructionException{"cannot create ptr to reference"};
+
 	if (m_existing_pointer_types.count(type_node.m_data_type_node)==0) {
 		IRPointerNode* new_pointer = new IRPointerNode{this,type_node};
 		

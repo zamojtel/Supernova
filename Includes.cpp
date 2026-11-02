@@ -3,6 +3,7 @@
 #ifndef INCLUDES_CPP
 #define INCLUDES_CPP
 
+#include "IRInvalidTypeConstructionException.cpp"
 #include "ASTCOnvIncludes.cpp"
 
 #include "IRIncludes.cpp"

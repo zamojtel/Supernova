@@ -35,7 +35,7 @@ public:
 	void set_op(const ReferencePtr<AbstractSyntaxTreeNode>& node, const IROperand& op);
 	IROperation ast_op_to_ir_op(OperationType t);
 
-	void build_ir_data_type_from_ast(const ReferencePtr<DataTypeNode>& node);
+	void build_ir_data_type_from_ast(size_t line_number, const ReferencePtr<DataTypeNode>& dtn);
 	void convert_control_flow_condition(const ReferencePtr<AbstractSyntaxTreeNode>& condition,IRBasicBlock* true_blk,IRBasicBlock* false_blk);
 	void convert_expression_to_bool(const ReferencePtr<AbstractSyntaxTreeNode>& condition);
 };

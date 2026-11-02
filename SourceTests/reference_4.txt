@@ -1,0 +1,8 @@
+
+int main(){
+	// this should cause an error
+	int & [3] tab;
+
+	return 0;
+}
+#------------------

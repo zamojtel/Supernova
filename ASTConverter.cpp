@@ -150,7 +150,7 @@ void ASTConverter::second_pass(const ReferencePtr<AbstractSyntaxTreeNode>& node)
 	post_order_traverse(node);
 }
 
-void ASTConverter::build_ir_data_type_from_ast(const ReferencePtr<DataTypeNode>& dtn) {
+void ASTConverter::build_ir_data_type_from_ast(size_t line_number,const ReferencePtr<DataTypeNode>& dtn) {
 	auto list = dtn->get_modifier_list();
 
 	// if the type for this dtn is already built we return 
@@ -182,45 +182,53 @@ void ASTConverter::build_ir_data_type_from_ast(const ReferencePtr<DataTypeNode>&
 	for (size_t i=0; i < list->get_count(); i++) {
 		auto element = list->get_element(i);
 		TreeNodeType type = element->get_type();
+		try {
+			switch (type)
+			{
+			case TreeNodeType::ARRAY: {
+				ReferencePtr<ArrayNode> node = element.cast<ArrayNode>();
+				ReferencePtr<AbstractSyntaxTreeNode> m_expr = node->get_expr();
+				if (m_expr->get_type() == TreeNodeType::CONSTANT) {
+					ReferencePtr<ConstantNode> constant = m_expr.cast<ConstantNode>();
+					if (constant->get_constant_value().safe_convert_value_to<int>().has_value()) {
+						int value = constant->get_constant_value().safe_convert_value_to<int>().value();
 
-		switch (type)
-		{
-		case TreeNodeType::ARRAY: {
-			ReferencePtr<ArrayNode> node = element.cast<ArrayNode>();
-			ReferencePtr<AbstractSyntaxTreeNode> m_expr = node->get_expr();
-			if (m_expr->get_type()==TreeNodeType::CONSTANT) {
-				ReferencePtr<ConstantNode> constant = m_expr.cast<ConstantNode>();
-				if (constant->get_constant_value().safe_convert_value_to<int>().has_value()) {
-					int value = constant->get_constant_value().safe_convert_value_to<int>().value();
-					current_ref = m_dtm->add_array(current_ref,value);
+						current_ref = m_dtm->add_array(current_ref, value);
+					}
 				}
+				break;
 			}
-			break;
-		}
-		case TreeNodeType::QUALIFIER: {
-			try {
-				ReferencePtr<QualifierNode> node = element.cast<QualifierNode>();
-				current_ref = m_dtm->add_qualifiers(current_ref,node->get_mask());
+			case TreeNodeType::QUALIFIER: {
+				try {
+					ReferencePtr<QualifierNode> node = element.cast<QualifierNode>();
+					current_ref = m_dtm->add_qualifiers(current_ref, node->get_mask());
+				}
+				catch (const std::runtime_error& e) {
+					m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR,dtn->get_line_number(),e.what() });
+				}
+				break;
 			}
-			catch (const std::runtime_error& e) {
-				m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR,dtn->get_line_number(),e.what()});
+			case TreeNodeType::REFERENCE: {
+				current_ref = m_dtm->add_reference(current_ref);
+				break;
 			}
-			break;
+			case TreeNodeType::POINTER: {
+				current_ref = m_dtm->add_pointer(current_ref);
+				break;
+			}
+			default:
+				break;
+			}
 		}
-		case TreeNodeType::REFERENCE: {
-			current_ref = m_dtm->add_reference(current_ref);
-			break;
+		catch (std::runtime_error& e) {
+			std::cout << e.what() << std::endl;
 		}
-		case TreeNodeType::POINTER: {
-			current_ref = m_dtm->add_pointer(current_ref);
-			break;
-		}
-		default:
-			break;
+		catch (IRInvalidTypeConstructionException& e) {
+			m_ast_converter_listener->error({ ErrorType::INVALID_TYPE_DECLARATION,line_number, e.get_message() });
+			current_ref = m_dtm->get_error();
 		}
 	}
 
-	//std::cout << current_ref.to_string() << std::endl;
 	dtn->m_ir_data_type = current_ref;
 }
 
@@ -250,7 +258,7 @@ void ASTConverter::find_function_signatures(const ReferencePtr<AbstractSyntaxTre
 		std::string fn_name = current_node->get_identifier_node()->get_identifier();
 
 		ReferencePtr<DataTypeNode> fn_return_type = current_node->get_data_type_node();
-		build_ir_data_type_from_ast(fn_return_type);
+		build_ir_data_type_from_ast(current_node->get_line_number(),fn_return_type);
 
 		std::vector<IRVariable*> fn_parameters;
 
@@ -268,7 +276,7 @@ void ASTConverter::find_function_signatures(const ReferencePtr<AbstractSyntaxTre
 			std::string parameter_name = param_node->get_identifier_node()->get_identifier();
 
 			ReferencePtr<DataTypeNode> parameter_type_node = param_node->get_data_type_node();
-			build_ir_data_type_from_ast(parameter_type_node);
+			build_ir_data_type_from_ast(current_node->get_line_number(), parameter_type_node);
 
 			l_param_types.push_back(parameter_type_node->m_ir_data_type);
 			l_param_names.push_back(parameter_name);
@@ -291,7 +299,7 @@ void ASTConverter::find_function_signatures(const ReferencePtr<AbstractSyntaxTre
 		auto list = current_node->get_declarations();
 
 		ReferencePtr<DataTypeNode> dtn = current_node->get_data_type_node();
-		build_ir_data_type_from_ast(dtn);
+		build_ir_data_type_from_ast(current_node->get_line_number(),dtn);
 
 		for (size_t i = 0; i < list->get_child_count(); i++) {
 			ReferencePtr<DeclarationListItemNode> current_item = list->get_element(i).cast<DeclarationListItemNode>();
@@ -551,14 +559,6 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 				element_address,
 				expr_op
 			);
-
-			//IROperand index_op = get_op(array_index);
-
-			//TypeRef target_type = variable_ptr_op.get_data_type().remove_array();
-			//implicit_conversion(current_node->get_line_number(),target_type, expr_op);
-
-			//IRTriple* array_accees_triple = m_coder.add_triple(current_node->get_line_number(),IROperation::ARRAY_ACCESS,variable_ptr_op,index_op);
-			//triple = m_coder.add_triple(current_node->get_line_number(),IROperation::WRITE_TO_POINTER,array_accees_triple,expr_op);
 		}
 		else if (left_expr->get_type() == TreeNodeType::MEMBER_ACCESS) {
 			ReferencePtr<MemberAccessNode> member_access_node = left_expr.cast<MemberAccessNode>();
@@ -712,9 +712,8 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		ReferencePtr<DeclarationNode> current_node = node.cast<DeclarationNode>();
 		ReferencePtr<ListNode<DeclarationListItemNode>> list = current_node->get_declarations();
 		ReferencePtr<DataTypeNode> dtn = current_node->get_data_type_node();
+		build_ir_data_type_from_ast(current_node->get_line_number(),dtn);
 
-		build_ir_data_type_from_ast(dtn);
-		
 		if (m_current_fn) {
 			for (size_t i = 0; i < list->get_child_count(); i++) {
 				ReferencePtr<DeclarationListItemNode> current_item = list->get_element(i).cast<DeclarationListItemNode>();
@@ -968,7 +967,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 				ReferencePtr<DeclarationNode> dcl_node = node.cast<DeclarationNode>();
 				ReferencePtr<ListNode<DeclarationListItemNode>> items = dcl_node->get_declarations();
 				ReferencePtr<DataTypeNode> dtm = dcl_node->get_data_type_node();
-				build_ir_data_type_from_ast(dtm);
+				build_ir_data_type_from_ast(current_node->get_line_number(), dtm);
 
 				for (size_t j = 0; j < items->get_child_count();j++) {
 					ReferencePtr<DeclarationListItemNode> item = items->get_child(j).cast<DeclarationListItemNode>();
@@ -1003,7 +1002,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 					ReferencePtr<MemberDeclarationNode> member_dcl = declarations->get_child(i).cast<MemberDeclarationNode>();
 
 					std::string field_name = member_dcl->get_identifier()->get_identifier();
-					build_ir_data_type_from_ast(member_dcl->get_data_type_node());
+					build_ir_data_type_from_ast(current_node->get_line_number(),member_dcl->get_data_type_node());
 					TypeRef member_data_type_ref = member_dcl->get_data_type_node()->m_ir_data_type;
 					casted_composite_node_type->add_field(member_data_type_ref,field_name);
 				}
@@ -1078,7 +1077,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 	case TreeNodeType::SIZE_OF: {
 		ReferencePtr<SizeOfNode> current_node = node.cast<SizeOfNode>();
 		ReferencePtr<DataTypeNode> dtn = current_node->m_data_type;
-		build_ir_data_type_from_ast(dtn);
+		build_ir_data_type_from_ast(current_node->get_line_number(),dtn);
 		uint64_t size = 0;
 		try {
 			size = (uint64_t)dtn->m_ir_data_type.get_size();
@@ -1176,7 +1175,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 	case TreeNodeType::CAST: {
 		ReferencePtr<CastNode> current_node = node.cast<CastNode>();
 		post_order_traverse(current_node->get_expr_node());
-		build_ir_data_type_from_ast(current_node->get_data_type_node());
+		build_ir_data_type_from_ast(current_node->get_line_number(),current_node->get_data_type_node());
 
 		IROperand cast_type_op = get_op(current_node->get_data_type_node());
 		IROperand expr_op = get_op(current_node->get_expr_node());
@@ -1187,7 +1186,7 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 	case TreeNodeType::REINTERPRET_CAST: {
 		ReferencePtr<ReinterpretNode> current_node = node.cast<ReinterpretNode>();
 		post_order_traverse(current_node->get_expr_node());
-		build_ir_data_type_from_ast(current_node->get_data_type_node());
+		build_ir_data_type_from_ast(current_node->get_line_number(), current_node->get_data_type_node());
 
 		IROperand cast_type_op = get_op(current_node->get_data_type_node());
 		IROperand expr_op = get_op(current_node->get_expr_node());

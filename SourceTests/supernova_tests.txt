@@ -133,3 +133,10 @@ void reference11_test(int &value){
 	value--;
 }
 
+void reference12_test(int &value){
+	int x = 10;
+	int *p = &x;
+	int& r = *p;
+	r = 20;
+	value = x;
+}

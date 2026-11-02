@@ -58,9 +58,8 @@ llvm::Value* IRToLLVMIRConverter::get_operand_address(const IROperand& op) {
 		IRVariable* variable = op.get_variable();
 		const TypeRef type = op.get_data_type();
 
-		if (type.is_reference()) {
+		if (type.is_reference())
 			return m_builder->CreateLoad(llvm::PointerType::get(*m_context,0),m_variables[variable->get_index()]);
-		}
 		
 		if (variable->is_global())
 			return m_global_variables[variable->get_index()];

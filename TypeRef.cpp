@@ -395,8 +395,9 @@ size_t TypeRef::get_size() const {
 			throw std::runtime_error("size of type is not set");
 		}
 	}
-	else
+	else {
 		throw std::runtime_error("data_type_node is nullptr");
+	}
 }
 
 bool TypeRef::has_size() const {
