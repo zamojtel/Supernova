@@ -1,0 +1,18 @@
+
+int main(){
+	int a = 1;
+	int b = 2;
+	int temp = 0;
+
+	if(a<b){
+		temp = a+10;
+		a = temp;
+	}else{
+		temp = b + 20;
+	}
+
+	int res = a+b;
+	return res;
+}
+#------------------
+13

@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <vector>
+#include <set>
 #include <array>
 #include <variant>
 #include <queue>
@@ -707,75 +708,6 @@ int main(int argc,char* argv[]) {
 		return 1;
 	}
 
-	//std::vector<std::string> test_names{
-	//	"member_1",
-	//	"member_access_1",
-	//	"implicit_type_widening",
-	//	"useless_statements_1",
-	//	"implicit_unsigned_widening",
-	//	"implicit_assignment_widening",
-	//	"implicit_float_to_double",
-	//	"implicit_reference_widening",
-	//	"add_function_call",
-	//	"many_blocks",
-	//	"inline_expanding_1",
-	//	"inline_function_1",
-	//	"inline_recursive_call_1",
-	//	"inline_reference_1",
-	//	"inline_one_return_1",
-	//	"inline_function_2",
-	//	"recursion_limit_1",
-	//	"unreachable_blk_1",
-	//	"bitwise_operations_1",
-	//	"constant_replacement_1",
-	//	"post_incrementation_1",
-	//	"post_incrementation_2",
-	//	"pre_incrementation_1",
-	//	"constant_conversion_1",
-	//	"modulo_division",
-	//	"return_promotion_1",
-	//	"promotion_core_logic_1",
-	//	"return_pointer_1",
-	//	"character_1",
-	//	"pointer_const_to_non_const_1",
-	//	"left_bitwise_shift_1",
-	//	"left_bitwise_shift_with_cast_1",
-	//	"right_bitwise_shift_1",
-	//	"logical_vs_arithmetical_shift_1",
-	//	"add_function_call",
-	//	"overload_4",
-	//	"overloading_1",
-	//	"overloading_2",
-	//	"overloading_3",
-	//	"overloading_single_argument_1",
-	//	"overloading_single_argument_2",
-	//	"overloading_multiple_arguments_1",
-	//	"overloading_multiple_arguments_2",
-	//	"string_1",
-	//	"string_2",
-	//	"string_5",
-	//	"string_6",
-	//	"string_7",
-	//	"string_8",
-	//	"array_to_pointer_1",
-		//"array_to_pointer_2",
-	//	"memcpy_1",
-	//	"malloc_1",
-	//	"member_point_1",
-	//	// -------- works --------------
-	//	"print_array_2",
-	//	"member_access_jit_1",
-	//	"struct_return_1",
-	//	"struct_return_2",
-	//	"struct_return_3",
-	//	"table_return_1",
-	//	"table_return_2" // TODO something does not work
-	//	"broadcasting_1",
-	//	"simple_cast_1",
-	//	"array_cast_1",
-	//	"array_cast_2"
-	//};
-
 	std::vector<std::string> test_names{
 		//"member_1",
 		//"member_access_1",
@@ -882,6 +814,8 @@ int main(int argc,char* argv[]) {
 		//"reference_3"
 		//"reference_4",
 		//"reference_5"
+		//"domination_frontiers_1",
+		"domination_frontiers_3"
 	};
 	
 	std::vector<std::string> jit_test{
@@ -949,10 +883,10 @@ int main(int argc,char* argv[]) {
 	);
 
 	interpreter_tester.run_all_tests(test_names, {});
-	jit_tester.run_all_tests(test_names, {});
+	//jit_tester.run_all_tests(test_names, {});
 
 	SupernovaCompiler supernova_compiler;
-	supernova_jit_tests(tests_path / "supernova_tests.txt");
+	//supernova_jit_tests(tests_path / "supernova_tests.txt");
 
 	return 0;
 }

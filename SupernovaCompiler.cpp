@@ -107,7 +107,7 @@ void SupernovaCompiler::compile(const std::string& source_code) {
 			module.setTargetTriple(m_jit->getTargetTriple().str());
 			bool broken = llvm::verifyModule(module, &llvm::errs());
 			if (!broken)
-				print_module_assembly(module);
+				//print_module_assembly(module);
 				return broken;
 		}
 	);

@@ -301,35 +301,35 @@ IRFunction* IRProgram::get_function(const std::string& name, const std::vector<T
 
 void IRProgram::sort_blocks() {
 	for (auto &[name,functions] : m_functions) {
-		
 		for (IRFunction* fn : functions) {
-			IRBasicBlock* starting_blk = fn->get_basic_blk(0);
-			int number_of_blocks = fn->get_basic_blocks().size();
-			std::vector<bool> visited(number_of_blocks,false);
-			std::queue<IRBasicBlock*> queue;
-			std::vector<IRBasicBlock*> traversal_order;
-			queue.push(starting_blk);
-			traversal_order.push_back(starting_blk);
+			fn->sort_blocks();
+			//IRBasicBlock* starting_blk = fn->get_basic_blk(0);
+			//int number_of_blocks = fn->get_basic_blocks().size();
+			//std::vector<bool> visited(number_of_blocks,false);
+			//std::queue<IRBasicBlock*> queue;
+			//std::vector<IRBasicBlock*> traversal_order;
+			//queue.push(starting_blk);
+			//traversal_order.push_back(starting_blk);
 
-			visited[starting_blk->get_index()] = true;
-			while (!queue.empty()) {
+			//visited[starting_blk->get_index()] = true;
+			//while (!queue.empty()) {
 
-				IRBasicBlock* current_blk = queue.front();
-				queue.pop();
+			//	IRBasicBlock* current_blk = queue.front();
+			//	queue.pop();
 
-				for (IRBasicBlock* successor : current_blk->get_successors()) {
-					if (!visited[successor->get_index()]) {
-						visited[successor->get_index()] = true;
-						traversal_order.push_back(successor);
-						queue.push(successor);
-					}
-				}
-			}
+			//	for (IRBasicBlock* successor : current_blk->get_successors()) {
+			//		if (!visited[successor->get_index()]) {
+			//			visited[successor->get_index()] = true;
+			//			traversal_order.push_back(successor);
+			//			queue.push(successor);
+			//		}
+			//	}
+			//}
 
-			for (size_t i = 0; i < traversal_order.size();i++)
-				traversal_order[i]->set_index(i);
+			//for (size_t i = 0; i < traversal_order.size();i++)
+			//	traversal_order[i]->set_index(i);
 
-			fn->m_basic_blocks = std::move(traversal_order);
+			//fn->m_basic_blocks = std::move(traversal_order);
 		}
 	}
 }

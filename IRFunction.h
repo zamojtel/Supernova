@@ -48,4 +48,6 @@ public:
 	bool is_inline() const;
 	void remove_blk(IRBasicBlock* blk);
 	std::vector<TypeRef> get_paramater_type();
+	void sort_blocks();
+	void compute_dominator_sets();
 };

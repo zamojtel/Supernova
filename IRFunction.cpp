@@ -163,33 +163,6 @@ void IRFunction::reindex_triples() {
 const TypeRef& IRFunction::get_return_type() const {
 	return m_return_type;
 }
-//
-//bool IRFunction::compare_arguments(const std::vector<IROperand>& arguments) {
-//	// for now it will ignore operands other than variables 
-//	if (m_parameters.size() != arguments.size())
-//		return false;
-//
-//	for (size_t i = 0; i < arguments.size();i++) {
-//		if (m_parameters[i]->get_data_type().remove_reference() != arguments[i].get_data_type().remove_reference())
-//			return false;
-//	}
-//
-//	return true;
-//}
-
-//bool IRFunction::compare_arguments(const std::vector<TypeRef>& argument_types) {
-//	// for now it will ignore operands other than variables 
-//	auto parameter_types = get_parameter_types();
-//	if (parameter_types.size() != argument_types.size())
-//		return false;
-//
-//	for (size_t i = 0; i < argument_types.size();i++) {
-//		if (parameter_types[i].remove_reference() != argument_types[i].remove_reference())
-//			return false;
-//	}
-//
-//	return true;
-//}
 
 const std::string& IRFunction::get_identifier() const {
 	return m_identifier;
@@ -207,4 +180,96 @@ std::vector<TypeRef> IRFunction::get_paramater_type() {
 		paramater_types.push_back(p->get_data_type());
 
 	return paramater_types;
+}
+
+void IRFunction::sort_blocks() {
+	IRBasicBlock* starting_blk = get_basic_blk(0);
+	int number_of_blocks = get_basic_blocks().size();
+	std::vector<bool> visited(number_of_blocks, false);
+	std::queue<IRBasicBlock*> queue;
+	std::vector<IRBasicBlock*> traversal_order;
+	queue.push(starting_blk);
+	traversal_order.push_back(starting_blk);
+
+	visited[starting_blk->get_index()] = true;
+	while (!queue.empty()) {
+
+		IRBasicBlock* current_blk = queue.front();
+		queue.pop();
+
+		for (IRBasicBlock* successor : current_blk->get_successors()) {
+			if (!visited[successor->get_index()]) {
+				visited[successor->get_index()] = true;
+				traversal_order.push_back(successor);
+				queue.push(successor);
+			}
+		}
+	}
+
+	for (size_t i = 0; i < traversal_order.size(); i++)
+		traversal_order[i]->set_index(i);
+
+	m_basic_blocks = std::move(traversal_order);
+}
+
+void IRFunction::compute_dominator_sets() {
+	sort_blocks();
+
+	for (size_t i = 0; i < m_basic_blocks.size();i++)
+		m_basic_blocks[i]->m_dominators.clear();
+
+	// for the first one we put only itself as a dominator
+	m_basic_blocks[0]->m_dominators.insert(m_basic_blocks[0]);
+	for (size_t i = 1; i < m_basic_blocks.size();i++)
+		m_basic_blocks[i]->m_dominators.insert(m_basic_blocks.begin(),m_basic_blocks.end());
+
+	bool changed = true;
+	while (changed) {
+		changed = false;
+		for (size_t i = 1; i < m_basic_blocks.size();i++) {
+			auto preds = m_basic_blocks[i]->get_predecessors();
+			std::set<IRBasicBlock*> intersection = preds[0]->m_dominators;
+
+			for (size_t j = 1; j < preds.size();j++) {
+				std::set<IRBasicBlock*> temp;
+				std::set_intersection(
+					intersection.begin(),intersection.end(),
+					preds[j]->m_dominators.begin(),preds[j]->m_dominators.end(),
+					std::inserter(temp,temp.begin())
+				);
+				intersection = std::move(temp);
+			}
+			
+			intersection.insert(m_basic_blocks[i]);
+			if (intersection != m_basic_blocks[i]->m_dominators) {
+				m_basic_blocks[i]->m_dominators = std::move(intersection);
+				changed = true;
+			}
+		}
+	}
+
+	for (size_t i = 0; i < m_basic_blocks.size();i++) {
+		m_basic_blocks[i]->m_dominator_tree_successors.clear();
+		m_basic_blocks[i]->m_idom = nullptr;
+	}
+
+	// to determine idom we search for a second greatest block  
+	for (int i = 1; i < m_basic_blocks.size(); i++) {
+		IRBasicBlock* idom = nullptr;
+		int second_largest_index = -1;
+		int forbidden_index = static_cast<int>(m_basic_blocks[i]->get_index());
+
+		for (auto dom : m_basic_blocks[i]->m_dominators) {
+			int index = static_cast<int>(dom->get_index());
+			if ( index >second_largest_index && index != forbidden_index) {
+				idom = dom;
+				second_largest_index = index;
+			}
+		}
+		
+		m_basic_blocks[i]->m_idom = idom;
+		if (idom != nullptr)
+			idom->m_dominator_tree_successors.push_back(m_basic_blocks[i]);
+	}
+
 }

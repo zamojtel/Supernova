@@ -3,7 +3,9 @@ class IRFunction;
 class IRBasicBlock : public IRUsedObject {
 private:
 	friend class IRCoder;
+	friend class IRPrinter;
 	friend class IRInliner;
+	friend class IRFunction;
 	size_t m_index;
 	std::vector<IRTriple*> m_triples;
 	IRFunction * m_current_function;
@@ -11,6 +13,19 @@ private:
 	// change to unordered_map
 	std::map<IRBasicBlock*,int> m_successors;
 	std::map<IRBasicBlock*,int> m_predecessors;
+
+	// for calculating dominance_frontiers
+	std::set<IRBasicBlock*> m_dominators;
+	IRBasicBlock* m_idom = nullptr;
+	std::vector<IRBasicBlock*> m_dominator_tree_successors;
+	std::set<IRBasicBlock*> m_dominance_frontiers;
+
+	// Liveness and phi insertion
+	std::set<IRVariable*> m_use;
+	std::set<IRVariable*> m_def;
+	std::set<IRVariable*> m_live_in;
+	std::set<IRVariable*> m_live_out;
+	std::set<IRVariable*> m_variable_has_phi;
 public:
 	IRBasicBlock(IRFunction* c_f, size_t i) : m_current_function{ c_f }, m_index{ i }, m_name{""} {}
 	IRBasicBlock(IRFunction* c_f, size_t i, const std::string& name) : m_current_function{ c_f }, m_index{ i }, m_name{name} {}

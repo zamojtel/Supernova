@@ -255,14 +255,15 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
     printer.print_ir_representation(ir_program);
 
     printer.print_errors(error_collector);
-    if (!is_error_test && (ast_conv_impl.has_error || !error_collector.get_errors().empty())) {
+    if (!is_error_test && (ast_conv_impl.has_error || !error_collector.get_errors().empty()))
         return false;
-    }
 
     IRInliner inliner;
-    
     std::vector<IROperand> fn_arguments{};
     IRFunction* main_fn = ir_program.get_function("main", {});
+    
+    main_fn->compute_dominator_sets();
+    printer.print_dominantors(main_fn);
 
     if (!main_fn) {
         std::cout << "there's no main function in the source file";

@@ -318,3 +318,17 @@ void IRPrinter::print_memory_layout(const IRProgram& p) const {
 		}
 	}
 }
+
+void IRPrinter::print_dominantors(const IRFunction* fn) const {
+	const std::vector<IRBasicBlock*> blks = fn->get_basic_blocks();
+
+	for (size_t i = 0; i < blks.size();i++) {
+		std::cout << "B_{" << i << "}" << std::endl;
+		std::cout << "Dominators: " << std::endl;
+		for (const auto dom : blks[i]->m_dominators) {
+			std::cout << "B_" << dom->get_index() << " ";
+		}
+		std::string idom_str = blks[i]->m_idom != nullptr ? std::to_string(blks[i]->m_idom->get_index()) : "nullptr";
+		std::cout << "IDom: B_" << idom_str << std::endl;
+	}
+}
