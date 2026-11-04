@@ -319,7 +319,7 @@ void IRPrinter::print_memory_layout(const IRProgram& p) const {
 	}
 }
 
-void IRPrinter::print_dominantors(const IRFunction* fn) const {
+void IRPrinter::print_dominators(const IRFunction* fn) const {
 	const std::vector<IRBasicBlock*> blks = fn->get_basic_blocks();
 
 	for (size_t i = 0; i < blks.size();i++) {
@@ -331,4 +331,23 @@ void IRPrinter::print_dominantors(const IRFunction* fn) const {
 		std::string idom_str = blks[i]->m_idom != nullptr ? std::to_string(blks[i]->m_idom->get_index()) : "nullptr";
 		std::cout << "IDom: B_" << idom_str << std::endl;
 	}
+}
+void IRPrinter::print_dominance_frontiers(const IRFunction* fn) const {
+	const std::vector<IRBasicBlock*> blks = fn->get_basic_blocks();
+	// TODO: correct printing
+	for (size_t i = 0; i < blks.size(); i++) {
+		std::cout << "===========================" << std::endl;
+		std::cout << "B_{" << i << "}" << std::endl;
+		std::cout << "Dominance Frontiers: " << std::endl;
+		if (blks[i]->m_dominance_frontiers.size() == 0) {
+			std::cout << "EMPTY" << std::endl;
+			continue;
+		}
+
+		for (const auto frontier : blks[i]->m_dominance_frontiers)
+			std::cout << "B_" << frontier->get_index() << " ";
+		std::cout << "\n===========================" << std::endl;
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
 }

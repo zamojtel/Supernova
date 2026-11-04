@@ -50,4 +50,5 @@ public:
 	std::vector<TypeRef> get_paramater_type();
 	void sort_blocks();
 	void compute_dominator_sets();
+	void compute_dominance_frontiers();
 };

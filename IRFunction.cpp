@@ -271,5 +271,23 @@ void IRFunction::compute_dominator_sets() {
 		if (idom != nullptr)
 			idom->m_dominator_tree_successors.push_back(m_basic_blocks[i]);
 	}
+}
 
+void IRFunction::compute_dominance_frontiers() {
+	for (size_t i = 0; i < m_basic_blocks.size(); i++) {
+		m_basic_blocks[i]->m_dominance_frontiers.clear();
+	}
+
+	for (int i = 0; i < m_basic_blocks.size();i++) {
+		auto current_blk = m_basic_blocks[i];
+		if (current_blk->get_predecessors().size()>1) {
+			for (IRBasicBlock *pred : current_blk->get_predecessors()) {
+				auto runner = pred;
+				while (runner!=current_blk->m_idom) {
+					runner->m_dominance_frontiers.insert(current_blk);
+					runner = runner->m_idom;
+				}
+			}
+		}
+	}
 }

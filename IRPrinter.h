@@ -21,5 +21,6 @@ public:
 	void print_all_data_types_with_size(IRProgram& p);
 	void print_memory_layout_for_fn(const IRFunction* f) const;
 	void print_memory_layout(const IRProgram& p) const;
-	void print_dominantors(const IRFunction* fn) const;
+	void print_dominators(const IRFunction* fn) const;
+	void print_dominance_frontiers(const IRFunction* fn) const;
 };
