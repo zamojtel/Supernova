@@ -263,7 +263,14 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
     IRFunction* main_fn = ir_program.get_function("main", {});
     
     main_fn->compute_dominator_sets();
-    printer.print_dominantors(main_fn);
+    main_fn->compute_dominance_frontiers();
+    main_fn->compute_live_variables();
+
+    printer.print_dominators(main_fn);
+    std::cout << std::endl;
+    printer.print_dominance_frontiers(main_fn);
+    std::cout << std::endl;
+    printer.print_live_variables(main_fn);
 
     if (!main_fn) {
         std::cout << "there's no main function in the source file";
@@ -310,7 +317,6 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
         auto llvm_module = ir_to_llvm_converter.convert();
         auto jit_result = llvm::orc::LLJITBuilder().create();
        
-
         if (!jit_result) {
             llvm::errs() << llvm::toString(jit_result.takeError()) << '\n';
             return false;

@@ -767,6 +767,7 @@
     <Text Include="SourceTests\broadcasting_3.txt" />
     <Text Include="SourceTests\broadcasting_4.txt" />
     <Text Include="SourceTests\broadcasting_5.txt" />
+    <Text Include="SourceTests\domain_frontiers_2.txt" />
     <Text Include="SourceTests\domination_frontiers_1.txt" />
     <Text Include="SourceTests\jit_compiled_function_1.txt" />
     <Text Include="SourceTests\jit_compiled_function_with_args_1.txt" />

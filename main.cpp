@@ -434,6 +434,14 @@ void supernova_jit_tests(const fs::path& source_file) {
 		compiled_function_16(dec);
 	assert(dec == 0);
 
+	//void reference12_test(int& value) {
+	//	int x = 10;
+	//	int* p = &x;
+	//	int& r = *p;
+	//	r = 20;
+	//	value = x;
+	//}
+
 	int passed_value = 0;
 	using function_17 = void (*)(int&);
 	std::vector<TypeRef> parameters17{ dtm->add_reference(dtm->get_int())};
@@ -815,7 +823,8 @@ int main(int argc,char* argv[]) {
 		//"reference_4",
 		//"reference_5"
 		//"domination_frontiers_1",
-		"domination_frontiers_3"
+		//"domination_frontiers_3"
+		"domination_frontiers_2"
 	};
 	
 	std::vector<std::string> jit_test{
@@ -887,6 +896,7 @@ int main(int argc,char* argv[]) {
 
 	SupernovaCompiler supernova_compiler;
 	//supernova_jit_tests(tests_path / "supernova_tests.txt");
+	//supernova_compiler.compile("int function1(int a) { return 10; }");
 
 	return 0;
 }
