@@ -49,6 +49,8 @@ public:
 	void remove_blk(IRBasicBlock* blk);
 	std::vector<TypeRef> get_paramater_type();
 	void sort_blocks();
+	// ssa-pruned
 	void compute_dominator_sets();
 	void compute_dominance_frontiers();
+	void compute_live_variables();
 };

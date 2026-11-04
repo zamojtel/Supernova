@@ -23,4 +23,5 @@ public:
 	void print_memory_layout(const IRProgram& p) const;
 	void print_dominators(const IRFunction* fn) const;
 	void print_dominance_frontiers(const IRFunction* fn) const;
+	void print_live_variables(const IRFunction* fn) const;
 };

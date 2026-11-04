@@ -274,9 +274,8 @@ void IRFunction::compute_dominator_sets() {
 }
 
 void IRFunction::compute_dominance_frontiers() {
-	for (size_t i = 0; i < m_basic_blocks.size(); i++) {
+	for (size_t i = 0; i < m_basic_blocks.size(); i++)
 		m_basic_blocks[i]->m_dominance_frontiers.clear();
-	}
 
 	for (int i = 0; i < m_basic_blocks.size();i++) {
 		auto current_blk = m_basic_blocks[i];
@@ -290,4 +289,95 @@ void IRFunction::compute_dominance_frontiers() {
 			}
 		}
 	}
+}
+
+void IRFunction::compute_live_variables() {
+	for (size_t i = 0; i < m_basic_blocks.size();i++) {
+		m_basic_blocks[i]->m_use.clear();
+		m_basic_blocks[i]->m_def.clear();
+		m_basic_blocks[i]->m_live_in.clear();
+		m_basic_blocks[i]->m_live_out.clear();
+	}
+
+	for (IRBasicBlock* blk : m_basic_blocks) {
+		const std::vector<IRTriple*> triples = blk->get_all_triples();
+		for (size_t i = 0; i < triples.size(); i++) {
+			switch (triples[i]->get_ir_operation())
+			{
+			case IROperation::INIT_ASSIGN:
+			case IROperation::ASSIGN:{
+				IROperand right_operand = triples[i]->m_operands[1];
+				IROperand left_operand = triples[i]->m_operands[0];
+				if (right_operand.m_operand_type == IROperandType::VARIABLE) {
+					IRVariable* variable = right_operand.get_variable();
+					if (blk->m_def.count(variable) == 0)
+						blk->m_use.insert(variable);
+				}
+
+				if (left_operand.m_operand_type == IROperandType::VARIABLE) {
+					IRVariable* variable = left_operand.get_variable();
+					blk->m_def.insert(variable);
+				}
+				break;
+			}
+			case IROperation::INC:
+			case IROperation::DEC: {
+				IROperand operand = triples[i]->m_operands[0];
+				
+				if (operand.m_operand_type == IROperandType::VARIABLE) {
+					IRVariable* variable = operand.get_variable();
+					if (blk->m_def.count(variable)==0) {
+						blk->m_use.insert(variable);
+						blk->m_def.insert(variable);
+					}
+				}
+
+				break;
+			}
+			default:
+				for (size_t j = 0; j < triples[i]->m_operands.size();j++) {
+					IROperand current_operand = triples[i]->m_operands[j];
+					if (current_operand.m_operand_type==IROperandType::VARIABLE) {
+						IRVariable* variable = current_operand.get_variable();
+						if(blk->m_def.count(variable)==0)
+							blk->m_use.insert(variable);
+					}
+				}
+				break;
+			}
+		}
+	}
+
+	bool changed = true;
+
+	while (changed) {
+
+		changed = false;
+		for (int i = static_cast<int>(m_basic_blocks.size()) - 1 ; i >= 0;i--) {
+			IRBasicBlock* current_blk = m_basic_blocks[i];
+			std::vector<IRBasicBlock*> successors = current_blk->get_successors();
+			std::set<IRVariable*> live_out_sum;
+
+			for (int j = 0; j < successors.size();j++)
+				live_out_sum.insert(successors[j]->m_live_in.begin(),successors[j]->m_live_in.end());
+			
+			if (current_blk->m_live_out != live_out_sum) {
+				current_blk->m_live_out = std::move(live_out_sum);
+				changed = true;
+			}
+
+			std::set<IRVariable*> live_in_result;
+			live_in_result.insert(current_blk->m_use.begin(),current_blk->m_use.end());
+			
+			std::set<IRVariable*> difference_result;
+			std::set_difference(current_blk->m_live_out.begin(),current_blk->m_live_out.end(),current_blk->m_def.begin(),current_blk->m_def.end(),std::inserter(difference_result,difference_result.begin()));
+			live_in_result.insert(difference_result.begin(),difference_result.end());
+			if (current_blk->m_live_in != live_in_result) {
+				current_blk->m_live_in = std::move(live_in_result);
+				changed = true;
+			}
+		}
+	}
+
+
 }

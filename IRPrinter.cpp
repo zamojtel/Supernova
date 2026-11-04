@@ -332,6 +332,7 @@ void IRPrinter::print_dominators(const IRFunction* fn) const {
 		std::cout << "IDom: B_" << idom_str << std::endl;
 	}
 }
+
 void IRPrinter::print_dominance_frontiers(const IRFunction* fn) const {
 	const std::vector<IRBasicBlock*> blks = fn->get_basic_blocks();
 	// TODO: correct printing
@@ -350,4 +351,30 @@ void IRPrinter::print_dominance_frontiers(const IRFunction* fn) const {
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;
+}
+
+void IRPrinter::print_live_variables(const IRFunction* fn) const {
+	const std::vector<IRBasicBlock*> blks = fn->get_basic_blocks();
+	for (size_t i = 0; i < blks.size();i++) {
+		IRBasicBlock* blk = blks[i];
+		std::cout << "\n===========================" << std::endl;
+		std::cout << "B_" << i << std::endl;
+		std::cout << "===========================" << std::endl;
+		
+		std::cout << "LiveIn:" << std::endl;
+		if (!blk->m_live_in.empty()) {
+			for (IRVariable * var : blk->m_live_in)
+				std::cout << var->m_identifier << std::endl;
+		}
+		else
+			std::cout << "EMPTY" << std::endl;
+
+		std::cout << "LiveOut:" << std::endl;
+		if (!blk->m_live_out.empty()) {
+			for (IRVariable* var : blk->m_live_out)
+				std::cout << var->m_identifier << std::endl;
+		}
+		else
+			std::cout << "EMPTY" << std::endl;
+	}
 }
