@@ -1,6 +1,8 @@
 #ifndef INCLUDES_H
 #define INCLUDES_H
 
+#include "Stopwatch.h"
+#include "Benchmarker.h"
 #include "IRInvalidTypeConstructionException.h"
 #include "TreeNodeType.h"
 #include "OperationType.h"

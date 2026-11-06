@@ -3,6 +3,8 @@
 #ifndef INCLUDES_CPP
 #define INCLUDES_CPP
 
+#include "Stopwatch.cpp"
+#include "Benchmarker.cpp"
 #include "IRInvalidTypeConstructionException.cpp"
 #include "ASTCOnvIncludes.cpp"
 

@@ -220,6 +220,12 @@
     <Filter Include="Source Files\Supernova">
       <UniqueIdentifier>{6ea8804a-dbb0-4cfd-83e7-b9292cead512}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Stopwatch">
+      <UniqueIdentifier>{cc8ebc21-b540-4a45-b00f-190c1b3614f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Benchmarker">
+      <UniqueIdentifier>{689f6093-7c82-41da-8acc-73105318e05c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -446,6 +452,18 @@
     </ClCompile>
     <ClCompile Include="SupernovaCompiler.cpp">
       <Filter>Source Files\Supernova</Filter>
+    </ClCompile>
+    <ClCompile Include="Stopwatch.cpp">
+      <Filter>Source Files\Stopwatch</Filter>
+    </ClCompile>
+    <ClCompile Include="Benchmarker.cpp">
+      <Filter>Source Files\Benchmarker</Filter>
+    </ClCompile>
+    <ClCompile Include="ExamplePrograms\bubble_sort.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExamplePrograms\merge_sort.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -929,6 +947,12 @@
     </ClInclude>
     <ClInclude Include="SupernovaCompiler.h">
       <Filter>Source Files\Supernova</Filter>
+    </ClInclude>
+    <ClInclude Include="Stopwatch.h">
+      <Filter>Source Files\Stopwatch</Filter>
+    </ClInclude>
+    <ClInclude Include="Benchmarker.h">
+      <Filter>Source Files\Benchmarker</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

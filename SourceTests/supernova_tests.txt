@@ -140,3 +140,22 @@ void reference12_test(int &value){
 	r = 20;
 	value = x;
 }
+
+void bubble_sort(int * arr,int n) {
+	for (int i = 0; i < n ;i++) {
+		bool swapped = false;
+		for (int j = 1; j < n - i;j++) {
+			if (arr[j-1]>arr[j]) {
+				int temp =  arr[j-1];
+				arr[j-1] = arr[j];
+				arr[j] = temp;
+				swapped = true;
+			}
+		}
+
+		// if (!swapped)
+		if (swapped==false)
+			return;
+	}
+	return;
+}

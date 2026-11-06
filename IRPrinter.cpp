@@ -274,7 +274,6 @@ void IRPrinter::print_all_data_types_with_size(IRProgram& p) {
 		else
 			std::cout << data_type_name << " no size has been set " << std::endl;
 	}
-
 }
 
 void IRPrinter::print_memory_layout_for_fn(const IRFunction* f) const {
