@@ -4,7 +4,7 @@ void Stopwatch::start() {
 }
 
 double Stopwatch::stop() {
-	m_end = Clock::now();
-	double seconds = std::chrono::duration<double,std::milli>(m_end - m_start).count();
-	return seconds;
+	TimePoint end = Clock::now();
+	double milliseconds = std::chrono::duration<double,std::milli>(end - m_start).count();
+	return milliseconds;
 }
