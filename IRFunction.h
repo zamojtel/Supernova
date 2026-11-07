@@ -53,4 +53,6 @@ public:
 	void compute_dominator_sets();
 	void compute_dominance_frontiers();
 	void compute_live_variables();
+	void compute_phi_functions();
+	void insert_phi_functions();
 };

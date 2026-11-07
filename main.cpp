@@ -822,8 +822,8 @@ int main(int argc,char* argv[]) {
 		//"reference_3"
 		//"reference_4",
 		//"reference_5"
-		//"domination_frontiers_1",
 		//"domination_frontiers_3"
+		"domination_frontiers_1",
 		"domination_frontiers_2"
 	};
 	

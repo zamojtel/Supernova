@@ -252,7 +252,6 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
     converter.convert(&ast_conv_impl);
 
     ir_program.check_program();
-    printer.print_ir_representation(ir_program);
 
     printer.print_errors(error_collector);
     if (!is_error_test && (ast_conv_impl.has_error || !error_collector.get_errors().empty()))
@@ -262,15 +261,23 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
     std::vector<IROperand> fn_arguments{};
     IRFunction* main_fn = ir_program.get_function("main", {});
     
+    // section for inserting phi functions
     main_fn->compute_dominator_sets();
     main_fn->compute_dominance_frontiers();
     main_fn->compute_live_variables();
+    main_fn->compute_phi_functions();
+    main_fn->insert_phi_functions();
 
     printer.print_dominators(main_fn);
     std::cout << std::endl;
     printer.print_dominance_frontiers(main_fn);
     std::cout << std::endl;
     printer.print_live_variables(main_fn);
+    std::cout << std::endl;
+    printer.print_inserted_phi_functions(main_fn);
+    std::cout << std::endl;
+
+    printer.print_ir_representation(ir_program);
 
     if (!main_fn) {
         std::cout << "there's no main function in the source file";

@@ -84,6 +84,8 @@ std::string IRPrinter::ir_operation_to_string(const IROperation op) const {
 		return "WRITE_TO_POINTER";
 	case IROperation::SELECT:
 		return "SELECT";
+	case IROperation::PHI:
+		return "PHI";
 	default:
 		throw std::runtime_error("can't find such ir operation");
 	}
@@ -376,5 +378,18 @@ void IRPrinter::print_live_variables(const IRFunction* fn) const {
 		}
 		else
 			std::cout << "EMPTY" << std::endl;
+	}
+}
+
+void IRPrinter::print_inserted_phi_functions(IRFunction* fn) const {
+	for (IRBasicBlock* blk : fn->get_basic_blocks()) {
+		std::cout << "Inserted Phi functions for B" << blk->m_index << std::endl;
+		if (!blk->m_variable_has_phi.empty()) {
+			for (IRVariable* var : blk->m_variable_has_phi)
+				std::cout << var->get_variable_name() << " ";
+			std::cout << std::endl;
+		}
+		else
+			std::cout << "NO INSERTION REQUIRED" << std::endl;
 	}
 }

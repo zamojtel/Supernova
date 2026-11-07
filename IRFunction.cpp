@@ -378,6 +378,63 @@ void IRFunction::compute_live_variables() {
 			}
 		}
 	}
+}
 
+void IRFunction::compute_phi_functions() {
+	// phi insertion 
+	for (IRBasicBlock* blk : m_basic_blocks)
+		blk->m_variable_has_phi.clear();
 
+	for (IRVariable* var : m_variables) {
+		std::queue<IRBasicBlock*> work_list;
+		std::unordered_set<IRBasicBlock*> ever_on_work_list;
+
+		for (IRBasicBlock* blk : m_basic_blocks) {
+			if (blk->m_def.count(var) > 0) {
+				work_list.push(blk);
+				ever_on_work_list.insert(blk);
+			}
+		}
+
+		// X is currently processed block
+		// Y is an element from the dominance_froniter list of block X
+		while (!work_list.empty()) {
+			IRBasicBlock* X = work_list.front();
+			work_list.pop();
+
+			for (IRBasicBlock* Y : X->m_dominance_frontiers) {
+				if (Y->m_live_in.count(var) > 0 && Y->m_variable_has_phi.count(var) == 0) {
+					Y->m_variable_has_phi.insert(var);
+
+					if (ever_on_work_list.count(Y) == 0) {
+						work_list.push(Y);
+						ever_on_work_list.insert(Y);
+					}
+				}
+			}
+		}
+	}
+}
+
+void IRFunction::insert_phi_functions() {
+	IRCoder coder(m_ir_program);
+	
+	for (IRBasicBlock *blk : m_basic_blocks) {
+		if (blk->m_variable_has_phi.size()>0) {
+			coder.set_position_at_start(blk);
+			int current_line_number = 0;
+			for (IRVariable* var : blk->m_variable_has_phi) {
+				std::vector<IROperand> operands;
+				operands.push_back(var);
+				
+				for (IRBasicBlock* pred : blk->get_predecessors()) {
+					operands.push_back(pred);
+					operands.push_back(IROperand{});
+				}
+
+				coder.add_triple(current_line_number++,IROperation::PHI,operands);
+			}
+		}
+	}
+	reindex_triples();
 }

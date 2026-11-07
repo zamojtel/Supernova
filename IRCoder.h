@@ -13,6 +13,7 @@ public:
 	IRTriple* add_triple(size_t line_number, IROperation operation, const std::vector<IROperand>& operands);
 	IRBasicBlock* get_basic_block() const;
 	void set_basic_block(IRBasicBlock* blk);
+	void set_position_at_start(IRBasicBlock* blk);
 	void set_position_after(IRTriple* triple);
 	void insert_triple(IRTriple* triple);
 };

@@ -629,6 +629,10 @@ void Interpreter::start(IRFunction* fn) {
 			m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result_addr;
 			break;
 		}
+		case IROperation::PHI: {
+
+			break;
+		}
 		default:
 			throw std::runtime_error("ir operation is not supported");
 		}
