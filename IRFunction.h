@@ -9,10 +9,14 @@ private:
 	IRProgram* m_ir_program = nullptr;
 	// inside of the function we remember how many triples we have
 	size_t m_triple_count;
+
 	std::vector<IRBasicBlock*> m_basic_blocks;
 	std::vector<IRConstant*> m_constants;
 	std::vector<IRVariable*> m_variables;
 	std::vector<IRVariable*> m_parameters;
+	std::unordered_set<IRVariable*> m_ssa_variable_candidates;
+	std::unordered_map<IRVariable*, std::vector<IROperand>> m_ssa_variable_stacks;
+
 	TypeRef m_return_type;
 	size_t m_total_size_required{ 0 };
 public:
@@ -55,4 +59,8 @@ public:
 	void compute_live_variables();
 	void compute_phi_functions();
 	void insert_phi_functions();
+	void collect_ssa_variable_candidates();
+	void filter_addressable_variables();
+	void rename_variables();
+	void rename_variables_in_block(IRBasicBlock* blk);
 };

@@ -299,6 +299,11 @@ void IRFunction::compute_live_variables() {
 		m_basic_blocks[i]->m_live_out.clear();
 	}
 
+	// the entry block B0 for parameters 
+	// is treated as the place where parameters are defined
+	for (size_t i = 0; i < m_parameters.size(); i++)
+		m_basic_blocks[0]->m_def.insert(m_parameters[i]);
+
 	for (IRBasicBlock* blk : m_basic_blocks) {
 		const std::vector<IRTriple*> triples = blk->get_all_triples();
 		for (size_t i = 0; i < triples.size(); i++) {
@@ -349,7 +354,6 @@ void IRFunction::compute_live_variables() {
 	}
 
 	bool changed = true;
-
 	while (changed) {
 
 		changed = false;
@@ -385,7 +389,7 @@ void IRFunction::compute_phi_functions() {
 	for (IRBasicBlock* blk : m_basic_blocks)
 		blk->m_variable_has_phi.clear();
 
-	for (IRVariable* var : m_variables) {
+	for (IRVariable* var : m_ssa_variable_candidates) {
 		std::queue<IRBasicBlock*> work_list;
 		std::unordered_set<IRBasicBlock*> ever_on_work_list;
 
@@ -437,4 +441,159 @@ void IRFunction::insert_phi_functions() {
 		}
 	}
 	reindex_triples();
+}
+
+void IRFunction::collect_ssa_variable_candidates() {
+	m_ssa_variable_candidates.clear();
+	for (IRVariable* variable : m_variables) {
+		const TypeRef type = variable->get_data_type();
+		if (type.is_reference())
+			continue;
+
+		const TypeRef clean_type = type.remove_qualifiers();
+
+		if (clean_type.is_array() || clean_type.is_pointer())
+			continue;
+
+		if (clean_type.is_basic_data_type())
+			m_ssa_variable_candidates.insert(variable);
+	}
+}
+
+void IRFunction::filter_addressable_variables() {
+	// there are 4 cases in which we remove the variable
+	// 1. We take the address of this variable anywhere in the code
+	// 2. if the left operand is a reference example int& r = x;
+	// 3. if a reference is passed as a parameter
+	// 4. in cases of INC and DEC because both of them modify the variable in place
+
+	for (IRBasicBlock* blk : m_basic_blocks) {
+		std::vector<IRTriple*> triples = blk->get_all_triples();
+		for (int i = 0; i < triples.size(); i++) {
+			IROperation operation = triples[i]->get_ir_operation();
+
+			if (operation == IROperation::ADDRESS_OF) {
+				if (triples[i]->m_operands[0].m_operand_type == IROperandType::VARIABLE)
+				{
+					IRVariable* variable = triples[i]->m_operands[0].get_variable();
+					m_ssa_variable_candidates.erase(variable);
+				}
+			}
+
+			if (operation == IROperation::INIT_ASSIGN) {
+				if (triples[i]->m_operands[0].get_data_type().is_reference() && triples[i]->m_operands[1].m_operand_type == IROperandType::VARIABLE) {
+					IRVariable* variable = triples[i]->m_operands[1].get_variable();
+					m_ssa_variable_candidates.erase(variable);
+				}
+			}
+
+			if (operation == IROperation::FUNCTION_CALL || operation == IROperation::EXTERNAL_FUNCTION_CALL) {
+				
+				IRBaseFunction * fn = triples[i]->m_operands[0].get_base_function();
+				const std::vector<TypeRef> parameter_types = fn->get_parameter_types();
+
+				for (size_t j = 0; j < parameter_types.size();j++) {
+					if (parameter_types[j].is_reference() && triples[i]->m_operands[j+1].m_operand_type==IROperandType::VARIABLE) {
+						IRVariable* variable = triples[i]->m_operands[j+1].get_variable();
+						m_ssa_variable_candidates.erase(variable);
+					}
+				}
+			}
+
+			if (operation == IROperation::INC || operation == IROperation::DEC) {
+				if(triples[i]->m_operands[0].m_operand_type==IROperandType::VARIABLE)
+					m_ssa_variable_candidates.erase(triples[i]->m_operands[0].get_variable());
+			}
+		}
+	}
+}
+
+void IRFunction::rename_variables_in_block(IRBasicBlock* blk) {
+
+	std::vector<IRVariable*> pushed_variables;
+	std::vector<IRTriple*> triples = blk->get_all_triples();
+	
+	for (IRTriple* triple : triples) {
+		IROperation operation = triple->get_ir_operation();
+
+		switch (operation) {
+			case IROperation::PHI: {
+				IRVariable* variable = triple->m_operands[0].get_variable();
+				m_ssa_variable_stacks[variable].push_back(triple);
+				pushed_variables.push_back(variable);
+
+				break;
+			}
+			case IROperation::INIT_ASSIGN:
+			case IROperation::ASSIGN:
+			{
+				if (operation == IROperation::ASSIGN || operation == IROperation::INIT_ASSIGN) {
+					if (triple->m_operands[1].m_operand_type == IROperandType::VARIABLE) {
+						IRVariable* right_variable = triple->m_operands[1].get_variable();
+						if (m_ssa_variable_candidates.count(right_variable) > 0)
+							triple->set_operand(1, m_ssa_variable_stacks[right_variable].back());
+					}
+
+					if (triple->m_operands[0].m_operand_type == IROperandType::VARIABLE) {
+						IRVariable* left_variable = triple->m_operands[0].get_variable();
+						if (m_ssa_variable_candidates.count(left_variable) > 0) {
+							m_ssa_variable_stacks[left_variable].push_back(triple->m_operands[1]);
+							pushed_variables.push_back(left_variable);
+							// removing triple
+							blk->remove_triple(triple);
+						}
+					}
+				}
+
+				break;
+			}
+			default:
+			{	
+				for (size_t j = 0; j < triple->m_operands.size();j++) {
+					if (triple->m_operands[j].m_operand_type == IROperandType::VARIABLE && m_ssa_variable_candidates.count(triple->m_operands[j].get_variable()))
+					{
+						IRVariable* variable = triple->m_operands[j].get_variable();
+						triple->set_operand(j,m_ssa_variable_stacks[variable].back());
+					}
+				}
+				break;
+			}
+		}
+	}
+
+	for (IRBasicBlock* succ : blk->get_successors()) {
+		std::vector<IRTriple*> triples = succ->get_all_triples();
+		for (IRTriple * triple : succ->get_all_triples()) {
+			IROperation operation = triple->get_ir_operation();
+			if (operation==IROperation::PHI) {
+				IRVariable* phi_variable = triple->m_operands[0].get_variable();
+				for (size_t k = 1; k < triple->m_operands.size();k+=2) {
+					if (triple->m_operands[k].m_operand_type == IROperandType::BASIC_BLOCK) {
+						if (triple->m_operands[k].get_basic_block()==blk) {
+							if (!m_ssa_variable_stacks[phi_variable].empty())
+								triple->set_operand(k + 1, m_ssa_variable_stacks[phi_variable].back());
+						}
+					}
+				}
+			}
+		}
+	}
+
+	for (IRBasicBlock* child : blk->m_dominator_tree_successors)
+		rename_variables_in_block(child);
+
+	for (IRVariable* variable : pushed_variables)
+		m_ssa_variable_stacks[variable].pop_back();
+
+}
+
+void IRFunction::rename_variables() {
+	m_ssa_variable_stacks.clear();
+	// first of all parameters
+	for (auto parameter : m_parameters) {
+		if (m_ssa_variable_candidates.count(parameter) > 0)
+			m_ssa_variable_stacks[parameter].push_back(parameter);
+	}
+
+	rename_variables_in_block(m_basic_blocks[0]);
 }

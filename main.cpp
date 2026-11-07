@@ -825,7 +825,8 @@ int main(int argc,char* argv[]) {
 		//"domination_frontiers_3"
 		//"domination_frontiers_1",
 		//"domination_frontiers_2",
-		"domination_frontiers_4"
+		//"domination_frontiers_4"
+		"domination_frontiers_simple_test_1"
 	};
 	
 	std::vector<std::string> jit_test{
@@ -893,12 +894,9 @@ int main(int argc,char* argv[]) {
 	);
 
 	interpreter_tester.run_all_tests(test_names, {});
-	//jit_tester.run_all_tests(test_names, {});
-
 	SupernovaCompiler supernova_compiler;
-	//supernova_jit_tests(tests_path / "supernova_tests.txt");
-	//supernova_compiler.compile("int function1(int a) { return 10; }");
-
+	// domination_frontiers_simple_test_1.txt
+		
 	return 0;
 }
 
