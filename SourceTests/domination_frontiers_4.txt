@@ -1,0 +1,21 @@
+int main(){
+	int i = 0;
+	int limit = 4;
+	int sum = 0;
+	int bonus = 1;
+	int step = 0;
+	while(i < limit){
+		if(i % 2 == 0){
+			step = 10;
+			bonus = bonus + 2;
+		}else{
+			step = 1;
+		}
+		sum = sum + step + bonus;
+		i = i + 1;
+	}
+	print(sum);
+	return 0;
+}
+#------------------
+38

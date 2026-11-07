@@ -1434,5 +1434,7 @@
     <Text Include="SourceTests\supernova_tests.txt" />
     <Text Include="SourceTests\array_passed_by_value_1.txt" />
     <Text Include="SourceTests\struct_passed_by_value_1.txt" />
+    <Text Include="SourceTests\domain_frontiers_2.txt" />
+    <Text Include="SourceTests\domination_frontiers_4.txt" />
   </ItemGroup>
 </Project>
