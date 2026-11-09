@@ -95,6 +95,27 @@ public:
   virtual void enterAssertCondition(GrammarParser::AssertConditionContext *ctx) = 0;
   virtual void exitAssertCondition(GrammarParser::AssertConditionContext *ctx) = 0;
 
+  virtual void enterInitializationList(GrammarParser::InitializationListContext *ctx) = 0;
+  virtual void exitInitializationList(GrammarParser::InitializationListContext *ctx) = 0;
+
+  virtual void enterUnnamedInitializationList(GrammarParser::UnnamedInitializationListContext *ctx) = 0;
+  virtual void exitUnnamedInitializationList(GrammarParser::UnnamedInitializationListContext *ctx) = 0;
+
+  virtual void enterUnnamedListElements(GrammarParser::UnnamedListElementsContext *ctx) = 0;
+  virtual void exitUnnamedListElements(GrammarParser::UnnamedListElementsContext *ctx) = 0;
+
+  virtual void enterUnnamedListElement(GrammarParser::UnnamedListElementContext *ctx) = 0;
+  virtual void exitUnnamedListElement(GrammarParser::UnnamedListElementContext *ctx) = 0;
+
+  virtual void enterNamedInitializationList(GrammarParser::NamedInitializationListContext *ctx) = 0;
+  virtual void exitNamedInitializationList(GrammarParser::NamedInitializationListContext *ctx) = 0;
+
+  virtual void enterNamedListElements(GrammarParser::NamedListElementsContext *ctx) = 0;
+  virtual void exitNamedListElements(GrammarParser::NamedListElementsContext *ctx) = 0;
+
+  virtual void enterNamedListElement(GrammarParser::NamedListElementContext *ctx) = 0;
+  virtual void exitNamedListElement(GrammarParser::NamedListElementContext *ctx) = 0;
+
   virtual void enterExpr(GrammarParser::ExprContext *ctx) = 0;
   virtual void exitExpr(GrammarParser::ExprContext *ctx) = 0;
 

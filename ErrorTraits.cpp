@@ -39,6 +39,8 @@ std::string ErrorTraits::get_name(ErrorType type) {
 		return "INCOMPATIBLE_ARRAY_SIZES";
 	case ErrorType::INVALID_TYPE_DECLARATION:
 		return "INVALID_TYPE_DECLARATION";
+	case ErrorType::INVALID_INITIALIZER:
+		return "INVALID_INITIALIZER";
 	default:
 		throw std::runtime_error("type not found");
 	}

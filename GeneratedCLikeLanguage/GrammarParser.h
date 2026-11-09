@@ -35,8 +35,10 @@ public:
     RuleDeclaration = 16, RuleDeclarationListItem = 17, RuleStructDecl = 18, 
     RuleUnionDecl = 19, RuleFundamentalType = 20, RuleDataType = 21, RuleTypeModifier = 22, 
     RuleBasicType = 23, RuleReturn = 24, RuleSizeOf = 25, RuleAssertCondition = 26, 
-    RuleExpr = 27, RuleSelect = 28, RuleNumber = 29, RuleString_literal = 30, 
-    RuleChar_literal = 31, RuleIdentifier = 32
+    RuleInitializationList = 27, RuleUnnamedInitializationList = 28, RuleUnnamedListElements = 29, 
+    RuleUnnamedListElement = 30, RuleNamedInitializationList = 31, RuleNamedListElements = 32, 
+    RuleNamedListElement = 33, RuleExpr = 34, RuleSelect = 35, RuleNumber = 36, 
+    RuleString_literal = 37, RuleChar_literal = 38, RuleIdentifier = 39
   };
 
   explicit GrammarParser(antlr4::TokenStream *input);
@@ -86,6 +88,13 @@ public:
   class ReturnContext;
   class SizeOfContext;
   class AssertConditionContext;
+  class InitializationListContext;
+  class UnnamedInitializationListContext;
+  class UnnamedListElementsContext;
+  class UnnamedListElementContext;
+  class NamedInitializationListContext;
+  class NamedListElementsContext;
+  class NamedListElementContext;
   class ExprContext;
   class SelectContext;
   class NumberContext;
@@ -402,10 +411,12 @@ public:
   public:
     GrammarParser::IdentifierContext *identifierContext = nullptr;
     GrammarParser::ExprContext *exprContext = nullptr;
+    GrammarParser::InitializationListContext *initializationListContext = nullptr;
     DeclarationListItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     IdentifierContext *identifier();
     ExprContext *expr();
+    InitializationListContext *initializationList();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -548,6 +559,120 @@ public:
 
   AssertConditionContext* assertCondition();
 
+  class  InitializationListContext : public MyContextSuperClass {
+  public:
+    GrammarParser::UnnamedInitializationListContext *unnamedInitializationListContext = nullptr;
+    GrammarParser::NamedInitializationListContext *namedInitializationListContext = nullptr;
+    InitializationListContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    UnnamedInitializationListContext *unnamedInitializationList();
+    NamedInitializationListContext *namedInitializationList();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  InitializationListContext* initializationList();
+
+  class  UnnamedInitializationListContext : public MyContextSuperClass {
+  public:
+    GrammarParser::UnnamedListElementsContext *unnamedListElementsContext = nullptr;
+    UnnamedInitializationListContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    UnnamedListElementsContext *unnamedListElements();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  UnnamedInitializationListContext* unnamedInitializationList();
+
+  class  UnnamedListElementsContext : public MyContextSuperClass {
+  public:
+    GrammarParser::UnnamedListElementContext *unnamedListElementContext = nullptr;
+    std::vector<UnnamedListElementContext *> elements;
+    UnnamedListElementsContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<UnnamedListElementContext *> unnamedListElement();
+    UnnamedListElementContext* unnamedListElement(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  UnnamedListElementsContext* unnamedListElements();
+
+  class  UnnamedListElementContext : public MyContextSuperClass {
+  public:
+    GrammarParser::ExprContext *e = nullptr;
+    GrammarParser::NamedInitializationListContext *namedInitializationListContext = nullptr;
+    GrammarParser::UnnamedInitializationListContext *unnamedInitializationListContext = nullptr;
+    UnnamedListElementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ExprContext *expr();
+    NamedInitializationListContext *namedInitializationList();
+    UnnamedInitializationListContext *unnamedInitializationList();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  UnnamedListElementContext* unnamedListElement();
+
+  class  NamedInitializationListContext : public MyContextSuperClass {
+  public:
+    GrammarParser::NamedListElementsContext *namedListElementsContext = nullptr;
+    NamedInitializationListContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    NamedListElementsContext *namedListElements();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  NamedInitializationListContext* namedInitializationList();
+
+  class  NamedListElementsContext : public MyContextSuperClass {
+  public:
+    GrammarParser::NamedListElementContext *namedListElementContext = nullptr;
+    std::vector<NamedListElementContext *> elements;
+    NamedListElementsContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<NamedListElementContext *> namedListElement();
+    NamedListElementContext* namedListElement(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  NamedListElementsContext* namedListElements();
+
+  class  NamedListElementContext : public MyContextSuperClass {
+  public:
+    GrammarParser::IdentifierContext *id = nullptr;
+    GrammarParser::ExprContext *e = nullptr;
+    GrammarParser::NamedInitializationListContext *named_initialization_list = nullptr;
+    GrammarParser::UnnamedInitializationListContext *unnamed_initialization_list = nullptr;
+    NamedListElementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    IdentifierContext *identifier();
+    ExprContext *expr();
+    NamedInitializationListContext *namedInitializationList();
+    UnnamedInitializationListContext *unnamedInitializationList();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  NamedListElementContext* namedListElement();
+
   class  ExprContext : public MyContextSuperClass {
   public:
     GrammarParser::ExprContext *array_id = nullptr;
@@ -569,6 +694,7 @@ public:
     GrammarParser::ExprContext *right = nullptr;
     GrammarParser::ExprContext *right_expr = nullptr;
     GrammarParser::IdentifierContext *field = nullptr;
+    GrammarParser::InitializationListContext *initialization_list = nullptr;
     ExprContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     DataTypeContext *dataType();
@@ -582,6 +708,7 @@ public:
     SelectContext *select();
     String_literalContext *string_literal();
     Char_literalContext *char_literal();
+    InitializationListContext *initializationList();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;

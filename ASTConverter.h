@@ -38,4 +38,5 @@ public:
 	void build_ir_data_type_from_ast(size_t line_number, const ReferencePtr<DataTypeNode>& dtn);
 	void convert_control_flow_condition(const ReferencePtr<AbstractSyntaxTreeNode>& condition,IRBasicBlock* true_blk,IRBasicBlock* false_blk);
 	void convert_expression_to_bool(const ReferencePtr<AbstractSyntaxTreeNode>& condition);
+	void handle_initialization_list(size_t line_number, IROperand target_object, const ReferencePtr<AbstractSyntaxTreeNode>& init_list_node);
 };

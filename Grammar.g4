@@ -226,6 +226,10 @@ declarationListItem:
 			ReferencePtr<AbstractSyntaxTreeNode> expr = $expr.ctx->m_node;
 			$ctx->m_node = new DeclarationListItemNode{in,expr};
 		}
+	|	(identifier '=' initializationList) {
+			ReferencePtr<IdentifierNode> in = $identifier.ctx->m_node.cast<IdentifierNode>();
+			$ctx->m_node = new DeclarationListItemNode{in,$initializationList.ctx->m_node};
+		}
 	;
 
 structDecl:
@@ -305,6 +309,78 @@ assertCondition:
 		}
 	;
 
+initializationList:
+				unnamedInitializationList {
+					$ctx->m_node = $unnamedInitializationList.ctx->m_node;
+				}
+			|	namedInitializationList {
+					$ctx->m_node = $namedInitializationList.ctx->m_node;
+			}
+		;
+				//_localctx->m_node = new NamedInitializaitonListNode{antlrcpp::downCast<NamedInitializationListContext *>(_localctx)->namedListElementsContext->m_node};
+                  //  //NamedInitializationListNode
+unnamedInitializationList:
+			'{' unnamedListElements? '}' {
+				if($unnamedListElements.ctx)
+					$ctx->m_node = new UnnamedInitializationListNode{ $unnamedListElements.ctx->m_node.cast<ListNode<AbstractSyntaxTreeNode>>() };
+				else
+					$ctx->m_node = new UnnamedInitializationListNode{ {} };
+			}
+		;
+
+unnamedListElements:
+			elements += unnamedListElement (',' elements += unnamedListElement)* {
+				ReferencePtr<ListNode<AbstractSyntaxTreeNode>> unnamed_list_elements = new ListNode<AbstractSyntaxTreeNode>{};
+				for(auto *element : $elements)
+					unnamed_list_elements->add(element->m_node);
+
+				$ctx->m_node = unnamed_list_elements;
+			}
+		;
+
+unnamedListElement:
+			e = expr {
+					$ctx->m_node = $e.ctx->m_node;
+				}
+			| namedInitializationList {
+				$ctx->m_node = $namedInitializationList.ctx->m_node;
+				}
+			| unnamedInitializationList{
+				$ctx->m_node = $unnamedInitializationList.ctx->m_node;
+			}
+		;
+
+namedInitializationList:
+			'{' namedListElements '}' {
+				$ctx->m_node = new NamedInitializationListNode{$namedListElements.ctx->m_node.cast<ListNode<NamedListElementNode>>()};
+			}
+		;
+
+namedListElements:
+			elements += namedListElement (',' elements += namedListElement)* {
+				ReferencePtr<ListNode<NamedListElementNode>> named_list_elements = new ListNode<NamedListElementNode>{};
+				for(auto *element : $elements){
+					named_list_elements->add(element->m_node.cast<NamedListElementNode>());
+				}
+
+				$ctx->m_node = named_list_elements;
+			}
+		;
+
+namedListElement:
+			'.' (id = identifier) '=' (e =  expr) {
+					ReferencePtr<IdentifierNode> id_node = $id.ctx->m_node.cast<IdentifierNode>();
+					$ctx->m_node = new NamedListElementNode{id_node,$e.ctx->m_node};
+				}
+			| '.' (id = identifier) '=' (named_initialization_list =  namedInitializationList) {
+					ReferencePtr<IdentifierNode> id_node = $id.ctx->m_node.cast<IdentifierNode>();
+					$ctx->m_node = new NamedListElementNode{id_node,$named_initialization_list.ctx->m_node};
+				}
+			| '.' (id = identifier) '=' (unnamed_initialization_list = unnamedInitializationList) {
+					ReferencePtr<IdentifierNode> id_node = $id.ctx->m_node.cast<IdentifierNode>();
+					$ctx->m_node = new NamedListElementNode{id_node,$unnamed_initialization_list.ctx->m_node};
+				}
+		;
 
 expr:
 		'(' dataType ')' expr {
@@ -430,6 +506,9 @@ expr:
 	|	identifier{ $ctx->m_node = $identifier.ctx->m_node; }
 	|	left_expr = expr '=' right_expr = expr {
 			$ctx->m_node = new AssignmentNode{$left_expr.ctx->m_node,$right_expr.ctx->m_node};
+		}
+	|	left_expr = expr '=' initialization_list = initializationList {
+			$ctx->m_node = new AssignmentNode{$left_expr.ctx->m_node,$initialization_list.ctx->m_node};
 		}
 	|	number{ $ctx -> m_node = $number.ctx->m_node; }
 	|	'(' expr ')' { $ctx->m_node = $expr.ctx->m_node; }
