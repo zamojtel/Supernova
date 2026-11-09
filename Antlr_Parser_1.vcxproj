@@ -588,6 +588,8 @@
     <ClInclude Include="MemberAccessNode.h" />
     <ClInclude Include="MemberDeclarationNode.h" />
     <ClInclude Include="MemcpyNode.h" />
+    <ClInclude Include="NamedInitializationListNode.h" />
+    <ClInclude Include="NamedListElementNode.h" />
     <ClInclude Include="OrNode.h" />
     <ClInclude Include="OverloadMatch.h" />
     <ClInclude Include="OverloadResolver.h" />
@@ -621,6 +623,7 @@
     <ClInclude Include="TypeRef.h" />
     <ClInclude Include="UnaryMinusNode.h" />
     <ClInclude Include="UnionNode.h" />
+    <ClInclude Include="UnnamedInitializationListNode.h" />
     <ClInclude Include="UselessControlFlowEliminator.h" />
     <ClInclude Include="WhileNode.h" />
   </ItemGroup>
@@ -782,6 +785,13 @@
     <Text Include="SourceTests\broadcasting_4.txt" />
     <Text Include="SourceTests\broadcasting_5.txt" />
     <Text Include="SourceTests\domination_frontiers_1.txt" />
+    <Text Include="SourceTests\initialization_list_1.txt" />
+    <Text Include="SourceTests\initialization_list_2.txt" />
+    <Text Include="SourceTests\initialization_list_3.txt" />
+    <Text Include="SourceTests\initialization_list_4.txt" />
+    <Text Include="SourceTests\initialization_list_5.txt" />
+    <Text Include="SourceTests\initialization_list_6.txt" />
+    <Text Include="SourceTests\initialization_list_7.txt" />
     <Text Include="SourceTests\jit_compiled_function_1.txt" />
     <Text Include="SourceTests\jit_compiled_function_with_args_1.txt" />
     <Text Include="SourceTests\overload_4.txt" />

@@ -1,0 +1,21 @@
+struct A{
+	int m_a;
+	int m_b;
+};
+
+int main(){
+	A[2] t = { { .m_a = 10 , .m_b = 20 } , { .m_a = 30 , .m_b = 40} };
+
+	t[1] = { .m_a = 100 , .m_b = 200 };
+	print(t[0].m_a);
+	print(t[0].m_b);
+	print(t[1].m_a);
+	print(t[1].m_b);
+
+	return 0;
+}
+#------------------
+10
+20
+100
+200

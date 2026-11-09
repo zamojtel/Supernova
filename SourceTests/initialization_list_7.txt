@@ -1,0 +1,16 @@
+
+struct A{
+	int m_x;
+	int [3] m_tab;
+};
+
+int main(){
+	A a;
+	a = { .m_x = 10, .m_tab = {1,2,3} };
+	print(a.m_x);
+	print(a.m_tab);
+	return 0;
+}
+#------------------
+10
+[1,2,3]

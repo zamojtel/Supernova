@@ -954,6 +954,15 @@
     <ClInclude Include="Benchmarker.h">
       <Filter>Source Files\Benchmarker</Filter>
     </ClInclude>
+    <ClInclude Include="NamedListElementNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NamedInitializationListNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="UnnamedInitializationListNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="commands.txt">
@@ -1458,5 +1467,12 @@
     <Text Include="SourceTests\supernova_tests.txt" />
     <Text Include="SourceTests\array_passed_by_value_1.txt" />
     <Text Include="SourceTests\struct_passed_by_value_1.txt" />
+    <Text Include="SourceTests\initialization_list_1.txt" />
+    <Text Include="SourceTests\initialization_list_2.txt" />
+    <Text Include="SourceTests\initialization_list_3.txt" />
+    <Text Include="SourceTests\initialization_list_4.txt" />
+    <Text Include="SourceTests\initialization_list_5.txt" />
+    <Text Include="SourceTests\initialization_list_6.txt" />
+    <Text Include="SourceTests\initialization_list_7.txt" />
   </ItemGroup>
 </Project>

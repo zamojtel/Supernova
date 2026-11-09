@@ -1,0 +1,18 @@
+struct B{
+	int m_c;
+};
+
+struct A{
+	int m_a;
+	B m_b;
+};
+
+int main(){
+	A a = { 10 , { 123 } };
+	print(a.m_a);
+	print(a.m_b.m_c);
+	return 0;
+}
+#------------------
+10
+123
