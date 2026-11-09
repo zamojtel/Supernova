@@ -1462,7 +1462,7 @@ void ASTConverter::convert_control_flow_condition(const ReferencePtr<AbstractSyn
 	}
 	case TreeNodeType::BOOLEAN_NOT: {
 		// swaping blocks 
-		convert_control_flow_condition(condition,false_blk,true_blk);
+		convert_control_flow_condition(condition.get_ptr()->get_child(0), false_blk, true_blk);
 		break;
 	}
 	default:
