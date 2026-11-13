@@ -63,4 +63,5 @@ public:
 	void filter_addressable_variables();
 	void rename_variables();
 	void rename_variables_in_block(IRBasicBlock* blk);
+	void convert_to_ssa();
 };

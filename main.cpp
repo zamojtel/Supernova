@@ -441,14 +441,6 @@ void supernova_jit_tests(const fs::path& source_file) {
 		compiled_function_16(dec);
 	assert(dec == 0);
 
-	//void reference12_test(int& value) {
-	//	int x = 10;
-	//	int* p = &x;
-	//	int& r = *p;
-	//	r = 20;
-	//	value = x;
-	//}
-
 	int passed_value = 0;
 	using function_17 = void (*)(int&);
 	std::vector<TypeRef> parameters17{ dtm->add_reference(dtm->get_int())};
@@ -456,7 +448,6 @@ void supernova_jit_tests(const fs::path& source_file) {
 	if (compiled_function_17)
 		compiled_function_17(passed_value);
 	assert(passed_value == 20);
-
 }
 
 void check_asserts() {
@@ -901,69 +892,70 @@ int main(int argc,char* argv[]) {
 
 	interpreter_tester.run_all_tests(test_names, {});
 	SupernovaCompiler supernova_compiler;
-	supernova_jit_tests(tests_path / "supernova_tests.txt");
-	Stopwatch stopwatch;
+	//supernova_jit_tests(tests_path / "supernova_tests.txt");
+	//Stopwatch stopwatch;
 
-	int n = 1e4;
-	std::vector<int> big_array(n);
-	std::mt19937 generator(std::random_device{}());
-	std::uniform_int_distribution<int> pick_random(0, n);
+	//int n = 1e4;
+	//std::vector<int> big_array(n);
+	//std::mt19937 generator(std::random_device{}());
+	//std::uniform_int_distribution<int> pick_random(0, n);
 
-	for (int& value : big_array)
-		value = pick_random(generator);
+	//for (int& value : big_array)
+	//	value = pick_random(generator);
 
-	std::vector<int> big_array_2(big_array.begin(),big_array.end());
-	std::vector<int> big_array_3(big_array.begin(),big_array.end());
-	std::vector<int> big_array_4(big_array.begin(),big_array.end());
-	std::vector<int> big_array_5(big_array.begin(),big_array.end());
+	//std::vector<int> big_array_2(big_array.begin(),big_array.end());
+	//std::vector<int> big_array_3(big_array.begin(),big_array.end());
+	//std::vector<int> big_array_4(big_array.begin(),big_array.end());
+	//std::vector<int> big_array_5(big_array.begin(),big_array.end());
 
-	Benchmarker benchmarker;
+	//Benchmarker benchmarker;
 
-	benchmarker.start_test("test2 merge_sort c++");
-	BenchmarkAlgorithms::merge_sort(big_array_2);
-	benchmarker.stop_test();
+	//benchmarker.start_test("test2 merge_sort c++");
+	//BenchmarkAlgorithms::merge_sort(big_array_2);
+	//benchmarker.stop_test();
 
-	auto supenova_tests_path = tests_path / "supernova_tests.txt";
-	std::string source_code = read_entire_file(supenova_tests_path);
-	SupernovaCompiler supernova{};
-	supernova.compile(source_code);
+	//auto supenova_tests_path = tests_path / "supernova_tests.txt";
+	//std::string source_code = read_entire_file(supenova_tests_path);
+	//SupernovaCompiler supernova{};
+	//supernova.compile(source_code);
 
-	auto dtm = supernova.m_ir_program.get_dtm_manager();
-	using function = void (*)(int*, int);
-	std::vector<TypeRef> parameters{ dtm->add_pointer(dtm->get_int()),dtm->get_int() };
-	auto compiled_function = supernova.get_function<function>("bubble_sort", parameters);
+	//auto dtm = supernova.m_ir_program.get_dtm_manager();
+	//using function = void (*)(int*, int);
+	//std::vector<TypeRef> parameters{ dtm->add_pointer(dtm->get_int()),dtm->get_int() };
+	//auto compiled_function = supernova.get_function<function>("bubble_sort", parameters);
 
-	benchmarker.start_test("test3 bubble supernova");
-	if (compiled_function)
-		compiled_function(big_array_3.data(), n);
-	else
-		std::cout << "SupernovaCompiler: " << "Failed" << std::endl;
+	//benchmarker.start_test("test3 bubble supernova");
+	//if (compiled_function)
+	//	compiled_function(big_array_3.data(), n);
+	//else
+	//	std::cout << "SupernovaCompiler: " << "Failed" << std::endl;
 
-	benchmarker.stop_test();
-	
-	std::vector<TypeRef> parameters2{ dtm->add_pointer(dtm->get_int()),dtm->get_int() };
-	auto compiled_function2 = supernova.get_function<function>("merge_sort", parameters2);
+	//benchmarker.stop_test();
+	//
+	//std::vector<TypeRef> parameters2{ dtm->add_pointer(dtm->get_int()),dtm->get_int() };
+	//auto compiled_function2 = supernova.get_function<function>("merge_sort", parameters2);
 
-	benchmarker.start_test("test4 merge_sort supernova");
-	if (compiled_function2)
-		compiled_function2(big_array_4.data(), n);
-	else
-		std::cout << "SupernovaCompiler: " << "Failed" << std::endl;
+	//benchmarker.start_test("test4 merge_sort supernova");
+	//if (compiled_function2)
+	//	compiled_function2(big_array_4.data(), n);
+	//else
+	//	std::cout << "SupernovaCompiler: " << "Failed" << std::endl;
 
-	benchmarker.stop_test();
-	if (BenchmarkAlgorithms::is_sorted(big_array_4))
-		std::cout << "big_array_4 is sorted" << std::endl;
-	else
-		std::cout << "not sorted" << std::endl;
-	
-	benchmarker.start_test("test1 bubble_sort c++");
-	BenchmarkAlgorithms::bubble_sort(big_array);
-	benchmarker.stop_test();
+	//benchmarker.stop_test();
+	//if (BenchmarkAlgorithms::is_sorted(big_array_4))
+	//	std::cout << "big_array_4 is sorted" << std::endl;
+	//else
+	//	std::cout << "not sorted" << std::endl;
+	//
+	//benchmarker.start_test("test1 bubble_sort c++");
+	//BenchmarkAlgorithms::bubble_sort(big_array);
+	//benchmarker.stop_test();
 
-	benchmarker.start_test("test5 bubble_sort2 c++");
-	BenchmarkAlgorithms::bubble_sort2(big_array_5.data(),big_array_5.size());
-	benchmarker.stop_test();
+	//benchmarker.start_test("test5 bubble_sort2 c++");
+	//BenchmarkAlgorithms::bubble_sort2(big_array_5.data(),big_array_5.size());
+	//benchmarker.stop_test();
 
-	benchmarker.print_summary();
+	//benchmarker.print_summary();
+
 	return 0;
 }

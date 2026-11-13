@@ -209,7 +209,23 @@ void IRFunction::sort_blocks() {
 	for (size_t i = 0; i < traversal_order.size(); i++)
 		traversal_order[i]->set_index(i);
 
+	for (size_t i = 0; i < number_of_blocks;i++) {
+		if (!visited[i]) {
+			for (IRTriple *triple : m_basic_blocks[i]->get_all_triples())
+				triple->clear();
+		}
+	}
+
+	for (size_t i = 0; i < number_of_blocks;i++) {
+		if (!visited[i])
+		{
+			m_basic_blocks[i]->clear();
+			delete m_basic_blocks[i];
+		}
+	}
+
 	m_basic_blocks = std::move(traversal_order);
+	reindex_triples();
 }
 
 void IRFunction::compute_dominator_sets() {
@@ -509,7 +525,6 @@ void IRFunction::filter_addressable_variables() {
 }
 
 void IRFunction::rename_variables_in_block(IRBasicBlock* blk) {
-
 	std::vector<IRVariable*> pushed_variables;
 	std::vector<IRTriple*> triples = blk->get_all_triples();
 	
@@ -530,7 +545,7 @@ void IRFunction::rename_variables_in_block(IRBasicBlock* blk) {
 				if (operation == IROperation::ASSIGN || operation == IROperation::INIT_ASSIGN) {
 					if (triple->m_operands[1].m_operand_type == IROperandType::VARIABLE) {
 						IRVariable* right_variable = triple->m_operands[1].get_variable();
-						if (m_ssa_variable_candidates.count(right_variable) > 0)
+						if (m_ssa_variable_candidates.count(right_variable) > 0 && !m_ssa_variable_stacks[right_variable].empty())
 							triple->set_operand(1, m_ssa_variable_stacks[right_variable].back());
 					}
 
@@ -553,7 +568,8 @@ void IRFunction::rename_variables_in_block(IRBasicBlock* blk) {
 					if (triple->m_operands[j].m_operand_type == IROperandType::VARIABLE && m_ssa_variable_candidates.count(triple->m_operands[j].get_variable()))
 					{
 						IRVariable* variable = triple->m_operands[j].get_variable();
-						triple->set_operand(j,m_ssa_variable_stacks[variable].back());
+						if(!m_ssa_variable_stacks[variable].empty())
+							triple->set_operand(j,m_ssa_variable_stacks[variable].back());
 					}
 				}
 				break;
@@ -588,12 +604,28 @@ void IRFunction::rename_variables_in_block(IRBasicBlock* blk) {
 }
 
 void IRFunction::rename_variables() {
+	if (m_basic_blocks.empty())
+		return;
+
 	m_ssa_variable_stacks.clear();
-	// first of all parameters
 	for (auto parameter : m_parameters) {
 		if (m_ssa_variable_candidates.count(parameter) > 0)
 			m_ssa_variable_stacks[parameter].push_back(parameter);
 	}
 
 	rename_variables_in_block(m_basic_blocks[0]);
+	reindex_triples();
+	m_ir_program->calculate_size_required_for_fn(this);
+}
+
+void IRFunction::convert_to_ssa() {
+	compute_dominator_sets();
+	compute_dominance_frontiers();
+	compute_live_variables();
+
+	collect_ssa_variable_candidates();
+	filter_addressable_variables();
+	compute_phi_functions();
+	insert_phi_functions();
+	rename_variables();
 }

@@ -260,28 +260,6 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
     IRInliner inliner;
     std::vector<IROperand> fn_arguments{};
     IRFunction* main_fn = ir_program.get_function("main", {});
-    
-    // section for inserting phi functions
-    main_fn->compute_dominator_sets();
-    main_fn->compute_dominance_frontiers();
-    main_fn->compute_live_variables();
-
-    main_fn->collect_ssa_variable_candidates();
-    main_fn->filter_addressable_variables();
-    main_fn->compute_phi_functions();
-    main_fn->insert_phi_functions();
-    main_fn->rename_variables();
-
-    printer.print_dominators(main_fn);
-    std::cout << std::endl;
-    printer.print_dominance_frontiers(main_fn);
-    std::cout << std::endl;
-    printer.print_live_variables(main_fn);
-    std::cout << std::endl;
-    printer.print_inserted_phi_functions(main_fn);
-    std::cout << std::endl;
-
-    printer.print_ir_representation(ir_program);
 
     if (!main_fn) {
         std::cout << "there's no main function in the source file";
@@ -297,20 +275,30 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
 
             if (triple->m_operands[0].m_operand_type == IROperandType::EXTERNAL_FUNCTION)
                 continue;
-            
 
             IRFunction* callee = triple->m_operands[0].get_function();
-
             if (callee != main_fn && callee->is_inline())
                 expected_inline_expansions++;
-
         }
     }
 
     const size_t expansions_before = inliner.m_inline_instance_counter;
-
     if (!is_error_test)
         inliner.expand_functions(main_fn);
+
+    if (!is_error_test) 
+        ir_program.convert_to_ssa();;
+
+    printer.print_dominators(main_fn);
+    std::cout << std::endl;
+    printer.print_dominance_frontiers(main_fn);
+    std::cout << std::endl;
+    printer.print_live_variables(main_fn);
+    std::cout << std::endl;
+    printer.print_inserted_phi_functions(main_fn);
+    std::cout << std::endl;
+
+    printer.print_ir_representation(ir_program);
 
     if (!is_error_test && inliner.m_inline_instance_counter!=0 && 
         inliner.m_inline_instance_counter - expansions_before < expected_inline_expansions) {
@@ -321,12 +309,10 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
     if (!is_error_test && m_mode == TestMode::JIT_OUTPUT) {
         IRToLLVMIRConverter ir_to_llvm_converter(&ir_program);
         IRPrinter printer_new;
-        inliner.expand_functions(main_fn);
         ir_program.sort_blocks();
         printer_new.print_ir_representation(ir_program);
 
         auto llvm_module = ir_to_llvm_converter.convert();
- /*       auto jit_result = llvm::orc::LLJITBuilder().create();*/
         auto jtmb = llvm::orc::JITTargetMachineBuilder::detectHost();
         jtmb->setCodeGenOptLevel(llvm::CodeGenOptLevel::Aggressive);
         auto target_machine = jtmb->createTargetMachine();
@@ -385,19 +371,6 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
         int result = compiled_main();
         PrintMessageCollector print_message_printer = Tester::get_message_collector();
         const std::vector<std::string> actual_outputs = print_message_printer.get_messages();
-
-        // Supernova Section
-        //SupernovaCompiler supernova(&ir_program);
-        //supernova.compile();
-        //auto dtm = ir_program.get_dtm_manager();
-        //dtm->get_int();
-        //std::vector<TypeRef> parameters{ dtm->get_int(),dtm->get_int()};
-        //using function = int (*)(int,int);
-        //auto compiled_function = supernova.get_function<function>("compiled_function",parameters);
-        //if (compiled_function) {
-        //    int x = 123;
-        //    std::cout <<"SupernovaCompiler: "<<compiled_function(2, 3) << std::endl;
-        //}
 
         return compare_test_ouput(source_file,actual_outputs,expected_outputs);
     }
