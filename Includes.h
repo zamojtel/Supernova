@@ -41,7 +41,6 @@
 #include "ArrayAccessNode.h"
 #include "PointerNode.h"
 
-//#include "ListNode.h"
 #include "TypeModifierNode.h"
 #include "DataTypeNode.h"
 #include "SizeOfNode.h"
@@ -122,6 +121,7 @@
 #include "ASTConvIncludes.h"
 #include "Tester.h"
 #include "SupernovaCompiler.h"
+#include "BenchmarkAlgorithms.h"
 
 #endif INCLUDES_H
 

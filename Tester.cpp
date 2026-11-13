@@ -307,8 +307,11 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
         printer_new.print_ir_representation(ir_program);
 
         auto llvm_module = ir_to_llvm_converter.convert();
-        auto jit_result = llvm::orc::LLJITBuilder().create();
-       
+ /*       auto jit_result = llvm::orc::LLJITBuilder().create();*/
+        auto jtmb = llvm::orc::JITTargetMachineBuilder::detectHost();
+        jtmb->setCodeGenOptLevel(llvm::CodeGenOptLevel::Aggressive);
+        auto target_machine = jtmb->createTargetMachine();
+        auto jit_result = llvm::orc::LLJITBuilder().setJITTargetMachineBuilder(std::move(*jtmb)).create();
 
         if (!jit_result) {
             llvm::errs() << llvm::toString(jit_result.takeError()) << '\n';

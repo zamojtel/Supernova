@@ -39,6 +39,7 @@
 #include <llvm/ExecutionEngine/Orc/LLJIT.h>
 #include <llvm/Support/TargetSelect.h>
 #include <llvm/Support/Error.h>
+#include <llvm/Passes/PassBuilder.h>
 
 #include "Includes.h"
 
@@ -127,7 +128,12 @@
 #pragma comment(lib, "oleaut32.lib")
 #pragma comment(lib, "comdlg32.lib")
 #pragma comment(lib, "zstd.lib")
+
+#ifdef _DEBUG
 #pragma comment(lib, "zlibd.lib")
+#else
+#pragma comment(lib, "zlib.lib")
+#endif
 
 class MyContextSuperClass : public antlr4::ParserRuleContext {
 public:
@@ -684,62 +690,6 @@ void check_prints(const std::string& file_name, const std::vector<std::string>& 
 		assert(collected_msgs[i] == messages[i]);
 }
 
-int fib(int n) {
-	if (n <= 1)
-		return n;
-
-	return fib(n-2)+fib(n-1);
-}
-
-void bubble_sort(std::vector<int>& arr) {
-	int n = arr.size();
-	for (int i = 0; i < n; i++) {
-		bool swapped = false;
-		for (int j = 1; j < n - i; j++) {
-			if (arr[j - 1] > arr[j]) {
-				std::swap(arr[j - 1], arr[j]);
-				swapped = true;
-			}
-		}
-
-		if (!swapped)
-			return;
-	}
-}
-
-void merge_sort_impl(std::vector<int>& a, std::vector<int>& temp, std::size_t left, std::size_t right) {
-	if (right - left <= 1)
-		return;
-
-	const std::size_t mid = left + (right - left) / 2;
-
-	merge_sort_impl(a, temp, left, mid);
-	merge_sort_impl(a, temp, mid, right);
-
-	std::size_t i = left, j = mid, k = left;
-
-	while (i < mid && j < right) {
-		if (a[i] <= a[j])
-			temp[k++] = a[i++];
-		else
-			temp[k++] = a[j++];
-	}
-
-	while (i < mid)
-		temp[k++] = a[i++];
-
-	while (j < right)
-		temp[k++] = a[j++];
-
-	for (std::size_t p = left; p < right; ++p)
-		a[p] = temp[p];
-}
-
-void merge_sort(std::vector<int>& a) {
-	std::vector<int> temp(a.size());
-	merge_sort_impl(a, temp, 0, a.size());
-}
-
 int main(int argc,char* argv[]) {
 	const fs::path tests_path = argc > 1 ? fs::path{ argv[1] } : fs::path{ "SourceTests" };
 
@@ -862,13 +812,13 @@ int main(int argc,char* argv[]) {
 		//"reference_3"
 		//"reference_4",
 		//"reference_5",
-		"initialization_list_1",
-		"initialization_list_2",
-		"initialization_list_3",
-		"initialization_list_4",
-		"initialization_list_5",
-		"initialization_list_6",
-		"initialization_list_7"
+		//"initialization_list_1",
+		//"initialization_list_2",
+		//"initialization_list_3",
+		//"initialization_list_4",
+		//"initialization_list_5",
+		//"initialization_list_6",
+		//"initialization_list_7"
 	};
 
 	std::vector<std::string> jit_test{
@@ -952,17 +902,14 @@ int main(int argc,char* argv[]) {
 
 	std::vector<int> big_array_2(big_array.begin(),big_array.end());
 	std::vector<int> big_array_3(big_array.begin(),big_array.end());
+	std::vector<int> big_array_4(big_array.begin(),big_array.end());
+	std::vector<int> big_array_5(big_array.begin(),big_array.end());
 
 	Benchmarker benchmarker;
-	benchmarker.start_test("test1");
-	bubble_sort(big_array);
-	benchmarker.stop_test();
-	Benchmarker::BenchmarkResult test1_result = benchmarker.m_results.back();
 
-	benchmarker.start_test("test2");
-	merge_sort(big_array_2);
+	benchmarker.start_test("test2 merge_sort c++");
+	BenchmarkAlgorithms::merge_sort(big_array_2);
 	benchmarker.stop_test();
-	Benchmarker::BenchmarkResult test2_result = benchmarker.m_results.back();
 
 	auto supenova_tests_path = tests_path / "supernova_tests.txt";
 	std::string source_code = read_entire_file(supenova_tests_path);
@@ -970,18 +917,41 @@ int main(int argc,char* argv[]) {
 	supernova.compile(source_code);
 
 	auto dtm = supernova.m_ir_program.get_dtm_manager();
-	using function = int (*)(int *,int);
+	using function = void (*)(int*, int);
 	std::vector<TypeRef> parameters{ dtm->add_pointer(dtm->get_int()),dtm->get_int() };
 	auto compiled_function = supernova.get_function<function>("bubble_sort", parameters);
 
 	benchmarker.start_test("test3 bubble supernova");
 	if (compiled_function)
-		std::cout << "SupernovaCompiler: " << compiled_function(big_array_3.data(),n) << std::endl;
+		compiled_function(big_array_3.data(), n);
 	else
 		std::cout << "SupernovaCompiler: " << "Failed" << std::endl;
 
 	benchmarker.stop_test();
+	
+	std::vector<TypeRef> parameters2{ dtm->add_pointer(dtm->get_int()),dtm->get_int() };
+	auto compiled_function2 = supernova.get_function<function>("merge_sort", parameters2);
+
+	benchmarker.start_test("test4 merge_sort supernova");
+	if (compiled_function2)
+		compiled_function2(big_array_4.data(), n);
+	else
+		std::cout << "SupernovaCompiler: " << "Failed" << std::endl;
+
+	benchmarker.stop_test();
+	if (BenchmarkAlgorithms::is_sorted(big_array_4))
+		std::cout << "big_array_4 is sorted" << std::endl;
+	else
+		std::cout << "not sorted" << std::endl;
+	
+	benchmarker.start_test("test1 bubble_sort c++");
+	BenchmarkAlgorithms::bubble_sort(big_array);
+	benchmarker.stop_test();
+
+	benchmarker.start_test("test5 bubble_sort2 c++");
+	BenchmarkAlgorithms::bubble_sort2(big_array_5.data(),big_array_5.size());
+	benchmarker.stop_test();
+
 	benchmarker.print_summary();
 	return 0;
 }
-
