@@ -505,6 +505,109 @@ bool ASTConverter::prepare_for_binary_operation_integer_unsigned_types(size_t li
 	return false;
 }
 
+void ASTConverter::handle_initialization_list(size_t line_number,IROperand target_object,const ReferencePtr<AbstractSyntaxTreeNode>& init_list_node) {
+
+	const TypeRef clean_type = target_object.get_data_type().remove_reference().remove_qualifiers();
+	if (clean_type.is_composite()) {
+		IRCompositeTypeNode* composite_node = static_cast<IRCompositeTypeNode*>(clean_type.get_data_type_node());
+
+		// two cases
+		if (init_list_node->get_type() == TreeNodeType::NAMED_INITIALIZATION_LIST) {
+			ReferencePtr<ListNode<NamedListElementNode>> list = init_list_node.cast<NamedInitializationListNode>()->get_named_element_list();
+
+			for (size_t i = 0; i < list->get_count(); i++) {
+				ReferencePtr<NamedListElementNode> named_list_element_node = list->get_child(i).cast<NamedListElementNode>();
+				std::string field_name = named_list_element_node->get_identifier()->get_identifier();
+
+				IRMember* member = composite_node->get_member(field_name);
+				if (member == nullptr) {
+					m_ast_converter_listener->error({ ErrorType::INVALID_INITIALIZER,line_number,"member field could not be found" });
+					continue;
+				}
+
+				IRTriple* member_address = m_coder.add_triple(line_number, IROperation::MEMBER_ACCESS, target_object, member);
+				ReferencePtr<AbstractSyntaxTreeNode> expr_node = named_list_element_node->get_expr();
+				if (expr_node->get_type() == TreeNodeType::NAMED_INITIALIZATION_LIST || expr_node->get_type() == TreeNodeType::UNNAMED_INITIALIZATION_LIST)
+				{
+					IRTriple* sub_object = m_coder.add_triple(line_number, IROperation::DEREFERENCE, member_address);
+					handle_initialization_list(line_number, sub_object, expr_node);
+				}
+				else {
+					post_order_traverse(expr_node);
+					IROperand expr_op = get_op(expr_node);
+
+					implicit_conversion(line_number, member->get_data_type(), expr_op);
+					m_coder.add_triple(line_number, IROperation::WRITE_TO_POINTER, member_address, expr_op);
+				}
+			}
+		}
+		else if (init_list_node->get_type() == TreeNodeType::UNNAMED_INITIALIZATION_LIST) {
+			const std::vector<IRMember*>& members = composite_node->get_members();
+			ReferencePtr<ListNode<AbstractSyntaxTreeNode>> list = init_list_node.cast<UnnamedInitializationListNode>()->get_unnamed_element_list();
+
+			if (list->get_count() > members.size()) {
+				m_ast_converter_listener->error({ ErrorType::INVALID_INITIALIZER,line_number,"too many initialization values" });
+				return;
+			}
+
+			for (size_t i = 0; i < list->get_count(); i++) {
+				IRMember* member = members[i];
+				ReferencePtr<AbstractSyntaxTreeNode> expr_node = list->get_child(i);
+
+				IRTriple* member_address = m_coder.add_triple(line_number, IROperation::MEMBER_ACCESS, target_object, member);
+				if (expr_node->get_type() == TreeNodeType::NAMED_INITIALIZATION_LIST || expr_node->get_type() == TreeNodeType::UNNAMED_INITIALIZATION_LIST)
+				{
+					IRTriple* sub_object = m_coder.add_triple(line_number, IROperation::DEREFERENCE, member_address);
+					handle_initialization_list(line_number, sub_object, expr_node);
+				}
+				else {
+					post_order_traverse(expr_node);
+					IROperand expr_op = get_op(expr_node);
+
+					implicit_conversion(line_number, member->get_data_type(), expr_op);
+					m_coder.add_triple(line_number, IROperation::WRITE_TO_POINTER, member_address, expr_op);
+				}
+			}
+		}
+	}
+	else if (clean_type.is_array()) {
+		if (init_list_node->get_type() == TreeNodeType::UNNAMED_INITIALIZATION_LIST) {
+			IRArrayNode* array_node = static_cast<IRArrayNode*>(clean_type.get_data_type_node());
+			ReferencePtr<ListNode<AbstractSyntaxTreeNode>> list = init_list_node.cast<UnnamedInitializationListNode>()->get_unnamed_element_list();
+			
+			if (list->get_count() > array_node->get_count()) {
+				m_ast_converter_listener->error({ ErrorType::INVALID_INITIALIZER,line_number,"too many initialization values" });
+				return;
+			}
+
+			for (size_t i = 0; i < list->get_count();i++) {
+				ReferencePtr<AbstractSyntaxTreeNode> expr_node = list->get_child(i);
+				ConstantValue array_element_index = ConstantValue(static_cast<int>(i));
+				IRConstant* element_index_constant = m_current_fn->add_constant(array_element_index);
+				IRTriple* array_address = m_coder.add_triple(line_number,IROperation::ARRAY_ACCESS,target_object,element_index_constant);
+
+				if (expr_node->get_type() == TreeNodeType::NAMED_INITIALIZATION_LIST || expr_node->get_type() == TreeNodeType::UNNAMED_INITIALIZATION_LIST)
+				{
+					IRTriple* sub_object = m_coder.add_triple(line_number, IROperation::DEREFERENCE, array_address);
+					handle_initialization_list(line_number, sub_object, expr_node);
+				}
+				else {
+					post_order_traverse(expr_node);
+					IROperand expr_op = get_op(expr_node);
+
+					implicit_conversion(line_number, clean_type.remove_array(), expr_op);
+					m_coder.add_triple(line_number, IROperation::WRITE_TO_POINTER, array_address, expr_op);
+				}
+			}
+		}
+		else
+			m_ast_converter_listener->error({ ErrorType::INVALID_INITIALIZER,line_number,"named initialization list is not allowed for array types" });
+	}
+	else
+		m_ast_converter_listener->error({ ErrorType::INVALID_INITIALIZER,line_number,"non-aggregate type cannot be initialized with an initializer list" });
+}
+
+
 void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode> &node) {
 	if(!node)
 		return;
@@ -516,9 +619,17 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		ReferencePtr<AssignmentNode> current_node = node.cast<AssignmentNode>();
 		ReferencePtr<AbstractSyntaxTreeNode> left_expr = current_node->get_left_expr_node();
 		ReferencePtr<AbstractSyntaxTreeNode> right_expr = current_node->get_right_expr_node();
-
-		post_order_traverse(current_node->get_right_expr_node());
-		IROperand expr_op = get_op(right_expr);
+		TreeNodeType type_node = right_expr->get_type();
+		if (type_node == TreeNodeType::NAMED_INITIALIZATION_LIST || type_node == TreeNodeType::UNNAMED_INITIALIZATION_LIST) {
+			post_order_traverse(left_expr);
+			IROperand left_op = get_op(left_expr);
+			handle_initialization_list(current_node->get_line_number(),left_op,right_expr);
+			break;
+		}
+		else
+			post_order_traverse(current_node->get_right_expr_node());
+		
+		IROperand right_expr_op = get_op(right_expr);
 
 		IRTriple* triple = nullptr;
 		if (left_expr->get_type() == TreeNodeType::DEREFERENCE) {
@@ -526,8 +637,8 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 			ReferencePtr<AbstractSyntaxTreeNode> ptr_variable = dereference_node->get_child(0);
 			post_order_traverse(ptr_variable);
 			IROperand ptr_variable_op = get_op(ptr_variable);
-			implicit_conversion(current_node->get_line_number(), ptr_variable_op.get_data_type().remove_pointer(), expr_op);
-			triple = m_coder.add_triple(current_node->get_line_number(), IROperation::WRITE_TO_POINTER, ptr_variable_op, expr_op);
+			implicit_conversion(current_node->get_line_number(), ptr_variable_op.get_data_type().remove_pointer(),right_expr_op);
+			triple = m_coder.add_triple(current_node->get_line_number(), IROperation::WRITE_TO_POINTER, ptr_variable_op, right_expr_op);
 		}
 		else if (left_expr->get_type() == TreeNodeType::ARRAY_ACCESS) {
 			ReferencePtr<ArrayAccessNode> array_access_node = left_expr.cast<ArrayAccessNode>();
@@ -550,14 +661,14 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 			implicit_conversion(
 				current_node->get_line_number(),
 				target_type,
-				expr_op
+				right_expr_op
 			);
 
 			triple = m_coder.add_triple(
 				current_node->get_line_number(),
 				IROperation::WRITE_TO_POINTER,
 				element_address,
-				expr_op
+				right_expr_op
 			);
 		}
 		else if (left_expr->get_type() == TreeNodeType::MEMBER_ACCESS) {
@@ -574,15 +685,15 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 			IRMember* member = composite_node->get_member(field_name);
 
 			IRTriple* member_address = m_coder.add_triple(current_node->get_line_number(),IROperation::MEMBER_ACCESS,object_operand,member);
-			implicit_conversion(current_node->get_line_number(), member->get_data_type(), expr_op);
+			implicit_conversion(current_node->get_line_number(), member->get_data_type(),right_expr_op);
 
-			triple = m_coder.add_triple(current_node->get_line_number(), IROperation::WRITE_TO_POINTER, member_address, expr_op);
+			triple = m_coder.add_triple(current_node->get_line_number(), IROperation::WRITE_TO_POINTER, member_address, right_expr_op);
 		}
 		else {
 			post_order_traverse(current_node->get_left_expr_node());
 			IROperand left_op = get_op(left_expr);
-			implicit_conversion(current_node->get_line_number(),left_op.get_data_type(),expr_op);
-			triple = m_coder.add_triple(current_node->get_line_number(), IROperation::ASSIGN, left_op, expr_op);
+			implicit_conversion(current_node->get_line_number(),left_op.get_data_type(),right_expr_op);
+			triple = m_coder.add_triple(current_node->get_line_number(), IROperation::ASSIGN, left_op,right_expr_op);
 		}
 
 		set_op(current_node, triple);
@@ -714,10 +825,12 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 		ReferencePtr<DataTypeNode> dtn = current_node->get_data_type_node();
 		build_ir_data_type_from_ast(current_node->get_line_number(),dtn);
 
+		//MyType type = { .flag =true ,.value = 123,stuff = 0.456}
+
 		if (m_current_fn) {
 			for (size_t i = 0; i < list->get_child_count(); i++) {
 				ReferencePtr<DeclarationListItemNode> current_item = list->get_element(i).cast<DeclarationListItemNode>();
-				current_item->get_child(i);
+				//current_item->get_child(i);
 
 				std::string variable_name = current_item->get_indentifier_node()->get_identifier();
 				TypeRef type = dtn->m_ir_data_type;
@@ -731,41 +844,49 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 				set_op(current_item, variable);
 
 				ReferencePtr<AbstractSyntaxTreeNode> expr_node = current_item->get_expr_node();
-				post_order_traverse(expr_node);
 
 				if (expr_node.get_ptr() != nullptr) {
-					IROperand expr_op = get_op(expr_node);
-					int line_number = current_node->get_line_number();
-					implicit_conversion(current_node->get_line_number(),variable->get_data_type(), expr_op);
+					TreeNodeType type_node = expr_node->get_type();
+					if (type_node == TreeNodeType::NAMED_INITIALIZATION_LIST || type_node == TreeNodeType::UNNAMED_INITIALIZATION_LIST) {
+						// handle_initialization_list
+						handle_initialization_list(current_node->get_line_number(),variable,expr_node);
+					}
+					else {
+						post_order_traverse(expr_node);
+						IROperand expr_op = get_op(expr_node);
+						int line_number = current_node->get_line_number();
+						implicit_conversion(current_node->get_line_number(),variable->get_data_type(), expr_op);
 
-					// for handling reference 
-					if (variable->get_data_type().is_reference()) {
-						if (variable->get_data_type().remove_reference().remove_qualifiers() != expr_op.get_data_type().remove_reference().remove_qualifiers()) {
-							std::string msg = std::format("can't assign value of different type to the reference variable from {} to {}",expr_op.get_data_type().to_string(), variable->get_data_type().to_string());
-							m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR,current_item->get_line_number(),msg });
+						// for handling reference 
+						if (variable->get_data_type().is_reference()) {
+							if (variable->get_data_type().remove_reference().remove_qualifiers() != expr_op.get_data_type().remove_reference().remove_qualifiers()) {
+								std::string msg = std::format("can't assign value of different type to the reference variable from {} to {}",expr_op.get_data_type().to_string(), variable->get_data_type().to_string());
+								m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR,current_item->get_line_number(),msg });
+							}
+
+							bool res1 = expr_op.get_data_type().remove_reference().is_const();
+							bool res2 = variable->get_data_type().remove_reference().is_const();
+							if (res1 && !res2) {
+								std::string msg = std::format("can't initialize non-const reference with const reference variable");
+								m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR,current_item->get_line_number(),msg });
+							}
 						}
 
-						bool res1 = expr_op.get_data_type().remove_reference().is_const();
-						bool res2 = variable->get_data_type().remove_reference().is_const();
-						if (res1 && !res2) {
-							std::string msg = std::format("can't initialize non-const reference with const reference variable");
-							m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR,current_item->get_line_number(),msg });
+						// for handling pointers
+						if (variable->get_data_type().is_pointer() && expr_op.get_data_type().is_pointer()) {
+
+							bool res1 = expr_op.get_data_type().remove_pointer().is_const();
+							bool res2 = variable->get_data_type().remove_pointer().is_const();
+
+							if (res1 && !res2) {
+								std::string msg = std::format("can't initialize non-const pointer with const pointer variable");
+								m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR,current_item->get_line_number(),msg });
+							}
 						}
+
+						m_coder.add_triple(current_node->get_line_number(), IROperation::INIT_ASSIGN, variable, expr_op);
 					}
 
-					// for handling pointers
-					if (variable->get_data_type().is_pointer() && expr_op.get_data_type().is_pointer()) {
-
-						bool res1 = expr_op.get_data_type().remove_pointer().is_const();
-						bool res2 = variable->get_data_type().remove_pointer().is_const();
-
-						if (res1 && !res2) {
-							std::string msg = std::format("can't initialize non-const pointer with const pointer variable");
-							m_ast_converter_listener->error({ ErrorType::UNKNOWN_ERROR,current_item->get_line_number(),msg });
-						}
-					}
-
-					m_coder.add_triple(current_node->get_line_number(), IROperation::INIT_ASSIGN, variable, expr_op);
 				}
 			}
 		}
@@ -991,7 +1112,6 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 				}
 			}
 			else if (node->get_tree_node_type() == TreeNodeType::STRUCT || node->get_tree_node_type() == TreeNodeType::UNION) {
-
 				ReferencePtr<CompositeNode> composite_node = node.cast<CompositeNode>();
 				ReferencePtr<IdentifierNode> m_identifier = composite_node->get_identifier_node();
 				ReferencePtr<ListNode<MemberDeclarationNode>> declarations = composite_node->get_declarations();
@@ -1462,7 +1582,7 @@ void ASTConverter::convert_control_flow_condition(const ReferencePtr<AbstractSyn
 	}
 	case TreeNodeType::BOOLEAN_NOT: {
 		// swaping blocks 
-		convert_control_flow_condition(condition,false_blk,true_blk);
+		convert_control_flow_condition(condition.get_ptr()->get_child(0), false_blk, true_blk);
 		break;
 	}
 	default:

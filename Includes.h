@@ -1,6 +1,8 @@
 #ifndef INCLUDES_H
 #define INCLUDES_H
 
+#include "Stopwatch.h"
+#include "Benchmarker.h"
 #include "IRInvalidTypeConstructionException.h"
 #include "TreeNodeType.h"
 #include "OperationType.h"
@@ -20,12 +22,16 @@
 #include "IRIncludes.h"
 
 #include "AbstractSyntaxTreeNode.h"
+#include "ListNode.h"
+#include "IdentifierNode.h"
+#include "NamedListElementNode.h"
+#include "NamedInitializationListNode.h"
+#include "UnnamedInitializationListNode.h"
 #include "BasicTypeNode.h"
 
 #include "BreakNode.h"
 #include "ContinueNode.h"
 
-#include "IdentifierNode.h"
 
 #include "PrintNode.h"
 #include "PrintTypeNode.h"
@@ -35,7 +41,6 @@
 #include "ArrayAccessNode.h"
 #include "PointerNode.h"
 
-#include "ListNode.h"
 #include "TypeModifierNode.h"
 #include "DataTypeNode.h"
 #include "SizeOfNode.h"
@@ -116,6 +121,7 @@
 #include "ASTConvIncludes.h"
 #include "Tester.h"
 #include "SupernovaCompiler.h"
+#include "BenchmarkAlgorithms.h"
 
 #endif INCLUDES_H
 

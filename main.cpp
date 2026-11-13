@@ -19,6 +19,8 @@
 #include <cmath>
 #include <chrono>
 #include <queue>
+#include <random>
+#include <algorithm>
 #define ANTLR4CPP_STATIC
 #pragma comment(lib,"antlr4-runtime.lib")
 #undef ERROR
@@ -38,6 +40,7 @@
 #include <llvm/ExecutionEngine/Orc/LLJIT.h>
 #include <llvm/Support/TargetSelect.h>
 #include <llvm/Support/Error.h>
+#include <llvm/Passes/PassBuilder.h>
 
 #include "Includes.h"
 
@@ -126,7 +129,12 @@
 #pragma comment(lib, "oleaut32.lib")
 #pragma comment(lib, "comdlg32.lib")
 #pragma comment(lib, "zstd.lib")
+
+#ifdef _DEBUG
 #pragma comment(lib, "zlibd.lib")
+#else
+#pragma comment(lib, "zlib.lib")
+#endif
 
 class MyContextSuperClass : public antlr4::ParserRuleContext {
 public:
@@ -143,7 +151,6 @@ public:
 #include "GeneratedCLikeLanguage/GrammarBaseListener.cpp"
 #include "GeneratedCLikeLanguage/GrammarLexer.cpp"
 #include "GeneratedCLikeLanguage/GrammarParser.cpp"
-
 
 #include <Tree/ParseTreeListener.h>
 #include <Tree/IterativeParseTreeWalker.h>
@@ -692,15 +699,7 @@ void check_prints(const std::string& file_name, const std::vector<std::string>& 
 		assert(collected_msgs[i] == messages[i]);
 }
 
-int fib(int n) {
-	if (n <= 1)
-		return n;
-
-	return fib(n-2)+fib(n-1);
-}
-
 int main(int argc,char* argv[]) {
-
 	const fs::path tests_path = argc > 1 ? fs::path{ argv[1] } : fs::path{ "SourceTests" };
 
 	if (!fs::is_directory(tests_path)) {
@@ -821,14 +820,21 @@ int main(int argc,char* argv[]) {
 		//"reference_2",
 		//"reference_3"
 		//"reference_4",
-		//"reference_5"
+		//"reference_5",
+		//"initialization_list_1",
+		//"initialization_list_2",
+		//"initialization_list_3",
+		//"initialization_list_4",
+		//"initialization_list_5",
+		//"initialization_list_6",
+		//"initialization_list_7"
 		//"domination_frontiers_3"
 		//"domination_frontiers_1",
 		//"domination_frontiers_2",
 		//"domination_frontiers_4"
 		"domination_frontiers_simple_test_1"
 	};
-	
+
 	std::vector<std::string> jit_test{
 		//"dereference_jit_1",
 		//"member_access_point_jit_1",
@@ -895,8 +901,69 @@ int main(int argc,char* argv[]) {
 
 	interpreter_tester.run_all_tests(test_names, {});
 	SupernovaCompiler supernova_compiler;
-	// domination_frontiers_simple_test_1.txt
-		
+	supernova_jit_tests(tests_path / "supernova_tests.txt");
+	Stopwatch stopwatch;
+
+	int n = 1e4;
+	std::vector<int> big_array(n);
+	std::mt19937 generator(std::random_device{}());
+	std::uniform_int_distribution<int> pick_random(0, n);
+
+	for (int& value : big_array)
+		value = pick_random(generator);
+
+	std::vector<int> big_array_2(big_array.begin(),big_array.end());
+	std::vector<int> big_array_3(big_array.begin(),big_array.end());
+	std::vector<int> big_array_4(big_array.begin(),big_array.end());
+	std::vector<int> big_array_5(big_array.begin(),big_array.end());
+
+	Benchmarker benchmarker;
+
+	benchmarker.start_test("test2 merge_sort c++");
+	BenchmarkAlgorithms::merge_sort(big_array_2);
+	benchmarker.stop_test();
+
+	auto supenova_tests_path = tests_path / "supernova_tests.txt";
+	std::string source_code = read_entire_file(supenova_tests_path);
+	SupernovaCompiler supernova{};
+	supernova.compile(source_code);
+
+	auto dtm = supernova.m_ir_program.get_dtm_manager();
+	using function = void (*)(int*, int);
+	std::vector<TypeRef> parameters{ dtm->add_pointer(dtm->get_int()),dtm->get_int() };
+	auto compiled_function = supernova.get_function<function>("bubble_sort", parameters);
+
+	benchmarker.start_test("test3 bubble supernova");
+	if (compiled_function)
+		compiled_function(big_array_3.data(), n);
+	else
+		std::cout << "SupernovaCompiler: " << "Failed" << std::endl;
+
+	benchmarker.stop_test();
+	
+	std::vector<TypeRef> parameters2{ dtm->add_pointer(dtm->get_int()),dtm->get_int() };
+	auto compiled_function2 = supernova.get_function<function>("merge_sort", parameters2);
+
+	benchmarker.start_test("test4 merge_sort supernova");
+	if (compiled_function2)
+		compiled_function2(big_array_4.data(), n);
+	else
+		std::cout << "SupernovaCompiler: " << "Failed" << std::endl;
+
+	benchmarker.stop_test();
+	if (BenchmarkAlgorithms::is_sorted(big_array_4))
+		std::cout << "big_array_4 is sorted" << std::endl;
+	else
+		std::cout << "not sorted" << std::endl;
+	
+	benchmarker.start_test("test1 bubble_sort c++");
+	BenchmarkAlgorithms::bubble_sort(big_array);
+	benchmarker.stop_test();
+
+	benchmarker.start_test("test5 bubble_sort2 c++");
+	BenchmarkAlgorithms::bubble_sort2(big_array_5.data(),big_array_5.size());
+	benchmarker.stop_test();
+
+	benchmarker.print_summary();
 	return 0;
 }
-

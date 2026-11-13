@@ -3,6 +3,8 @@
 #ifndef INCLUDES_CPP
 #define INCLUDES_CPP
 
+#include "Stopwatch.cpp"
+#include "Benchmarker.cpp"
 #include "IRInvalidTypeConstructionException.cpp"
 #include "ASTCOnvIncludes.cpp"
 
@@ -23,4 +25,6 @@
 #include "PrintMessageCollector.cpp"
 #include "StringTests/StringTests.cpp"
 #include "SupernovaCompiler.cpp"
+#include "BenchmarkAlgorithms.cpp"
+
 #endif INCLUDES_CPP

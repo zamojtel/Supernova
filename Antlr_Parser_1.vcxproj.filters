@@ -220,6 +220,12 @@
     <Filter Include="Source Files\Supernova">
       <UniqueIdentifier>{6ea8804a-dbb0-4cfd-83e7-b9292cead512}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Stopwatch">
+      <UniqueIdentifier>{cc8ebc21-b540-4a45-b00f-190c1b3614f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Benchmarker">
+      <UniqueIdentifier>{689f6093-7c82-41da-8acc-73105318e05c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -446,6 +452,18 @@
     </ClCompile>
     <ClCompile Include="SupernovaCompiler.cpp">
       <Filter>Source Files\Supernova</Filter>
+    </ClCompile>
+    <ClCompile Include="Stopwatch.cpp">
+      <Filter>Source Files\Stopwatch</Filter>
+    </ClCompile>
+    <ClCompile Include="Benchmarker.cpp">
+      <Filter>Source Files\Benchmarker</Filter>
+    </ClCompile>
+    <ClCompile Include="ExamplePrograms\bubble_sort.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExamplePrograms\merge_sort.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -929,6 +947,21 @@
     </ClInclude>
     <ClInclude Include="SupernovaCompiler.h">
       <Filter>Source Files\Supernova</Filter>
+    </ClInclude>
+    <ClInclude Include="Stopwatch.h">
+      <Filter>Source Files\Stopwatch</Filter>
+    </ClInclude>
+    <ClInclude Include="Benchmarker.h">
+      <Filter>Source Files\Benchmarker</Filter>
+    </ClInclude>
+    <ClInclude Include="NamedListElementNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NamedInitializationListNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="UnnamedInitializationListNode.h">
+      <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1434,6 +1467,13 @@
     <Text Include="SourceTests\supernova_tests.txt" />
     <Text Include="SourceTests\array_passed_by_value_1.txt" />
     <Text Include="SourceTests\struct_passed_by_value_1.txt" />
+    <Text Include="SourceTests\initialization_list_1.txt" />
+    <Text Include="SourceTests\initialization_list_2.txt" />
+    <Text Include="SourceTests\initialization_list_3.txt" />
+    <Text Include="SourceTests\initialization_list_4.txt" />
+    <Text Include="SourceTests\initialization_list_5.txt" />
+    <Text Include="SourceTests\initialization_list_6.txt" />
+    <Text Include="SourceTests\initialization_list_7.txt" />
     <Text Include="SourceTests\domain_frontiers_2.txt" />
     <Text Include="SourceTests\domination_frontiers_4.txt" />
     <Text Include="SourceTests\domination_frontiers_simple_test_1.txt" />

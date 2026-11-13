@@ -1,0 +1,15 @@
+
+struct A{
+	int m_a;
+	float m_b;
+};
+
+int main(){
+	A a = { .m_a = 10, .m_b = 12.0f};
+	print(a.m_a);
+	print(a.m_b);
+	return 0;
+}
+#------------------
+10
+12

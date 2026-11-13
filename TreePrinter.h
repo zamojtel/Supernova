@@ -383,6 +383,18 @@ void TreePrinter::print_node(const ReferencePtr<AbstractSyntaxTreeNode> &node,in
 		std::cout << "PRINT " << std::endl;
 		break;
 	}
+	case TreeNodeType::UNNAMED_INITIALIZATION_LIST: {
+		std::cout << "UNNAMED_INITIALIZATION_LIST " << std::endl;
+		break;
+	}
+	case TreeNodeType::NAMED_INITIALIZATION_LIST: {
+		std::cout << "NAMED_INITIALIZATION_LIST " << std::endl;
+		break;
+	}
+	case TreeNodeType::NAMED_LIST_ELEMENT: {
+		std::cout << "NAMED_LIST_ELEMENT " << std::endl;
+		break;
+	}
 	default:
 		throw std::runtime_error("unknown tree node type");
 		break;

@@ -92,7 +92,12 @@ void SupernovaCompiler::compile(const std::string& source_code) {
 	printer_new.print_ir_representation(m_ir_program);
 
 	auto llvm_module = ir_to_llvm_converter.convert();
-	auto jit_result = llvm::orc::LLJITBuilder().create();
+	auto jtmb = llvm::orc::JITTargetMachineBuilder::detectHost();
+	jtmb->setCodeGenOptLevel(llvm::CodeGenOptLevel::Aggressive);
+	auto target_machine = jtmb->createTargetMachine();
+	auto jit_result = llvm::orc::LLJITBuilder()
+		.setJITTargetMachineBuilder(std::move(*jtmb))
+		.create();
 
 	if (!jit_result) {
 		llvm::errs() << llvm::toString(jit_result.takeError()) << '\n';
@@ -106,9 +111,24 @@ void SupernovaCompiler::compile(const std::string& source_code) {
 			module.setDataLayout(m_jit->getDataLayout());
 			module.setTargetTriple(m_jit->getTargetTriple().str());
 			bool broken = llvm::verifyModule(module, &llvm::errs());
-			if (!broken)
-				//print_module_assembly(module);
-				return broken;
+			if (!broken) {
+				// llvm optimization
+				llvm::LoopAnalysisManager LAM;
+				llvm::FunctionAnalysisManager FAM;
+				llvm::CGSCCAnalysisManager CGAM;
+				llvm::ModuleAnalysisManager MAM;
+				llvm::PassBuilder PB(target_machine->get());
+				PB.registerModuleAnalyses(MAM);
+				PB.registerCGSCCAnalyses(CGAM);
+				PB.registerFunctionAnalyses(FAM);
+				PB.registerLoopAnalyses(LAM);
+				PB.crossRegisterProxies(LAM, FAM, CGAM, MAM);
+				llvm::ModulePassManager MPM = PB.buildPerModuleDefaultPipeline(llvm::OptimizationLevel::O3);
+				MPM.run(module, MAM);
+				print_module_assembly(module);
+			}
+
+			return broken;
 		}
 	);
 
