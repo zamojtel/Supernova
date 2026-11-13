@@ -25,4 +25,6 @@
 #include "PrintMessageCollector.cpp"
 #include "StringTests/StringTests.cpp"
 #include "SupernovaCompiler.cpp"
+#include "BenchmarkAlgorithms.cpp"
+
 #endif INCLUDES_CPP

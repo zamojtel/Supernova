@@ -144,7 +144,8 @@ void reference12_test(int &value){
 void bubble_sort(int * arr,int n) {
 	for (int i = 0; i < n ;i++) {
 		bool swapped = false;
-		for (int j = 1; j < n - i;j++) {
+		int new_limit = n - i;
+		for (int j = 1; j < new_limit ;j++) {
 			if (arr[j-1]>arr[j]) {
 				int temp =  arr[j-1];
 				arr[j-1] = arr[j];
@@ -152,10 +153,40 @@ void bubble_sort(int * arr,int n) {
 				swapped = true;
 			}
 		}
-
-		// if (!swapped)
 		if (swapped==false)
 			return;
 	}
 	return;
+}
+
+void merge_sort_impl(int* a, int* temp, int left, int right) {
+	if (right - left <= 1)
+		return;
+	int const mid = left + (right - left) / 2;
+	merge_sort_impl(a, temp, left, mid);
+	merge_sort_impl(a, temp, mid, right);
+
+	int i = left, j = mid, k = left;
+	while (i < mid && j < right) {
+		if (a[i] <= a[j])
+			temp[k++] = a[i++];
+		else
+			temp[k++] = a[j++];
+	}
+
+	while (i < mid)
+		temp[k++] = a[i++];
+
+	while (j < right)
+		temp[k++] = a[j++];
+
+	for (int p = left; p < right; ++p)
+		a[p] = temp[p];
+
+}
+
+void merge_sort(int* a, int n) {
+	int* temp = (int*)malloc(((uint64)n) * sizeof(int));
+	merge_sort_impl(a, temp, 0, n);
+	free(temp);
 }
