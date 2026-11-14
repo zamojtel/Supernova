@@ -1,0 +1,22 @@
+int f(int x){
+	int p = 10;
+	int *q = &p;
+	
+	if(x>10){
+		*q = *q + x;
+		p++;
+	}else{
+		*q = *q - x;
+	}
+
+	return p;
+}
+
+int main(){
+	int x = 20;
+	int result = f(x);
+	print(result);
+	return 0;
+}
+#------------------
+31

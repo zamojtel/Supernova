@@ -481,7 +481,7 @@ void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
 				bool value = constant->get_value().get_value<bool>();
 				m_llvm_constants.at(constant->get_index()) =
 					llvm::ConstantInt::get(
-						llvm::Type::getInt8Ty(*m_context),
+						get_llvm_type(type),
 						value
 					);
 				break;
@@ -501,6 +501,7 @@ void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
 		m_llvm_block_map.emplace(blks[i], m_llvm_basic_blocks.at(i));
 	}
 
+	std::vector<std::pair<IRTriple*, llvm::PHINode*>> phi_nodes;
 	for (size_t i = 0; i < blks.size();i++) {
 		m_builder->SetInsertPoint(m_llvm_basic_blocks.at(i));
 		for (IRTriple * triple : blks[i]->get_all_triples()) {
@@ -1093,12 +1094,37 @@ void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
 
 				break;
 			}
+			case IROperation::PHI: {
+				int expected_edges = (triple->m_operands.size() - 1) / 2;
+				llvm::PHINode* phi_node = m_builder->CreatePHI(get_llvm_type(triple->get_data_type()),expected_edges,triple->m_operands[0].get_variable()->get_variable_name());
+				m_triple_values[triple->get_global_index()] = phi_node;
+				phi_nodes.emplace_back(triple, phi_node);
+
+				break;
+			}
 			default:
 				throw std::runtime_error("operation is not supported");
 				break;
 			}
 		}
 	}
+
+	for (const auto& [triple, phi_node] : phi_nodes) {
+		for (size_t i = 1; i < triple->m_operands.size();i+=2) {
+			IRBasicBlock* blk = triple->m_operands[i].get_basic_block();
+			llvm::BasicBlock* pred_blk = m_llvm_block_map.at(blk);
+			m_builder->SetInsertPoint(pred_blk->getTerminator());
+
+			llvm::Value* value = nullptr;
+			if (triple->m_operands[i + 1].m_operand_type == IROperandType::NO_OPERAND)
+				value = llvm::UndefValue::get(phi_node->getType());
+			else
+				value = get_operand_value(triple->m_operands[i+1]);
+
+			phi_node->addIncoming(value,pred_blk);
+		}
+	}
+
 }
 
 llvm::FunctionType* IRToLLVMIRConverter::get_llvm_function_type(IRBaseFunction* base_fn) {

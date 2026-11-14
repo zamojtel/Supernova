@@ -52,13 +52,16 @@ void IRTriple::set_operand(size_t index,IROperand op) {
 	if (index >= m_operands.size())
 		throw std::runtime_error("index out of range");
 
-	if (m_operands[index].m_operand_type==IROperandType::BASIC_BLOCK)
-		m_basic_blk->remove_successor(m_operands[index].get_basic_block());
 
-	if (op.m_operand_type==IROperandType::BASIC_BLOCK) {
-		IRBasicBlock* blk = op.get_basic_block();
-		// it adds connections both ways
-		m_basic_blk->add_successor(blk);
+	if (m_operation!=IROperation::PHI) {
+		if (m_operands[index].m_operand_type==IROperandType::BASIC_BLOCK)
+			m_basic_blk->remove_successor(m_operands[index].get_basic_block());
+
+		if (op.m_operand_type==IROperandType::BASIC_BLOCK) {
+			IRBasicBlock* blk = op.get_basic_block();
+			// it adds connections both ways
+			m_basic_blk->add_successor(blk);
+		}
 	}
 
 	IRUsedObject* old_obj = m_operands[index].get_used_object();

@@ -127,6 +127,7 @@
       <AdditionalIncludeDirectories>C:\Users\zamoj\C++Projects\antlr4\runtime\Cpp\runtime\src;D:\vcpkg\buildtrees\llvm\x64-windows-dbg\include;D:\vcpkg\buildtrees\llvm\src\org-18.1.6-167c29d834.clean\llvm\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,6 +148,7 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -189,6 +191,7 @@
     </ClCompile>
     <ClCompile Include="BenchmarkAlgorithms.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Benchmarker.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -459,9 +462,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Test1.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Tester.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -660,7 +660,6 @@
     <ClInclude Include="StructNode.h" />
     <ClInclude Include="SupernovaCompiler.h" />
     <ClInclude Include="SymbolTable.h" />
-    <ClInclude Include="Test1.h" />
     <ClInclude Include="Tester.h" />
     <ClInclude Include="TreePrinter.h" />
     <ClInclude Include="IRTriple.h" />
@@ -829,6 +828,7 @@
     <Text Include="SourceTests\broadcasting_3.txt" />
     <Text Include="SourceTests\broadcasting_4.txt" />
     <Text Include="SourceTests\broadcasting_5.txt" />
+    <Text Include="SourceTests\domain_frontiers_2.txt" />
     <Text Include="SourceTests\domination_frontiers_1.txt" />
     <Text Include="SourceTests\initialization_list_1.txt" />
     <Text Include="SourceTests\initialization_list_2.txt" />
@@ -837,6 +837,8 @@
     <Text Include="SourceTests\initialization_list_5.txt" />
     <Text Include="SourceTests\initialization_list_6.txt" />
     <Text Include="SourceTests\initialization_list_7.txt" />
+    <Text Include="SourceTests\domination_frontiers_4.txt" />
+    <Text Include="SourceTests\domination_frontiers_simple_test_1.txt" />
     <Text Include="SourceTests\jit_compiled_function_1.txt" />
     <Text Include="SourceTests\jit_compiled_function_with_args_1.txt" />
     <Text Include="SourceTests\overload_4.txt" />

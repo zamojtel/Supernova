@@ -34,4 +34,5 @@ public:
 	size_t calculate_size_required_for_global_variables();
 	StringRef get_or_add_string_literal(const std::string& text);
 	void sort_blocks();
+	void convert_to_ssa();
 };

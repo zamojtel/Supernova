@@ -226,13 +226,14 @@ void Interpreter::start(IRFunction* fn) {
 		}
 		case IROperation::JMP: {
 			IROperand op = current_triple->m_operands[0];
+			m_current_frame->m_previous_blk = current_blk;
 			current_blk = std::get<IRBasicBlock*>(op.m_value);
 			current_blk_triple_index = 0;
 			continue;
 		}
 		case IROperation::JC: {
-
 			uint8_t* value_addr = get_operand_address(current_triple->m_operands[0]);
+			m_current_frame->m_previous_blk = current_blk;
 			if (*value_addr) {
 				IROperand op = current_triple->m_operands[1];
 				current_blk = std::get<IRBasicBlock*>(op.m_value);
@@ -244,6 +245,37 @@ void Interpreter::start(IRFunction* fn) {
 				current_blk_triple_index = 0;
 			}
 			continue;
+		}
+		case IROperation::PHI: {
+			std::vector<std::pair<IRTriple*, std::vector<uint8_t>>> phi_data;
+			std::vector<IRTriple*> triples = current_blk->get_all_triples();
+			int triple_index;
+			for (triple_index = current_blk_triple_index; triple_index<triples.size() &&  triples[triple_index]->get_ir_operation() == IROperation::PHI;triple_index++) {
+				IRTriple * phi_triple = triples[triple_index];
+				for (size_t i = 1; i < phi_triple->m_operands.size();i+=2) {
+					IRBasicBlock* blk = phi_triple->m_operands[i].get_basic_block();
+					if (m_current_frame->m_previous_blk==blk) {
+						IROperand value_op = phi_triple->m_operands[i + 1];
+						if (value_op.m_operand_type != IROperandType::NO_OPERAND) {
+							uint8_t* address = get_operand_address(value_op);
+							size_t size = phi_triple->get_data_type().get_size();
+							std::vector<uint8_t> data(size);
+							memcpy(data.data(),address,size);
+							phi_data.emplace_back(phi_triple,std::move(data));
+						}
+						break;
+					}
+				}
+			}
+
+			current_blk_triple_index = triple_index-1;
+			for (size_t i = 0; i < phi_data.size();i++) {
+				uint8_t* result_address = m_current_frame->m_memory_stack.data() + phi_data[i].first->get_local_mem_offset();
+				memcpy(result_address,phi_data[i].second.data(),phi_data[i].second.size());
+				m_current_frame->m_triple_addresses[phi_data[i].first->get_global_index()] = result_address;
+			}
+
+			break;
 		}
 		case IROperation::PRINT: {
 			IROperand op = current_triple->m_operands[0];
@@ -341,10 +373,8 @@ void Interpreter::start(IRFunction* fn) {
 
 			break;
 		}
-		// funkcja jest Ÿle wywo³ywana 
 		case IROperation::FUNCTION_CALL: {
 			std::vector<IROperand> arguments = current_triple->get_function_call_arguments();
-			// remove 
 			std::vector<ConstantValue> values_passed_to_func;
 			
 			IROperand function_op = current_triple->m_operands[0];
@@ -467,19 +497,7 @@ void Interpreter::start(IRFunction* fn) {
 			break;
 		}
 		case IROperation::WRITE_TO_POINTER: {
-			//IROperand target_triple = current_triple->m_operands[0];
-			//IROperand operand = current_triple->m_operands[1];
-			//uint8_t* target_address = get_operand_address(target_triple);
-			//uint8_t* operand_address = get_operand_address(operand);
-			//int a = 123;
-			//int* p = &a;
-			
-			//memcpy(target_address, operand_address, operand.get_data_type().get_size());
-			
-			// CHANGED
-			// szufladka z adresem do adresu do którego chemy zapisaæ
 			uint8_t* pointer_slot = get_operand_address(current_triple->m_operands[0]);
-			// wyci¹gamy z niej adres
 			uint8_t* destination = *reinterpret_cast<uint8_t**>(pointer_slot);
 			uint8_t* source = get_operand_address(current_triple->m_operands[1]);
 			memcpy(destination, source, current_triple->m_operands[1].get_data_type().get_size());
@@ -488,39 +506,21 @@ void Interpreter::start(IRFunction* fn) {
 		}
 		case IROperation::ADDRESS_OF: {
 			IROperand op1 = current_triple->m_operands[0];
-			//uint8_t* op_1_addr = nullptr;
-
-	/*		if (op1.m_operand_type==IROperandType::TRIPLE && op1.get_triple()->get_ir_operation()==IROperation::DEREFERENCE) {
-
-			}
-			else {*/
 			uint8_t* op_1_addr = get_operand_address(op1);
 			uint8_t* result_addr = &m_current_frame->m_memory_stack[0] + current_triple->get_local_mem_offset();
 			int32_t* result = reinterpret_cast<int32_t*>(op_1_addr);
 			
 			*reinterpret_cast<void**>(result_addr) = op_1_addr;
 			m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result_addr;
-			//}
-
 
 			break;
 		}
 		case IROperation::DEREFERENCE: {
-			//IROperand op1 = current_triple->m_operands[0];
-			//uint8_t* op_1_address = get_operand_address(op1);
-			//uint8_t* result_address = m_current_frame->m_memory_stack.data() + current_triple->get_local_mem_offset();
-			//memcpy(result_address, op_1_address, current_triple->get_data_type().get_size());
-			//m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result_address;
 			IROperand op1 = current_triple->m_operands[0];
 			uint8_t* op_1_address = get_operand_address(op1);
 			uint8_t* result = *(reinterpret_cast<uint8_t**>(op_1_address));
 			m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result;
 
-			//uint8_t* pointer_slot = get_operand_address(current_triple->m_operands[0]);
-			//uint8_t* actual_source = *reinterpret_cast<uint8_t**>(pointer_slot);
-			//uint8_t* result_slot = m_current_frame->m_memory_stack.data() + current_triple->get_local_mem_offset();
-			//memcpy(result_slot, actual_source, current_triple->m_data_type.get_size());
-			//m_current_frame->m_triple_addresses[current_triple->get_global_index()] = result_slot;
 			break;
 		}
 		case IROperation::SELECT: {

@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <vector>
+#include <set>
 #include <array>
 #include <variant>
 #include <queue>
@@ -447,7 +448,6 @@ void supernova_jit_tests(const fs::path& source_file) {
 	if (compiled_function_17)
 		compiled_function_17(passed_value);
 	assert(passed_value == 20);
-
 }
 
 void check_asserts() {
@@ -819,6 +819,11 @@ int main(int argc,char* argv[]) {
 		//"initialization_list_5",
 		//"initialization_list_6",
 		//"initialization_list_7"
+		"domination_frontiers_1",
+		"domination_frontiers_2",
+		"domination_frontiers_3",
+		"domination_frontiers_4",
+		//"domination_frontiers_simple_test_1"
 	};
 
 	std::vector<std::string> jit_test{
@@ -887,7 +892,6 @@ int main(int argc,char* argv[]) {
 
 	interpreter_tester.run_all_tests(test_names, {});
 	jit_tester.run_all_tests(test_names, {});
-
 	SupernovaCompiler supernova_compiler;
 	supernova_jit_tests(tests_path / "supernova_tests.txt");
 	Stopwatch stopwatch;
@@ -953,5 +957,6 @@ int main(int argc,char* argv[]) {
 	benchmarker.stop_test();
 
 	benchmarker.print_summary();
+
 	return 0;
 }

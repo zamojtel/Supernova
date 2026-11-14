@@ -88,7 +88,7 @@ void SupernovaCompiler::compile(const std::string& source_code) {
 	IRToLLVMIRConverter ir_to_llvm_converter(&m_ir_program);
 	IRPrinter printer_new;
 
-	m_ir_program.sort_blocks();
+	m_ir_program.convert_to_ssa();
 	printer_new.print_ir_representation(m_ir_program);
 
 	auto llvm_module = ir_to_llvm_converter.convert();

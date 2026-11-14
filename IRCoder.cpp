@@ -27,6 +27,11 @@ IRTriple* IRCoder::add_triple(size_t line_number, IROperation operation, const s
 	return triple;
 }
 
+void IRCoder::set_position_at_start(IRBasicBlock* blk) {
+	m_current_basic_blk = blk;
+	m_position = 0;
+}
+
 void IRCoder::set_basic_block(IRBasicBlock* blk) {
 	m_position = blk->get_number_of_triples();
 	m_current_basic_blk = blk;
