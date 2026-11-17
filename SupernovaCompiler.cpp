@@ -1,7 +1,8 @@
 
 SupernovaCompiler::SupernovaCompiler() {}
 
-void SupernovaCompiler::compile(const std::string& source_code) {
+void SupernovaCompiler::compile(const std::string& source_code,bool verbose) {
+	m_verbose = verbose;
 	IRPrinter printer;
 
 	antlr4::ANTLRInputStream stream(source_code);
@@ -72,7 +73,9 @@ void SupernovaCompiler::compile(const std::string& source_code) {
 	converter.convert(&ast_conv_impl);
 
 	m_ir_program.check_program();
-	printer.print_ir_representation(m_ir_program);
+	if(m_verbose)
+		printer.print_ir_representation(m_ir_program);
+
 	printer.print_errors(error_collector);
 
 	IRInliner inliner;
@@ -89,9 +92,10 @@ void SupernovaCompiler::compile(const std::string& source_code) {
 	IRPrinter printer_new;
 
 	m_ir_program.convert_to_ssa();
-	printer_new.print_ir_representation(m_ir_program);
+	if (m_verbose) 
+		printer_new.print_ir_representation(m_ir_program);
 
-	auto llvm_module = ir_to_llvm_converter.convert();
+	auto llvm_module = ir_to_llvm_converter.convert(m_verbose);
 	auto jtmb = llvm::orc::JITTargetMachineBuilder::detectHost();
 	jtmb->setCodeGenOptLevel(llvm::CodeGenOptLevel::Aggressive);
 	auto target_machine = jtmb->createTargetMachine();
@@ -125,7 +129,8 @@ void SupernovaCompiler::compile(const std::string& source_code) {
 				PB.crossRegisterProxies(LAM, FAM, CGAM, MAM);
 				llvm::ModulePassManager MPM = PB.buildPerModuleDefaultPipeline(llvm::OptimizationLevel::O3);
 				MPM.run(module, MAM);
-				print_module_assembly(module);
+				if(m_verbose)
+					print_module_assembly(module);
 			}
 
 			return broken;
@@ -146,13 +151,16 @@ template <class T>
     IRBaseFunction* fn = m_ir_program.get_function(fn_name,argument_types);
     std::string llvm_function_name;
 
-    if (fn->is_internal()) {
+    if (fn->is_internal())
         llvm_function_name = FunctionNames::get_internal_name(fn_name);
-    }
     else
         throw std::runtime_error("external function cannot be provided");
 
     llvm::Expected<llvm::orc::ExecutorAddr> function = m_jit->lookup(llvm_function_name);
     auto compiled_function = function->toPtr<T>();
     return compiled_function;
+}
+
+IRDataTypeManager* SupernovaCompiler::get_dtm() {
+	return m_ir_program.get_dtm_manager();
 }

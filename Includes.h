@@ -122,6 +122,9 @@
 #include "Tester.h"
 #include "SupernovaCompiler.h"
 #include "BenchmarkAlgorithms.h"
+#include "Test1.h"
+#include "Test2.h"
+#include "BenchmarkSuite.h"
 
 #endif INCLUDES_H
 

@@ -425,33 +425,11 @@ bool Tester::run_single_test(const fs::path& source_file, const fs::path& expect
             TestInterpreterListener test_listener;
             Interpreter interpreter{ &ir_program,main_fn,fn_arguments };
             interpreter.set_listener(&test_listener);
-
-            //std::vector<IROperand> fn_arguments{};
-            //IRFunction* global_function = ir_program.get_function("_global_function", fn_arguments);
             IRFunction* global_function = ir_program.get_function("_global_function", {});
             interpreter.start(global_function);
-
             interpreter.start(main_fn);
-
             auto& actual_outputs = test_listener.get_messages();
-
             return compare_test_ouput(source_file, actual_outputs, expected_outputs);
-
-            /*if (actual_outputs.size() != expected_outputs.size()) {
-                std::cout << "differenet number of results, expected: " << expected_outputs.size() << "\n ";
-                std::cout << "Got: " << actual_outputs.size() << "\n";
-                return false;
-            }
-
-            for (size_t i = 0; i < expected_outputs.size(); i++) {
-                if (actual_outputs[i] != expected_outputs[i]) {
-                    std::cout << "wrong result at the line :" << (i + 1) << "\n";
-                    std::cout << "expected :" << expected_outputs[i] << "\n";
-                    std::cout << "received :" << actual_outputs[i] << "\n";
-                    system("pause");
-                    return false;
-                }
-            }*/
         }
     }
 

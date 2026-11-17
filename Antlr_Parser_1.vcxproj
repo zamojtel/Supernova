@@ -197,6 +197,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="BenchmarkSuite.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ClangAOTBenchmarks.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="ErrorTraits.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -462,6 +470,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Test1.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Test2.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Tester.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -496,6 +512,7 @@
     <ClInclude Include="ASTConverterError.h" />
     <ClInclude Include="BenchmarkAlgorithms.h" />
     <ClInclude Include="Benchmarker.h" />
+    <ClInclude Include="BenchmarkSuite.h" />
     <ClInclude Include="BinaryOperatorNode.h" />
     <ClInclude Include="ASTConverter.h" />
     <ClInclude Include="ASTConvIncludes.h" />
@@ -660,6 +677,8 @@
     <ClInclude Include="StructNode.h" />
     <ClInclude Include="SupernovaCompiler.h" />
     <ClInclude Include="SymbolTable.h" />
+    <ClInclude Include="Test1.h" />
+    <ClInclude Include="Test2.h" />
     <ClInclude Include="Tester.h" />
     <ClInclude Include="TreePrinter.h" />
     <ClInclude Include="IRTriple.h" />
@@ -821,6 +840,9 @@
     <Text Include="SourceTests\basic_select_2.txt" />
     <Text Include="SourceTests\basic_select_4.txt" />
     <Text Include="SourceTests\basic_select_5.txt" />
+    <Text Include="SourceTests\Benchmarks\bubble_sort.txt" />
+    <Text Include="SourceTests\Benchmarks\convolve_2d.txt" />
+    <Text Include="SourceTests\Benchmarks\merge_sort.txt" />
     <Text Include="SourceTests\bool_value_1.txt" />
     <Text Include="SourceTests\bool_value_2.txt" />
     <Text Include="SourceTests\broadcasting_1.txt" />

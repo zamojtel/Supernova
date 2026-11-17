@@ -190,3 +190,34 @@ void merge_sort(int* a, int n) {
 	merge_sort_impl(a, temp, 0, n);
 	free(temp);
 }
+
+void apply_mask(float* in,float * out,int row,int col,int width,int height,float* kernel, int k) {
+	int index = row * width + col;
+	int kernel_position = 0;
+	float result = 0.0f;
+	for (int row_pos = -k; row_pos <= k;row_pos++) {
+		int current_row_in = row + row_pos;
+		int current_col_in = col - k;
+		int current_index_in = current_row_in * width + current_col_in;
+		int size = 2 * k + 1;
+
+		for (int i = 0; i < size ;i++) {
+			result = result + (in[current_index_in] * kernel[kernel_position]);
+			kernel_position++;
+			current_index_in++;
+		}
+	}
+	out[index] = result;
+}
+
+void convolve(float* r_in, float* g_in, float* b_in, float* r_out, float* g_out, float* b_out, int width, int height, float* kernel, int k){
+	int rows_limit = height-k;
+	int cols_limit = width-k;
+	for (int row = k; row < rows_limit;row++) {
+		for (int col = k; col < cols_limit; col++) {
+			apply_mask(r_in,r_out, row, col,width, height, kernel, k);
+			apply_mask(g_in,g_out, row, col,width, height, kernel, k);
+			apply_mask(b_in,b_out, row, col,width, height, kernel, k);
+		}
+	}
+}

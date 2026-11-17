@@ -212,7 +212,10 @@ void IRToLLVMIRConverter::create_llvm_function(IRBaseFunction* current_fn) {
 	llvm::Value* llvm_callee = nullptr;
 	if (current_fn->m_kind==IRBaseFunction::Kind::INTERNAL) {
 		std::string name = FunctionNames::get_internal_name(current_fn->get_name());
-		std::cout << "Internal " << name << std::endl;
+
+		if(m_verbose)
+			std::cout << "Internal " << name << std::endl;
+
 		llvm::Function* llvm_function = llvm::Function::Create(
 			function_type,
 			llvm::Function::ExternalLinkage,
@@ -299,7 +302,8 @@ IRToLLVMIRConverter::IRToLLVMIRConverter(IRProgram* ir_program) : m_ir_program{ 
 	int triples_count = 0;
 }
 
-llvm::orc::ThreadSafeModule IRToLLVMIRConverter::convert() {
+llvm::orc::ThreadSafeModule IRToLLVMIRConverter::convert(bool verbose) {
+	m_verbose = verbose;
 	m_module.reset();
 	m_context = std::make_unique<llvm::LLVMContext>();
 	m_module = std::make_unique<llvm::Module>("MyModule",*m_context);
@@ -339,11 +343,11 @@ llvm::orc::ThreadSafeModule IRToLLVMIRConverter::convert() {
 		}
 	}
 
-	if (llvm::verifyModule(*m_module, &llvm::errs())) {
+	if (llvm::verifyModule(*m_module, &llvm::errs()))
 		llvm::errs() << "Module verification failed!\n";
-	}
+	if(m_verbose)
+		m_module->print(llvm::outs(), nullptr);
 
-	m_module->print(llvm::outs(), nullptr);
 	m_builder = nullptr;
 
 	return llvm::orc::ThreadSafeModule(std::move(m_module),std::move(m_context));
@@ -668,8 +672,6 @@ void IRToLLVMIRConverter::convert_function(IRFunction* current_fn) {
 			case IROperation::WRITE_TO_POINTER: {
 				llvm::Value* variable_address = get_operand_value(triple->m_operands[0]);
 				llvm::Value* value = get_operand_value(triple->m_operands[1]);
-				print_llvm_type(variable_address->getType());
-				print_llvm_type(value->getType());
 
 				m_builder->CreateStore(value,variable_address);
 				break;

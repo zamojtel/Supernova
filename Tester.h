@@ -53,7 +53,7 @@ public:
 	Tester(const std::string& s_d, const std::string& e_d,TestMode m);
 	bool run_single_test(const fs::path& source_file, const fs::path& expected_path,bool flag);
 	void run_all_tests(const std::vector<std::string>& test_names, const std::vector<std::string>& test_error_names);
-	std::string read_entire_file(const fs::path& file_path);
+	static std::string read_entire_file(const fs::path& file_path);
 	static PrintMessageCollector& get_message_collector();
 	bool compare_test_ouput(const fs::path& source_file, const std::vector<std::string>& actual_outputs, const std::vector<std::string>& expected_outputs);
 };

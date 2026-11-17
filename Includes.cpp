@@ -26,5 +26,8 @@
 #include "StringTests/StringTests.cpp"
 #include "SupernovaCompiler.cpp"
 #include "BenchmarkAlgorithms.cpp"
+#include "Test1.cpp"
+#include "Test2.cpp"
+#include "BenchmarkSuite.cpp"
 
 #endif INCLUDES_CPP

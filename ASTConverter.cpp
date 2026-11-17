@@ -1654,6 +1654,6 @@ void ASTConverter::convert(ASTConverterListener* listener) {
 		m_coder.add_triple(0,IROperation::RETURN);
 	}
 
-	std::cout << "Before expanding" << std::endl;
-	printer.print_ir_representation(*m_ir_program);
+	//std::cout << "Before expanding" << std::endl;
+	//printer.print_ir_representation(*m_ir_program);
 }

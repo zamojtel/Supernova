@@ -459,10 +459,19 @@
     <ClCompile Include="Benchmarker.cpp">
       <Filter>Source Files\Benchmarker</Filter>
     </ClCompile>
-    <ClCompile Include="ExamplePrograms\bubble_sort.cpp">
+    <ClCompile Include="BenchmarkAlgorithms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ExamplePrograms\merge_sort.cpp">
+    <ClCompile Include="BenchmarkSuite.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ClangAOTBenchmarks.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -962,6 +971,18 @@
     </ClInclude>
     <ClInclude Include="UnnamedInitializationListNode.h">
       <Filter>Source Files\AbstractSyntaxtTreeNodeTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="BenchmarkAlgorithms.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BenchmarkSuite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Test1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Test2.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1477,5 +1498,8 @@
     <Text Include="SourceTests\domain_frontiers_2.txt" />
     <Text Include="SourceTests\domination_frontiers_4.txt" />
     <Text Include="SourceTests\domination_frontiers_simple_test_1.txt" />
+    <Text Include="SourceTests\Benchmarks\bubble_sort.txt" />
+    <Text Include="SourceTests\Benchmarks\merge_sort.txt" />
+    <Text Include="SourceTests\Benchmarks\convolve_2d.txt" />
   </ItemGroup>
 </Project>

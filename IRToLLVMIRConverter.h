@@ -15,9 +15,10 @@ private:
 	std::vector<llvm::Value*> m_variables;
 	std::vector<llvm::Value*> m_triple_values;
 	std::vector<llvm::FunctionCallee> m_function_callees;
+	bool m_verbose = true;
 public:
 	IRToLLVMIRConverter(IRProgram* ir_prog);
-	llvm::orc::ThreadSafeModule convert();
+	llvm::orc::ThreadSafeModule convert(bool verbose = true);
 	void convert_function(IRFunction* current_fn);
 	void create_llvm_function(IRBaseFunction* current_fn);
 	void create_llvm_basic_blocks(IRFunction* current_fn);
