@@ -20,6 +20,7 @@
 #include <chrono>
 #include <queue>
 #include <random>
+#include <numbers>
 #include <algorithm>
 #define ANTLR4CPP_STATIC
 #pragma comment(lib,"antlr4-runtime.lib")
@@ -828,12 +829,12 @@ int main(int argc, char* argv[]) {
 		//"initialization_list_3",
 		//"initialization_list_4",
 		//"initialization_list_5",
-		//"initialization_list_6",
-		//"initialization_list_7"
-		"domination_frontiers_1",
-		"domination_frontiers_2",
-		"domination_frontiers_3",
-		"domination_frontiers_4",
+		"initialization_list_6",
+		"initialization_list_7"
+		//"domination_frontiers_1",
+		//"domination_frontiers_2",
+		//"domination_frontiers_3",
+		//"domination_frontiers_4",
 		//"domination_frontiers_simple_test_1"
 	};
 

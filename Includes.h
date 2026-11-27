@@ -122,8 +122,14 @@
 #include "Tester.h"
 #include "SupernovaCompiler.h"
 #include "BenchmarkAlgorithms.h"
+
+#include "RandomNumberGenerator.h"
 #include "Test1.h"
 #include "Test2.h"
+#include "Biquad.h"
+#include "Test3.h"
+#include "Test4.h"
+
 #include "BenchmarkSuite.h"
 
 #endif INCLUDES_H

@@ -26,8 +26,13 @@
 #include "StringTests/StringTests.cpp"
 #include "SupernovaCompiler.cpp"
 #include "BenchmarkAlgorithms.cpp"
+
+#include "RandomNumberGenerator.cpp"
+#include "Biquad.cpp"
 #include "Test1.cpp"
 #include "Test2.cpp"
+#include "Test3.cpp"
+#include "Test4.cpp"
 #include "BenchmarkSuite.cpp"
 
 #endif INCLUDES_CPP

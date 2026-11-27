@@ -91,7 +91,6 @@ IRUsedObject* IROperand::get_used_object() const {
 	}
 }
 
-
 TypeRef IROperand::get_data_type() const {
 	switch (m_operand_type)
 	{

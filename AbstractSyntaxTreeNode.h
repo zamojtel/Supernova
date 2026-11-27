@@ -23,7 +23,6 @@ public:
 
 	static size_t get_max_index() { return m_global_index; }
 	void add_ref() { m_ref_count++; }
-	
 	void release() {
 		m_ref_count--;
 		if (m_ref_count == 0)

@@ -1,6 +1,9 @@
 
 class BenchmarkSuite {
 private:
+	static constexpr int WARMUP_RUNS = 5;
+	static constexpr int MEASURED_RUNS = 31;
+
 	template <typename Fn>
 	Fn load_dll_fn(HMODULE dll, const char* name) {
 		if (!dll)
@@ -22,5 +25,8 @@ public:
 	void run_sorting_baseline(const fs::path& tests_path);
 	void run_convolution_2d(const fs::path& tests_path);
 	void run_formula(const fs::path& tests_path);
+	void run_biquad_iir(const fs::path& tests_path);
+	void run_chroma_key_simd(const fs::path& tests_path);
 	void run_all(const fs::path& tests_path, const std::string& csv_path);
+
 };

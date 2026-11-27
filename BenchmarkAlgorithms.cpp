@@ -47,39 +47,6 @@ bool BenchmarkAlgorithms::is_sorted(const std::vector<int>& v) {
 	return true;
 }
 
-//void BenchmarkAlgorithms::merge_sort_impl(std::vector<int>& a, std::vector<int>& temp, std::size_t left, std::size_t right) {
-//	if (right - left <= 1)
-//		return;
-//
-//	const size_t mid = left + (right - left) / 2;
-//
-//	merge_sort_impl(a, temp, left, mid);
-//	merge_sort_impl(a, temp, mid, right);
-//
-//	size_t i = left, j = mid, k = left;
-//
-//	while (i < mid && j < right) {
-//		if (a[i] <= a[j])
-//			temp[k++] = a[i++];
-//		else
-//			temp[k++] = a[j++];
-//	}
-//
-//	while (i < mid)
-//		temp[k++] = a[i++];
-//
-//	while (j < right)
-//		temp[k++] = a[j++];
-//
-//	for (size_t p = left; p < right; ++p)
-//		a[p] = temp[p];
-//}
-//
-//void BenchmarkAlgorithms::merge_sort(std::vector<int>& a) {
-//	std::vector<int> temp(a.size());
-//	merge_sort_impl(a, temp, 0, a.size());
-//}
-
 void BenchmarkAlgorithms::merge_sort_impl(int* a, int* temp, int left, int right) {
 	if (right - left <= 1)
 		return;
@@ -141,6 +108,53 @@ void BenchmarkAlgorithms::convolve_2d(float* red_input_canal, float* green_input
 			apply_mask(red_input_canal, red_output_canal, row, col, width, height, kernel, k);
 			apply_mask(green_input_canal,green_output_canal, row, col, width, height, kernel, k);
 			apply_mask(blue_input_canal,blue_output_canal, row, col, width, height, kernel, k);
+		}
+	}
+}
+
+void BenchmarkAlgorithms::biquad_cascade(float* in, float* out, int num_samples, float* coeffs, int* enabled, float* state, int num_stages) {
+	for (int i = 0; i < num_samples;i++) {
+		float x0 = in[i];
+		for (int j = 0; j < num_stages;j++) {
+			if (enabled[j]) {
+				int c = j * 5;
+				int s = j * 4;
+				float y0 = coeffs[c] * x0 + coeffs[c + 1] * state[s] + coeffs[c + 2] * state[s + 1] - coeffs[c + 3] * state[s + 2] - coeffs[c + 4] * state[s + 3];
+				state[s + 1] = state[s];
+				state[s] = x0;
+				state[s + 3] = state[s + 2];
+				state[s + 2] = y0;
+				x0 = y0;
+			}
+		}
+		out[i] = x0;
+	}
+}
+
+void BenchmarkAlgorithms::chroma_key(float* fg_r, float* fg_g, float* fg_b, float* bg_r, float* bg_g, float* bg_b, float* out_r, float* out_g, float* out_b,int num_pixels, float thresh, float spill_limit, float gain) {
+
+	for (int i = 0; i < num_pixels;i++) {
+		float avg_rb = (fg_r[i] + fg_b[i]) * 0.5f;
+		float excess = fg_g[i] - avg_rb;
+		
+		if (excess > thresh) {
+			out_b[i] = bg_b[i];
+			out_g[i] = bg_g[i];
+			out_r[i] = bg_r[i];
+		}
+		else {
+			float g_clean;
+			if (excess > spill_limit) {
+				g_clean = avg_rb + spill_limit;
+			}
+			else {
+				g_clean = fg_g[i];
+			}
+
+			out_r[i] = fg_r[i] * gain;
+			out_g[i] = g_clean * gain;
+			out_b[i] = fg_b[i] * gain;
+
 		}
 	}
 }
