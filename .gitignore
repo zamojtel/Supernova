@@ -43,3 +43,4 @@ Thumbs.db
 # Optional: if you prefer to NOT commit ANTLR generated code,
 # ignore the generated folder (update path as needed)
 # GeneratedCLikeLanguage/
+*.exp

@@ -12,9 +12,7 @@ std::array<const IRDataTypeTraits,(size_t)IRBasicType::NUMBER_OF_TYPES> ir_data_
 		IRDataTypeTraits{ 4 }, // 8 FLOAT
 		IRDataTypeTraits{ 8 }, // 9 DOUBLE
 		IRDataTypeTraits{ 1 }, // 10 BOOL UNKNOWN
-		// IRDataTypeTraits{ 1 }, // 11 STRING UNKNOWN
-		IRDataTypeTraits{ 0 }, // 12 ERROR KNOWN
-		//IRDataTypeTraits{ 0 }, // 13 VOID KNOWN
+		IRDataTypeTraits{ 0 }, // 11 ERROR KNOWN
 	}
 };
 

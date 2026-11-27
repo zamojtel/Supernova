@@ -14,18 +14,3 @@ public:
 	const std::vector<IRMember*>& get_members() const;
 	void close();
 };
-
-	// 'member
-	//	remember
-	//	pamietam
-
-	//	'member
-	//	'mietam
-
-	//class Member {
-	//private:
-	//	TypeRef m_ref_type;
-	//	std::string m_name;
-	//public:
-	//	Member(const TypeRef& ref_type, const std::string& f_name) : m_ref_type{ ref_type }, m_name{ f_name } {}
-	//};

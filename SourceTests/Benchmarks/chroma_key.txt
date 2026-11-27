@@ -1,0 +1,25 @@
+
+
+void chroma_key(float[8]* fg_r, float[8]* fg_g, float[8]* fg_b, float[8]* bg_r, float[8]* bg_g, float[8]* bg_b, float[8]* out_r, float[8]* out_g, float[8]* out_b,int num_vec8, float thresh, float spill_limit, float gain) {
+	
+    for (int i = 0; i < num_vec8; i++) {
+        float[8] fr = fg_r[i];
+        float[8] fg = fg_g[i];
+        float[8] fb = fg_b[i];
+
+        float[8] br = bg_r[i];
+        float[8] bg = bg_g[i];
+        float[8] bb = bg_b[i];
+
+        float[8] avg_rb = (fr + fb) * 0.5f;
+        float[8] excess = fg - avg_rb;
+
+        bool[8] is_bg = excess > thresh;
+        float[8] g_clean = select(excess > spill_limit, avg_rb + spill_limit, fg);
+
+        out_r[i] = select(is_bg, br, fr * gain);
+        out_g[i] = select(is_bg, bg, g_clean * gain);
+        out_b[i] = select(is_bg, bb, fb * gain);
+    }
+
+}

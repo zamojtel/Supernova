@@ -1,0 +1,18 @@
+void biquad_cascade(float* in, float* out, int num_samples, float* coeffs, int* enabled, float* state, int num_stages) {
+	for (int i = 0; i < num_samples;i++) {
+		float x0 = in[i];
+		for (int j = 0; j < num_stages;j++) {
+			if (enabled[j]!=0) {
+				int c = j * 5;
+				int s = j * 4;
+				float y0 = coeffs[c] * x0 + coeffs[c + 1] * state[s] + coeffs[c + 2] * state[s + 1] - coeffs[c + 3] * state[s + 2] - coeffs[c + 4] * state[s + 3];
+				state[s + 1] = state[s];
+				state[s] = x0;
+				state[s + 3] = state[s + 2];
+				state[s + 2] = y0;
+				x0 = y0;
+			}
+		}
+		out[i] = x0;
+	}
+}

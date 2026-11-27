@@ -29,7 +29,6 @@ public:
 
 	bool is_array() const;
 	// correct typo
-
 	bool is_qualifiers() const;
 	bool is_const() const;
 	bool is_volatile() const;
@@ -50,7 +49,6 @@ public:
 	bool is_big_integer() const;
 	bool is_signed() const;
 	bool is_pointer_with_qualifiers() const;
-
 
 	size_t get_size() const;
 	bool has_size() const;

@@ -1404,6 +1404,18 @@ void ASTConverter::post_order_traverse(const ReferencePtr<AbstractSyntaxTreeNode
 				expr_op = c;
 				break;
 			}
+			case IRBasicType::FLOAT: {
+				float value = cv.get_value<float>();
+				IRConstant* c = m_current_fn->add_constant(-value);
+				expr_op = c;
+				break;
+			}
+			case IRBasicType::DOUBLE: {
+				double value = cv.get_value<double>();
+				IRConstant* c = m_current_fn->add_constant(-value);
+				expr_op = c;
+				break;
+			}
 			case IRBasicType::INT64:
 			{
 				int64_t value = cv.get_value<int64_t>();
@@ -1654,6 +1666,6 @@ void ASTConverter::convert(ASTConverterListener* listener) {
 		m_coder.add_triple(0,IROperation::RETURN);
 	}
 
-	std::cout << "Before expanding" << std::endl;
-	printer.print_ir_representation(*m_ir_program);
+	//std::cout << "Before expanding" << std::endl;
+	//printer.print_ir_representation(*m_ir_program);
 }
